@@ -1,0 +1,5 @@
+# This file is included as it is typically expected to be found here.
+# Just points to requirements for production.
+# For development: see requirements/dev.txt
+
+-r requirements/prod.txt

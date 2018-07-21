@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve run4it_backend
+After=network.target
+
+[Service]
+User=<username>
+Group=<group>
+WorkingDirectory=/var/www/run4it/backend
+Environment="PATH=/var/www/run4it/backend/flaskenv/bin"
+ExecStart=/var/www/run4it/backend/flaskenv/bin/uwsgi --ini run4it_backend.ini
+
+[Install]
+WantedBy=multi-user.target

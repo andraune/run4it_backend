@@ -1,1 +1,5 @@
-# Empty as of yet
+# Ignore Python virtual environment and pycache
+flaskenv/
+.vscode/
+__pycache__/
+
