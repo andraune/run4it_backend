@@ -1,21 +1,11 @@
 # run4it_backend
 
-run4it_backend.py
-|-- run4it
-|   |-- api (more or less everything...)
-|   |   |-- user (authentication)
-|   |   |   |-- model.py
-|   |   |   |-- resource.py
-|   |   |   
-|   |   |-- <other modules>
-|   |   
-|   |-- app (config, extensions, ...)
-|
-|--- tests
-
 flask db init
+
 flask db migrate
+
 flask db upgrade
+
 flask run
 
 
