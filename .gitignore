@@ -3,3 +3,6 @@ flaskenv/
 .vscode/
 __pycache__/
 
+# Ignore db stuff
+migrations/
+*.db

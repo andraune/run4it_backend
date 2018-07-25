@@ -8,6 +8,5 @@ app_config = get_environment_config()
 app = create_app(app_config, __name__)
 api = create_api(app)
 
-
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
