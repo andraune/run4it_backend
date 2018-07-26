@@ -36,6 +36,7 @@ class DevelopConfig(Config):
     JWT_SECRET_KEY = "even-more-top-secreterer"
     SQLALCHEMY_DATABASE_URI = "sqlite:///{0}".format(os.path.join(Config.PROJECT_ROOT, 'dev.db'))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    APISPEC_FORMAT_RESPONSE = False
 
 class ProductionConfig(Config):
     """Production Configuration"""
