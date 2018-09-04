@@ -7,12 +7,13 @@
 	},
 	"item": [
 		{
+			"_postman_id": "408f698a-0088-4157-94cd-be66405fd41d",
 			"name": "HomeApiV1",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "5b8ac116-3cb5-4c2b-9af4-b836889d64a8",
+						"id": "af2182dc-2dd1-4ac7-a67d-93d3d64dc248",
 						"type": "text/javascript",
 						"exec": [
 							"pm.test(\"Response time is acceptable\", function() {",
@@ -55,6 +56,52 @@
 			"response": []
 		},
 		{
+			"_postman_id": "2a2ff7ca-37d8-49a3-8d5b-ef634cad1a66",
+			"name": "HomeApiV1_405",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3ec2a143-5b04-4bc9-b63b-195d527787a9",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Response time is acceptable\", function() {",
+							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+							"});",
+							"",
+							"pm.test(\"Method not allowed\", function() {",
+							"    pm.response.to.have.status(405);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is JSON\", function() {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{apiBaseUrl}}/{{apiVersion}}/",
+					"host": [
+						"{{apiBaseUrl}}"
+					],
+					"path": [
+						"{{apiVersion}}",
+						""
+					]
+				},
+				"description": "POST for API version not allowed."
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "f70a548c-3b2f-44c8-90e9-1e9aff35e5b8",
 			"name": "NotFound404Json",
 			"event": [
 				{
@@ -99,19 +146,20 @@
 			"response": []
 		},
 		{
+			"_postman_id": "56010de6-955d-47b2-be10-8e746d9b30c1",
 			"name": "RegisterUser",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "8044f575-2037-48a8-a57b-2831f62179ed",
+						"id": "f779b360-637e-48e0-8980-ec6e81874938",
 						"type": "text/javascript",
 						"exec": [
 							"pm.test(\"Response time is acceptable\", function() {",
 							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
 							"});",
 							"",
-							"pm.test(\"Status code is 201\", function() {",
+							"pm.test(\"User registered\", function() {",
 							"    pm.response.to.have.status(201);",
 							"});",
 							"",
@@ -158,14 +206,137 @@
 			"response": []
 		},
 		{
+			"_postman_id": "3eb6f0b6-0393-42fd-88ba-a077383b9a07",
+			"name": "RegisterExistingUsername",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e5b39a05-8b39-4395-84a2-a39a449145a9",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Response time is acceptable\", function() {",
+							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+							"});",
+							"",
+							"pm.test(\"User already exists\", function() {",
+							"    pm.response.to.have.status(409);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is JSON\", function() {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+							"});",
+							"",
+							"pm.test(\"Registration response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors.register[0]).to.eql(\"User already exists(1)\");",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"username\": \"existing\", \"email\":\"non-existing@mail.com\", \"password\":\"passw0rd2\" }\n"
+				},
+				"url": {
+					"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+					"host": [
+						"{{apiBaseUrl}}"
+					],
+					"path": [
+						"{{apiVersion}}",
+						"user",
+						"register"
+					]
+				},
+				"description": "Post request to register new user."
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "bccdfac8-ec32-4519-b143-fa5117cef075",
+			"name": "RegisterExistingEmail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "619ea8e5-04e6-4e29-b81f-e3d4e29be652",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Response time is acceptable\", function() {",
+							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+							"});",
+							"",
+							"pm.test(\"User already exists\", function() {",
+							"    pm.response.to.have.status(409);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is JSON\", function() {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+							"});",
+							"",
+							"pm.test(\"Registration response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors.register[0]).to.eql(\"User already exists(2)\");",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"username\": \"nouser\", \"email\":\"existing@user.com\", \"password\":\"passw0rd3\" }\n"
+				},
+				"url": {
+					"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+					"host": [
+						"{{apiBaseUrl}}"
+					],
+					"path": [
+						"{{apiVersion}}",
+						"user",
+						"register"
+					]
+				},
+				"description": "Post request to register new user."
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "c57a3e43-8ecc-4dfd-9467-dcc7f5221d57",
 			"name": "RegisterUser_405",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "7e5efece-c9e5-4c86-960a-9971878b0db6",
+						"id": "169e2220-f215-40e3-9f89-f848a05864d2",
 						"type": "text/javascript",
 						"exec": [
+							"pm.test(\"Response time is acceptable\", function() {",
+							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+							"});",
+							"",
 							"pm.test(\"Method not allowed\", function() {",
 							"    pm.response.to.have.status(405);",
 							"});",
@@ -199,46 +370,7 @@
 			"response": []
 		},
 		{
-			"name": "HomeApiV1_405",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "4136c4c6-3294-454a-b67b-52ad63cf977e",
-						"type": "text/javascript",
-						"exec": [
-							"pm.test(\"Method not allowed\", function() {",
-							"    pm.response.to.have.status(405);",
-							"});",
-							"",
-							"pm.test(\"Content-Type is JSON\", function() {",
-							"    pm.response.to.have.header(\"Content-Type\");",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
-							"});",
-							""
-						]
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "{{apiBaseUrl}}/{{apiVersion}}/",
-					"host": [
-						"{{apiBaseUrl}}"
-					],
-					"path": [
-						"{{apiVersion}}",
-						""
-					]
-				},
-				"description": "POST for API version not allowed."
-			},
-			"response": []
-		},
-		{
+			"_postman_id": "612af22c-c89f-475b-bab1-6c61ee88ea90",
 			"name": "RegisterUser_422",
 			"event": [
 				{
