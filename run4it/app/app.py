@@ -1,6 +1,7 @@
 """The app module, containing the app factory function."""
 from flask import Flask
-from run4it.app.extensions import jwt, db, migrate
+from . import commands
+from .extensions import jwt, db, migrate
 from run4it.api.user.model import User
 
 
@@ -10,6 +11,7 @@ def create_app(config_object, app_name):
     app.config.from_object(config_object)
 
     register_extensions(app)
+    register_commands(app)
     register_shell_context(app)
 
     return app
@@ -19,6 +21,10 @@ def register_extensions(app):
     jwt.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
+
+def register_commands(app):
+    app.cli.add_command(commands.initdata)
+
 
 def register_shell_context(app):
     """Register shell context objects."""

@@ -6,6 +6,7 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 get_jwt_identity, get_raw_jwt)
 
 from run4it.app.database import db
+from run4it.api.exceptions import report_error_and_abort
 from .model import User
 from .schema import user_schema
 
@@ -17,10 +18,10 @@ class Register(Resource):
     def post(self, username, email, password, **kwargs):
 
         if User.find_by_username(username):
-            return { "message": "User already exists(1)." }, 409
+            report_error_and_abort(409, "register", "User already exists(1)")
 
         if User.find_by_email(email):
-            return { "message": "User already exists(2)." }, 409
+            report_error_and_abort(409, "register", "User already exists(2)")
 
         new_user = User(username, email, password, **kwargs)
         try:
@@ -29,6 +30,6 @@ class Register(Resource):
             refresh_token = create_refresh_token(identity=username)
         except:
             db.session.rollback()
-            return { "message": "Unable to create user." }, 500
+            report_error_and_abort(500, "register", "Unable to create user")
 
         return new_user, 201

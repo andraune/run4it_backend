@@ -1,0 +1,300 @@
+{
+	"info": {
+		"_postman_id": "915471b7-3140-4cc5-b17f-b111857325dd",
+		"name": "Run4IT_backend",
+		"description": "Requests for local dev of Run4IT backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "HomeApiV1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5b8ac116-3cb5-4c2b-9af4-b836889d64a8",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Response time is acceptable\", function() {",
+							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+							"});",
+							"",
+							"pm.test(\"Status code is 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is JSON\", function() {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+							"});",
+							"",
+							"pm.test(\"Reported version is 1\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.version).to.eql(1);",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{apiBaseUrl}}/{{apiVersion}}",
+					"host": [
+						"{{apiBaseUrl}}"
+					],
+					"path": [
+						"{{apiVersion}}"
+					]
+				},
+				"description": "Basic GET for home page"
+			},
+			"response": []
+		},
+		{
+			"name": "NotFound404Json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a2a447d6-7a07-4bea-ad1a-a587e7391659",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Response time is acceptable\", function() {",
+							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+							"});",
+							"",
+							"pm.test(\"Status code is 404\", function() {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is JSON\", function() {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{apiBaseUrl}}/{{apiVersion}}/notfound",
+					"host": [
+						"{{apiBaseUrl}}"
+					],
+					"path": [
+						"{{apiVersion}}",
+						"notfound"
+					]
+				},
+				"description": "A page that does not exist - we still want to return JSON."
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8044f575-2037-48a8-a57b-2831f62179ed",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Response time is acceptable\", function() {",
+							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+							"});",
+							"",
+							"pm.test(\"Status code is 201\", function() {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is JSON\", function() {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+							"});",
+							"",
+							"pm.test(\"Registration response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.username).to.eql(\"user_name\");",
+							"    pm.expect(jsonData.email).to.eql(\"me@mail.com\");",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"username\": \"user_name\", \"email\":\"me@mail.com\", \"password\":\"passw0rd\" }\n"
+				},
+				"url": {
+					"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+					"host": [
+						"{{apiBaseUrl}}"
+					],
+					"path": [
+						"{{apiVersion}}",
+						"user",
+						"register"
+					]
+				},
+				"description": "Post request to register new user."
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterUser_405",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7e5efece-c9e5-4c86-960a-9971878b0db6",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Method not allowed\", function() {",
+							"    pm.response.to.have.status(405);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is JSON\", function() {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+					"host": [
+						"{{apiBaseUrl}}"
+					],
+					"path": [
+						"{{apiVersion}}",
+						"user",
+						"register"
+					]
+				},
+				"description": "GET for registering not allowed"
+			},
+			"response": []
+		},
+		{
+			"name": "HomeApiV1_405",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4136c4c6-3294-454a-b67b-52ad63cf977e",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Method not allowed\", function() {",
+							"    pm.response.to.have.status(405);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is JSON\", function() {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{apiBaseUrl}}/{{apiVersion}}/",
+					"host": [
+						"{{apiBaseUrl}}"
+					],
+					"path": [
+						"{{apiVersion}}",
+						""
+					]
+				},
+				"description": "POST for API version not allowed."
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterUser_422",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "87699d3c-22be-4cb7-9cb3-5d64ef0149e4",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Response time is acceptable\", function() {",
+							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+							"});",
+							"",
+							"pm.test(\"Status code is 422\", function() {",
+							"    pm.response.to.have.status(422);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is JSON\", function() {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+							"});",
+							"",
+							"pm.test(\"Registration response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors.email[0]).to.equal(\"Not a valid email address.\")",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"username\": \"user_name\", \"email\":\"invalid_mail.com\", \"password\":\"passw0rd\" }\n"
+				},
+				"url": {
+					"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+					"host": [
+						"{{apiBaseUrl}}"
+					],
+					"path": [
+						"{{apiVersion}}",
+						"user",
+						"register"
+					]
+				},
+				"description": "Post request to register new user fails due to invalid email"
+			},
+			"response": []
+		}
+	]
+}
