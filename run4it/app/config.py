@@ -25,6 +25,7 @@ class Config(object):
     #SECRET_KEY = 'some-secret'
     #SQLALCHEMY_DATABASE_URI = None
     #SQLALCHEMY_TRACK_MODIFICATIONS = False
+    #APISPEC_FORMAT_RESPONSE = False
 
 
 class DevelopConfig(Config):
@@ -38,6 +39,17 @@ class DevelopConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     APISPEC_FORMAT_RESPONSE = False
 
+class TestConfig(Config):
+    """Test Configuration"""
+    ENV = "test"
+    DEBUG = True
+    TESTING = True
+    SECRET_KEY = "very-very-top-secret"
+    JWT_SECRET_KEY = "even-more-top-secreterer"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///{0}".format(os.path.join(Config.PROJECT_ROOT, 'test.db'))
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    APISPEC_FORMAT_RESPONSE = False
+
 class ProductionConfig(Config):
     """Production Configuration"""
     ENV = "production"
@@ -47,3 +59,4 @@ class ProductionConfig(Config):
     JWT_SECRET_KEY = os.environ.get("RUN4IT_JWT_SECRET_KEY", "8e2cacb621f833324bca0a13f33f3194ca8bc7cca8ad8145")
     SQLALCHEMY_DATABASE_URI = os.environ.get("RUN4IT_DB_URL", "postgresql://localhost/run4it")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    APISPEC_FORMAT_RESPONSE = False

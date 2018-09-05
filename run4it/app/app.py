@@ -23,7 +23,9 @@ def register_extensions(app):
     migrate.init_app(app, db)
 
 def register_commands(app):
+    app.cli.add_command(commands.clean)
     app.cli.add_command(commands.initdata)
+    app.cli.add_command(commands.tests)
 
 
 def register_shell_context(app):

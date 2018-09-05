@@ -3,6 +3,9 @@ flaskenv/
 .vscode/
 __pycache__/
 
+# PyTest
+.pytest_cache
+
 # Ignore db stuff
 migrations/
 *.db
