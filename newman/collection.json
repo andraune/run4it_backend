@@ -7,7 +7,696 @@
 	},
 	"item": [
 		{
-			"_postman_id": "408f698a-0088-4157-94cd-be66405fd41d",
+			"name": "UserRegister",
+			"item": [
+				{
+					"name": "RegisterUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "60df108a-7a42-46cb-bf2f-9ae890b081f3",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Registration OK\", function() {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.username).to.eql(\"user_name\");",
+									"    pm.expect(jsonData.email).to.eql(\"me@mail.com\");",
+									"    pm.expect(jsonData.confirmed).to.eql(false);",
+									"});",
+									"",
+									"pm.test(\"Resource location included\", function() {",
+									"   pm.response.to.have.header(\"Location\");",
+									"   var locationURL = pm.response.headers.get(\"Location\");",
+									"   var expectedURL = pm.environment.get('apiBaseUrl') + '/' + pm.environment.get('apiVersion') + '/user/3';",
+									"   pm.expect(locationURL).to.equal(expectedURL);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"user_name\", \"email\":\"me@mail.com\", \"password\":\"passw0rd\" }\n"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"register"
+							]
+						},
+						"description": "Post request to register new user."
+					},
+					"response": []
+				},
+				{
+					"name": "RegisterExistingUsername",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e5b39a05-8b39-4395-84a2-a39a449145a9",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"User already exists\", function() {",
+									"    pm.response.to.have.status(409);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.register[0]).to.eql(\"User already exists(1)\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"existing\", \"email\":\"non-existing@mail.com\", \"password\":\"passw0rd2\" }\n"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"register"
+							]
+						},
+						"description": "Post request to register new user."
+					},
+					"response": []
+				},
+				{
+					"name": "RegisterExistingEmail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "619ea8e5-04e6-4e29-b81f-e3d4e29be652",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"User already exists\", function() {",
+									"    pm.response.to.have.status(409);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.register[0]).to.eql(\"User already exists(2)\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"nouser\", \"email\":\"existing@user.com\", \"password\":\"passw0rd3\" }\n"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"register"
+							]
+						},
+						"description": "Post request to register new user."
+					},
+					"response": []
+				},
+				{
+					"name": "RegisterUser_405",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "169e2220-f215-40e3-9f89-f848a05864d2",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Method not allowed\", function() {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"register"
+							]
+						},
+						"description": "GET for registering not allowed"
+					},
+					"response": []
+				},
+				{
+					"name": "RegisterUser_InvalidUsername",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bc6befdc-f219-49cf-807e-6456899f5e20",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Status code is 422\", function() {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.username[0]).to.equal(\"Length must be between 4 and 16.\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"0\", \"email\":\"me@mail.com\", \"password\":\"passw0rd\" }\n"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"register"
+							]
+						},
+						"description": "Post request to register new user fails due to invalid email"
+					},
+					"response": []
+				},
+				{
+					"name": "RegisterUser_InvalidEmail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "87699d3c-22be-4cb7-9cb3-5d64ef0149e4",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Status code is 422\", function() {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.email[0]).to.equal(\"Not a valid email address.\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"user_name\", \"email\":\"invalid_mail.com\", \"password\":\"passw0rd\" }\n"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"register"
+							]
+						},
+						"description": "Post request to register new user fails due to invalid email"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "UserConfirmation",
+			"item": [
+				{
+					"name": "ConfirmUser_405",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "169e2220-f215-40e3-9f89-f848a05864d2",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Method not allowed\", function() {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"register"
+							]
+						},
+						"description": "GET for user confirmation not allowed"
+					},
+					"response": []
+				},
+				{
+					"name": "ConfirmUser_NoCode",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e1715e86-8a8b-470a-a621-97d1359d7fe3",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Status code is 422\", function() {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.confirmationCode[0]).to.equal(\"Confirmation code is required.\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"nouser\" }"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/confirmation",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"confirmation"
+							]
+						},
+						"description": "Post request to confirm new user fails due to no code provided"
+					},
+					"response": []
+				},
+				{
+					"name": "ConfirmUser_NoUsername",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bd558ced-b06f-48b0-9fad-972cecebdd9c",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Status code is 422\", function() {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.username[0]).to.equal(\"Username is required.\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"confirmationCode\": \"code\" }"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/confirmation",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"confirmation"
+							]
+						},
+						"description": "Post request to confirm new user fails due to no username provided"
+					},
+					"response": []
+				},
+				{
+					"name": "ConfirmUser_IncorrectUsername",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5a9fc73a-0643-4b58-85b7-f09b3a68ba8e",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Status code is 422\", function() {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.confirmation[0]).to.equal(\"Confirmation failed(1)\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"nouser\", \"confirmationCode\": \"correct\"}"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/confirmation",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"confirmation"
+							]
+						},
+						"description": "Post request to confirm new user fails due to invalid code"
+					},
+					"response": []
+				},
+				{
+					"name": "ConfirmUser_IncorrectCode",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3bd74730-97fc-4030-8cc5-6eb4ffce21df",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Status code is 422\", function() {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.confirmation[0]).to.equal(\"Confirmation failed(3)\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"confirm\", \"confirmationCode\": \"incorrect\"}"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/confirmation",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"confirmation"
+							]
+						},
+						"description": "Post request to confirm new user fails due to invalid code"
+					},
+					"response": []
+				},
+				{
+					"name": "ConfirmUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7acdbbcb-fe9c-4cc0-9a35-1823902fa0b6",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Confirmation OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Confirmation response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.username).to.eql(\"confirm\");",
+									"    pm.expect(jsonData.email).to.eql(\"confirm@user.com\");",
+									"    pm.expect(jsonData.confirmed).to.eql(true);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"confirm\", \"confirmationCode\": \"correct\"}"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/confirmation",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"confirmation"
+							]
+						},
+						"description": "Post request to confirm new user fails due to invalid code"
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "HomeApiV1",
 			"event": [
 				{
@@ -56,7 +745,6 @@
 			"response": []
 		},
 		{
-			"_postman_id": "2a2ff7ca-37d8-49a3-8d5b-ef634cad1a66",
 			"name": "HomeApiV1_405",
 			"event": [
 				{
@@ -101,7 +789,6 @@
 			"response": []
 		},
 		{
-			"_postman_id": "f70a548c-3b2f-44c8-90e9-1e9aff35e5b8",
 			"name": "NotFound404Json",
 			"event": [
 				{
@@ -142,289 +829,6 @@
 					]
 				},
 				"description": "A page that does not exist - we still want to return JSON."
-			},
-			"response": []
-		},
-		{
-			"_postman_id": "56010de6-955d-47b2-be10-8e746d9b30c1",
-			"name": "RegisterUser",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "f779b360-637e-48e0-8980-ec6e81874938",
-						"type": "text/javascript",
-						"exec": [
-							"pm.test(\"Response time is acceptable\", function() {",
-							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
-							"});",
-							"",
-							"pm.test(\"User registered\", function() {",
-							"    pm.response.to.have.status(201);",
-							"});",
-							"",
-							"pm.test(\"Content-Type is JSON\", function() {",
-							"    pm.response.to.have.header(\"Content-Type\");",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
-							"});",
-							"",
-							"pm.test(\"Registration response\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.username).to.eql(\"user_name\");",
-							"    pm.expect(jsonData.email).to.eql(\"me@mail.com\");",
-							"});",
-							""
-						]
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{ \"username\": \"user_name\", \"email\":\"me@mail.com\", \"password\":\"passw0rd\" }\n"
-				},
-				"url": {
-					"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
-					"host": [
-						"{{apiBaseUrl}}"
-					],
-					"path": [
-						"{{apiVersion}}",
-						"user",
-						"register"
-					]
-				},
-				"description": "Post request to register new user."
-			},
-			"response": []
-		},
-		{
-			"_postman_id": "3eb6f0b6-0393-42fd-88ba-a077383b9a07",
-			"name": "RegisterExistingUsername",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "e5b39a05-8b39-4395-84a2-a39a449145a9",
-						"type": "text/javascript",
-						"exec": [
-							"pm.test(\"Response time is acceptable\", function() {",
-							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
-							"});",
-							"",
-							"pm.test(\"User already exists\", function() {",
-							"    pm.response.to.have.status(409);",
-							"});",
-							"",
-							"pm.test(\"Content-Type is JSON\", function() {",
-							"    pm.response.to.have.header(\"Content-Type\");",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
-							"});",
-							"",
-							"pm.test(\"Registration response\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.errors.register[0]).to.eql(\"User already exists(1)\");",
-							"});",
-							""
-						]
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{ \"username\": \"existing\", \"email\":\"non-existing@mail.com\", \"password\":\"passw0rd2\" }\n"
-				},
-				"url": {
-					"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
-					"host": [
-						"{{apiBaseUrl}}"
-					],
-					"path": [
-						"{{apiVersion}}",
-						"user",
-						"register"
-					]
-				},
-				"description": "Post request to register new user."
-			},
-			"response": []
-		},
-		{
-			"_postman_id": "bccdfac8-ec32-4519-b143-fa5117cef075",
-			"name": "RegisterExistingEmail",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "619ea8e5-04e6-4e29-b81f-e3d4e29be652",
-						"type": "text/javascript",
-						"exec": [
-							"pm.test(\"Response time is acceptable\", function() {",
-							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
-							"});",
-							"",
-							"pm.test(\"User already exists\", function() {",
-							"    pm.response.to.have.status(409);",
-							"});",
-							"",
-							"pm.test(\"Content-Type is JSON\", function() {",
-							"    pm.response.to.have.header(\"Content-Type\");",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
-							"});",
-							"",
-							"pm.test(\"Registration response\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.errors.register[0]).to.eql(\"User already exists(2)\");",
-							"});",
-							""
-						]
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{ \"username\": \"nouser\", \"email\":\"existing@user.com\", \"password\":\"passw0rd3\" }\n"
-				},
-				"url": {
-					"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
-					"host": [
-						"{{apiBaseUrl}}"
-					],
-					"path": [
-						"{{apiVersion}}",
-						"user",
-						"register"
-					]
-				},
-				"description": "Post request to register new user."
-			},
-			"response": []
-		},
-		{
-			"_postman_id": "c57a3e43-8ecc-4dfd-9467-dcc7f5221d57",
-			"name": "RegisterUser_405",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "169e2220-f215-40e3-9f89-f848a05864d2",
-						"type": "text/javascript",
-						"exec": [
-							"pm.test(\"Response time is acceptable\", function() {",
-							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
-							"});",
-							"",
-							"pm.test(\"Method not allowed\", function() {",
-							"    pm.response.to.have.status(405);",
-							"});",
-							"",
-							"pm.test(\"Content-Type is JSON\", function() {",
-							"    pm.response.to.have.header(\"Content-Type\");",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
-							"});",
-							""
-						]
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
-					"host": [
-						"{{apiBaseUrl}}"
-					],
-					"path": [
-						"{{apiVersion}}",
-						"user",
-						"register"
-					]
-				},
-				"description": "GET for registering not allowed"
-			},
-			"response": []
-		},
-		{
-			"_postman_id": "612af22c-c89f-475b-bab1-6c61ee88ea90",
-			"name": "RegisterUser_422",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "87699d3c-22be-4cb7-9cb3-5d64ef0149e4",
-						"type": "text/javascript",
-						"exec": [
-							"pm.test(\"Response time is acceptable\", function() {",
-							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
-							"});",
-							"",
-							"pm.test(\"Status code is 422\", function() {",
-							"    pm.response.to.have.status(422);",
-							"});",
-							"",
-							"pm.test(\"Content-Type is JSON\", function() {",
-							"    pm.response.to.have.header(\"Content-Type\");",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
-							"});",
-							"",
-							"pm.test(\"Registration response\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.errors.email[0]).to.equal(\"Not a valid email address.\")",
-							"});",
-							""
-						]
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{ \"username\": \"user_name\", \"email\":\"invalid_mail.com\", \"password\":\"passw0rd\" }\n"
-				},
-				"url": {
-					"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
-					"host": [
-						"{{apiBaseUrl}}"
-					],
-					"path": [
-						"{{apiVersion}}",
-						"user",
-						"register"
-					]
-				},
-				"description": "Post request to register new user fails due to invalid email"
 			},
 			"response": []
 		}

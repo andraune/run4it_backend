@@ -38,16 +38,27 @@ def init_database_data():
     print('Deleting database data ...')
 
     from run4it.app.database import db  # noqa
-    from run4it.api.user import User  # noqa
+    from run4it.api.user import User, UserConfirmation  # noqa
 
     rows = User.query.delete()
-
     if rows > 0:
         print('Deleted {0} rows from User table'.format(rows))
 
     user = User('existing', 'existing@user.com', 'pwd')
     user.save()
     print("Added User '{0}'".format(user.username))
+    user = User('confirm', 'confirm@user.com', 'pwd')
+    user.save()
+    print("Added User '{0}'".format(user.username)) 
+
+    rows = UserConfirmation.query.delete()
+    if rows > 0:
+        print('Deleted {0} rows from UserConfirmation table'.format(rows))
+    
+    confirmation = UserConfirmation('confirm', 'correct')
+    confirmation.save()
+    print("Added UserConfirmation '{0} : {1}'".format(confirmation.username, confirmation.code))
+
     """
     state_names = ['TODO', 'In Progress', 'Review', 'Done']
 
@@ -56,6 +67,7 @@ def init_database_data():
         state.save()
         
     """
+    db.session.commit()
     print('Application data initialized!')
     return 0
 

@@ -13,3 +13,5 @@ flask clean
 flask initdata
 
 flask tests
+
+flask shell
