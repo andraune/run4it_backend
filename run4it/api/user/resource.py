@@ -9,7 +9,7 @@ from run4it.app.database import db
 from run4it.api.exceptions import report_error_and_abort
 from .mail import mail_send_confirmation_code
 from .model import User, UserConfirmation
-from .schema import user_schema, confirmation_schema
+from .schema import user_schema, confirmation_schema, login_schema
 
 
 class Register(Resource):
@@ -74,4 +74,11 @@ class Confirmation(Resource):
             report_error_and_abort(500, "confirmation", "Unable to confirm user")
 
         return user, 200
+
+
+class Login(Resource):
+    @use_kwargs(login_schema)
+    @marshal_with(user_schema)
+    def post(self, email, password, **kwargs):
+        pass    
 
