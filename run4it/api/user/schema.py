@@ -8,6 +8,8 @@ class UserSchema(Schema):
     confirmed = fields.Bool(dump_only=True, required=True)
     createdAt = fields.DateTime(attribute='created_at', dump_only=True)
     updatedAt = fields.DateTime(attribute='updated_at', dump_only=True)
+    accessToken = fields.Str(attribute='access_token', dump_only=True)
+    refreshToken = fields.Str(attribute='refresh_token', dump_only=True)
     
     class Meta:
         strict = True

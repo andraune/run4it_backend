@@ -31,9 +31,6 @@ class Register(Resource):
             new_user.save()
             mail_send_confirmation_code(username, email, confirmation.code)
 
-            #TODO: Remove from here
-            access_token = create_access_token(identity=username)
-            refresh_token = create_refresh_token(identity=username)
         except:
             db.session.rollback()
             report_error_and_abort(500, "register", "Unable to create user")
@@ -80,5 +77,17 @@ class Login(Resource):
     @use_kwargs(login_schema)
     @marshal_with(user_schema)
     def post(self, email, password, **kwargs):
-        pass    
+        user = User.find_by_email(email)
 
+        if user is None:
+           report_error_and_abort(401, "login", "Login failed(1)") 
+
+        if not user.confirmed:
+            report_error_and_abort(401, "login", "Login failed(2)")
+
+        if not user.check_password(password):
+            report_error_and_abort(401, "login", "Login failed(3)")
+        
+        user.access_token = create_access_token(identity=user.username)
+        user.refresh_token = create_refresh_token(identity=user.username)
+        return user, 200   

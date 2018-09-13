@@ -15,7 +15,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "695d5175-d767-4fbd-b639-800b9df5a232",
+								"id": "c0a41e54-4f31-4037-8742-9b2edd77bb28",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Response time is acceptable\", function() {",
@@ -36,6 +36,8 @@
 									"    pm.expect(jsonData.username).to.eql(\"user_name\");",
 									"    pm.expect(jsonData.email).to.eql(\"me@mail.com\");",
 									"    pm.expect(jsonData.confirmed).to.eql(false);",
+									"    pm.expect(jsonData.accessToken).to.eql(\"\");",
+									"    pm.expect(jsonData.refreshToken).to.eql(\"\");",
 									"});",
 									"",
 									"pm.test(\"Resource location included\", function() {",
@@ -635,7 +637,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7acdbbcb-fe9c-4cc0-9a35-1823902fa0b6",
+								"id": "0b3559bc-a021-411d-8f80-a07755885d0f",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Response time is acceptable\", function() {",
@@ -656,6 +658,8 @@
 									"    pm.expect(jsonData.username).to.eql(\"confirm\");",
 									"    pm.expect(jsonData.email).to.eql(\"confirm@user.com\");",
 									"    pm.expect(jsonData.confirmed).to.eql(true);",
+									"    pm.expect(jsonData.accessToken).to.eql(\"\");",
+									"    pm.expect(jsonData.refreshToken).to.eql(\"\");",
 									"});"
 								]
 							}

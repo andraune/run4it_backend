@@ -11,6 +11,8 @@ class User(SurrogatePK, TimestampedModel):
     email = Column(db.String(128), unique=True, nullable=False, index=True)
     password = Column(db.String(128), nullable=True)
     confirmed = Column(db.Boolean, nullable=False, default=False)
+    access_token = ''
+    refresh_token  = ''
 
     def __init__(self, username, email, password=None, **kwargs):
         """Create instance."""
