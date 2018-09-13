@@ -21,8 +21,8 @@ def create_api(app):
     api.add_resource(ApiVersion, "/")
 
     # User resources
-    api.add_resource(Register, "/user/register")
-    api.add_resource(Confirmation, "/user/confirmation")
+    api.add_resource(Register, "/users")
+    api.add_resource(Confirmation, "/users/confirmation")
 
     app.register_blueprint(api_blueprint, url_prefix=api_blueprint_url_prefix)
     return api

@@ -15,7 +15,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "60df108a-7a42-46cb-bf2f-9ae890b081f3",
+								"id": "695d5175-d767-4fbd-b639-800b9df5a232",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Response time is acceptable\", function() {",
@@ -41,7 +41,7 @@
 									"pm.test(\"Resource location included\", function() {",
 									"   pm.response.to.have.header(\"Location\");",
 									"   var locationURL = pm.response.headers.get(\"Location\");",
-									"   var expectedURL = pm.environment.get('apiBaseUrl') + '/' + pm.environment.get('apiVersion') + '/user/3';",
+									"   var expectedURL = pm.environment.get('apiBaseUrl') + '/' + pm.environment.get('apiVersion') + '/users/3';",
 									"   pm.expect(locationURL).to.equal(expectedURL);",
 									"});",
 									""
@@ -62,14 +62,13 @@
 							"raw": "{ \"username\": \"user_name\", \"email\":\"me@mail.com\", \"password\":\"passw0rd\" }\n"
 						},
 						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users",
 							"host": [
 								"{{apiBaseUrl}}"
 							],
 							"path": [
 								"{{apiVersion}}",
-								"user",
-								"register"
+								"users"
 							]
 						},
 						"description": "Post request to register new user."
@@ -120,14 +119,13 @@
 							"raw": "{ \"username\": \"existing\", \"email\":\"non-existing@mail.com\", \"password\":\"passw0rd2\" }\n"
 						},
 						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users",
 							"host": [
 								"{{apiBaseUrl}}"
 							],
 							"path": [
 								"{{apiVersion}}",
-								"user",
-								"register"
+								"users"
 							]
 						},
 						"description": "Post request to register new user."
@@ -178,14 +176,13 @@
 							"raw": "{ \"username\": \"nouser\", \"email\":\"existing@user.com\", \"password\":\"passw0rd3\" }\n"
 						},
 						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users",
 							"host": [
 								"{{apiBaseUrl}}"
 							],
 							"path": [
 								"{{apiVersion}}",
-								"user",
-								"register"
+								"users"
 							]
 						},
 						"description": "Post request to register new user."
@@ -223,14 +220,13 @@
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users",
 							"host": [
 								"{{apiBaseUrl}}"
 							],
 							"path": [
 								"{{apiVersion}}",
-								"user",
-								"register"
+								"users"
 							]
 						},
 						"description": "GET for registering not allowed"
@@ -281,14 +277,13 @@
 							"raw": "{ \"username\": \"0\", \"email\":\"me@mail.com\", \"password\":\"passw0rd\" }\n"
 						},
 						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users",
 							"host": [
 								"{{apiBaseUrl}}"
 							],
 							"path": [
 								"{{apiVersion}}",
-								"user",
-								"register"
+								"users"
 							]
 						},
 						"description": "Post request to register new user fails due to invalid email"
@@ -339,14 +334,13 @@
 							"raw": "{ \"username\": \"user_name\", \"email\":\"invalid_mail.com\", \"password\":\"passw0rd\" }\n"
 						},
 						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users",
 							"host": [
 								"{{apiBaseUrl}}"
 							],
 							"path": [
 								"{{apiVersion}}",
-								"user",
-								"register"
+								"users"
 							]
 						},
 						"description": "Post request to register new user fails due to invalid email"
@@ -389,14 +383,14 @@
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/register",
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/confirmation",
 							"host": [
 								"{{apiBaseUrl}}"
 							],
 							"path": [
 								"{{apiVersion}}",
-								"user",
-								"register"
+								"users",
+								"confirmation"
 							]
 						},
 						"description": "GET for user confirmation not allowed"
@@ -447,13 +441,13 @@
 							"raw": "{ \"username\": \"nouser\" }"
 						},
 						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/confirmation",
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/confirmation",
 							"host": [
 								"{{apiBaseUrl}}"
 							],
 							"path": [
 								"{{apiVersion}}",
-								"user",
+								"users",
 								"confirmation"
 							]
 						},
@@ -505,13 +499,13 @@
 							"raw": "{ \"confirmationCode\": \"code\" }"
 						},
 						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/confirmation",
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/confirmation",
 							"host": [
 								"{{apiBaseUrl}}"
 							],
 							"path": [
 								"{{apiVersion}}",
-								"user",
+								"users",
 								"confirmation"
 							]
 						},
@@ -563,13 +557,13 @@
 							"raw": "{ \"username\": \"nouser\", \"confirmationCode\": \"correct\"}"
 						},
 						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/confirmation",
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/confirmation",
 							"host": [
 								"{{apiBaseUrl}}"
 							],
 							"path": [
 								"{{apiVersion}}",
-								"user",
+								"users",
 								"confirmation"
 							]
 						},
@@ -621,13 +615,13 @@
 							"raw": "{ \"username\": \"confirm\", \"confirmationCode\": \"incorrect\"}"
 						},
 						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/confirmation",
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/confirmation",
 							"host": [
 								"{{apiBaseUrl}}"
 							],
 							"path": [
 								"{{apiVersion}}",
-								"user",
+								"users",
 								"confirmation"
 							]
 						},
@@ -680,13 +674,13 @@
 							"raw": "{ \"username\": \"confirm\", \"confirmationCode\": \"correct\"}"
 						},
 						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user/confirmation",
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/confirmation",
 							"host": [
 								"{{apiBaseUrl}}"
 							],
 							"path": [
 								"{{apiVersion}}",
-								"user",
+								"users",
 								"confirmation"
 							]
 						},
@@ -775,13 +769,12 @@
 				"header": [],
 				"body": {},
 				"url": {
-					"raw": "{{apiBaseUrl}}/{{apiVersion}}/",
+					"raw": "{{apiBaseUrl}}/{{apiVersion}}",
 					"host": [
 						"{{apiBaseUrl}}"
 					],
 					"path": [
-						"{{apiVersion}}",
-						""
+						"{{apiVersion}}"
 					]
 				},
 				"description": "POST for API version not allowed."

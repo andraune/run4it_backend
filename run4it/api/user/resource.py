@@ -6,8 +6,8 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 get_jwt_identity, get_raw_jwt)
 
 from run4it.app.database import db
-from run4it.app.extensions import mail
 from run4it.api.exceptions import report_error_and_abort
+from .mail import mail_send_confirmation_code
 from .model import User, UserConfirmation
 from .schema import user_schema, confirmation_schema
 
@@ -29,6 +29,7 @@ class Register(Resource):
         try:
             confirmation.save()
             new_user.save()
+            mail_send_confirmation_code(username, email, confirmation.code)
 
             #TODO: Remove from here
             access_token = create_access_token(identity=username)
@@ -37,7 +38,7 @@ class Register(Resource):
             db.session.rollback()
             report_error_and_abort(500, "register", "Unable to create user")
 
-        return new_user, 201, {'Location': request.path.replace('/register', '/{0}'.format(new_user.id), 1) }
+        return new_user, 201, {'Location': '{0}/{1}'.format(request.path, new_user.id) }
 
 
 class Confirmation(Resource):

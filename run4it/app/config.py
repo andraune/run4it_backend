@@ -32,7 +32,7 @@ class DevelopConfig(Config):
     """Development Configuration"""
     ENV = "development"
     DEBUG = True
-    TESTING = False
+    TESTING = True
     SECRET_KEY = "very-very-top-secret"
     JWT_SECRET_KEY = "even-more-top-secreterer"
     SQLALCHEMY_DATABASE_URI = "sqlite:///{0}".format(os.path.join(Config.PROJECT_ROOT, 'dev.db'))
