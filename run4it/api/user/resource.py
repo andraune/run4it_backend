@@ -1,4 +1,5 @@
 """API Resources for handling registration, login, logout etc."""
+import datetime as dt
 from flask_restful import Resource, request
 from flask_apispec import use_kwargs, marshal_with
 from flask_jwt_extended import (create_access_token, create_refresh_token,
@@ -65,6 +66,7 @@ class Confirmation(Resource):
         try:
             confirmation.delete()
             user.confirmed = True
+            user.updated_at = dt.datetime.utcnow()
             user.save()
         except:
             db.session.rollback()
@@ -80,13 +82,13 @@ class Login(Resource):
         user = User.find_by_email(email)
 
         if user is None:
-           report_error_and_abort(401, "login", "Login failed(1)") 
+           report_error_and_abort(401, "login", "Login failed") 
 
         if not user.confirmed:
-            report_error_and_abort(401, "login", "Login failed(2)")
+            report_error_and_abort(401, "login", "Login failed")
 
         if not user.check_password(password):
-            report_error_and_abort(401, "login", "Login failed(3)")
+            report_error_and_abort(401, "login", "Login failed")
         
         user.access_token = create_access_token(identity=user.username)
         user.refresh_token = create_refresh_token(identity=user.username)

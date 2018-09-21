@@ -47,6 +47,7 @@ def init_database_data():
     user = User('existing', 'existing@user.com', 'pwd')
     user.save()
     print("Added User '{0}'".format(user.username))
+
     user = User('confirm', 'confirm@user.com', 'pwd')
     user.save()
     print("Added User '{0}'".format(user.username)) 

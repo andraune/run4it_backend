@@ -2,7 +2,7 @@
 from flask import Flask
 from . import commands
 from .extensions import jwt, db, migrate, mail
-from run4it.api.user.model import User, UserConfirmation
+from run4it.api.user.model import User, UserConfirmation, TokenRegistry
 
 
 def create_app(config_object, app_name):
@@ -36,7 +36,8 @@ def register_shell_context(app):
         return {
             'db': db,
             'User': User,
-            'UserConfirmation': UserConfirmation
+            'UserConfirmation': UserConfirmation,
+            'TokenRegistry': TokenRegistry
         }
 
     app.shell_context_processor(shell_context)
