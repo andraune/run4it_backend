@@ -104,10 +104,11 @@ class TokenRegistry(SurrogatePK, Model):
             return True
 
     @classmethod
-    def add_encoded_token(encoded_token, username):
+    def add_token(cls, encoded_token):
         decoded_token = decode_token(encoded_token)
         jti = decoded_token['jti']
         token_type = decoded_token['type']
+        username = decoded_token['identity']
         expires = dt.datetime.fromtimestamp(decoded_token['exp'])
         revoked = False
         token = cls(jti, token_type, username, revoked, expires)

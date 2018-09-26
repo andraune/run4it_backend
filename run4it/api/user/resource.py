@@ -9,7 +9,7 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
 from run4it.app.database import db
 from run4it.api.exceptions import report_error_and_abort
 from .mail import mail_send_confirmation_code
-from .model import User, UserConfirmation
+from .model import User, UserConfirmation, TokenRegistry
 from .schema import user_schema, confirmation_schema, login_schema
 
 
@@ -92,4 +92,23 @@ class Login(Resource):
         
         user.access_token = create_access_token(identity=user.username)
         user.refresh_token = create_refresh_token(identity=user.username)
+        TokenRegistry.add_token(user.access_token)
+        TokenRegistry.add_token(user.refresh_token)
         return user, 200   
+
+
+class LoginRefresh(Resource): 
+    @jwt_refresh_token_required
+    @marshal_with(user_schema)
+    def post(self):
+        username = get_jwt_identity()
+        user = User.find_by_username(username)
+
+        if user is None:
+            report_error_and_abort(401, "refresh", "Login refresh failed")
+        
+        user.access_token = create_access_token(identity=user.username)
+        TokenRegistry.add_token(user.access_token)
+        return user, 200
+
+

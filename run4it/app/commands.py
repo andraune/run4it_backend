@@ -38,7 +38,7 @@ def init_database_data():
     print('Deleting database data ...')
 
     from run4it.app.database import db  # noqa
-    from run4it.api.user import User, UserConfirmation  # noqa
+    from run4it.api.user import User, UserConfirmation, TokenRegistry  # noqa
 
     rows = User.query.delete()
     if rows > 0:
@@ -60,6 +60,10 @@ def init_database_data():
     confirmation.save()
     print("Added UserConfirmation '{0} : {1}'".format(confirmation.username, confirmation.code))
 
+    rows = TokenRegistry.query.delete()
+    if rows > 0:
+        print('Deleted {0} rows from TokenRegistry table'.format(rows))
+        
     """
     state_names = ['TODO', 'In Progress', 'Review', 'Done']
 

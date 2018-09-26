@@ -1,7 +1,7 @@
 """The api module, containing the API factory function."""
 from flask import Blueprint, Flask
 from flask_restful import Api, Resource
-from run4it.api.user.resource import Register, Confirmation, Login
+from run4it.api.user.resource import Register, Confirmation, Login, LoginRefresh
 
 
 API_VERSION = 1
@@ -24,6 +24,7 @@ def create_api(app):
     api.add_resource(Register, "/users")
     api.add_resource(Confirmation, "/users/confirmation")
     api.add_resource(Login, "/users/login")
+    api.add_resource(LoginRefresh, "/users/loginRefresh")
 
     app.register_blueprint(api_blueprint, url_prefix=api_blueprint_url_prefix)
     return api

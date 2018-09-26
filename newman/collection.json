@@ -7,8 +7,216 @@
 	},
 	"item": [
 		{
+			"name": "Api",
+			"item": [
+				{
+					"name": "HomeApiV1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "47da3c61-6720-4f30-ae0f-111df85b53c5",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Status code is OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Reported version is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.version).to.eql(1);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}"
+							]
+						},
+						"description": "Basic GET for home page"
+					},
+					"response": []
+				},
+				{
+					"name": "HomeApiV1_405",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3ec2a143-5b04-4bc9-b63b-195d527787a9",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Method not allowed\", function() {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}"
+							]
+						},
+						"description": "POST for API version not allowed."
+					},
+					"response": []
+				},
+				{
+					"name": "NotFound404Json",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c3839fe3-4814-4bda-94a4-d15e5c76014a",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Page not found\", function() {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/notfound",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"notfound"
+							]
+						},
+						"description": "A page that does not exist - we still want to return JSON."
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "5c552baa-82d0-4376-b30f-854bb686eecc",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.unset(\"userLoginAccessKey\");",
+							"pm.environment.unset(\"userLoginRefreshKey\");",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "83dac6fa-2717-41e3-b806-eb1292443164",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
 			"name": "UserRegister",
 			"item": [
+				{
+					"name": "RegisterUserMethodNotAllowed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "169e2220-f215-40e3-9f89-f848a05864d2",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Method not allowed\", function() {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users"
+							]
+						},
+						"description": "GET for registering not allowed"
+					},
+					"response": []
+				},
 				{
 					"name": "RegisterUser",
 					"event": [
@@ -192,25 +400,30 @@
 					"response": []
 				},
 				{
-					"name": "RegisterUser_405",
+					"name": "RegisterUser_InvalidEmail",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "169e2220-f215-40e3-9f89-f848a05864d2",
+								"id": "87699d3c-22be-4cb7-9cb3-5d64ef0149e4",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Response time is acceptable\", function() {",
 									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
 									"});",
 									"",
-									"pm.test(\"Method not allowed\", function() {",
-									"    pm.response.to.have.status(405);",
+									"pm.test(\"Status code is 422\", function() {",
+									"    pm.response.to.have.status(422);",
 									"});",
 									"",
 									"pm.test(\"Content-Type is JSON\", function() {",
 									"    pm.response.to.have.header(\"Content-Type\");",
 									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.email[0]).to.equal(\"Not a valid email address.\")",
 									"});",
 									""
 								]
@@ -218,9 +431,17 @@
 						}
 					],
 					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"username\": \"user_name\", \"email\":\"invalid_mail.com\", \"password\":\"passw0rd\" }\n"
+						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users",
 							"host": [
@@ -231,7 +452,7 @@
 								"users"
 							]
 						},
-						"description": "GET for registering not allowed"
+						"description": "Post request to register new user fails due to invalid email"
 					},
 					"response": []
 				},
@@ -291,63 +512,31 @@
 						"description": "Post request to register new user fails due to invalid email"
 					},
 					"response": []
+				}
+			],
+			"description": "Requests related to user registration.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "0acf55f5-3922-4cb9-a4da-a2d51a5ffb2e",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.unset(\"userLoginAccessKey\");",
+							"pm.environment.unset(\"userLoginRefreshKey\");",
+							""
+						]
+					}
 				},
 				{
-					"name": "RegisterUser_InvalidEmail",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "87699d3c-22be-4cb7-9cb3-5d64ef0149e4",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Response time is acceptable\", function() {",
-									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
-									"});",
-									"",
-									"pm.test(\"Status code is 422\", function() {",
-									"    pm.response.to.have.status(422);",
-									"});",
-									"",
-									"pm.test(\"Content-Type is JSON\", function() {",
-									"    pm.response.to.have.header(\"Content-Type\");",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
-									"});",
-									"",
-									"pm.test(\"Registration response\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.errors.email[0]).to.equal(\"Not a valid email address.\")",
-									"});",
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{ \"username\": \"user_name\", \"email\":\"invalid_mail.com\", \"password\":\"passw0rd\" }\n"
-						},
-						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users",
-							"host": [
-								"{{apiBaseUrl}}"
-							],
-							"path": [
-								"{{apiVersion}}",
-								"users"
-							]
-						},
-						"description": "Post request to register new user fails due to invalid email"
-					},
-					"response": []
+					"listen": "test",
+					"script": {
+						"id": "b198b476-a4ba-45af-af69-c8ac2a155a45",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		},
@@ -355,7 +544,7 @@
 			"name": "UserConfirmation",
 			"item": [
 				{
-					"name": "ConfirmUser_405",
+					"name": "ConfirmUserMethodNotAllowed",
 					"event": [
 						{
 							"listen": "test",
@@ -637,7 +826,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0b3559bc-a021-411d-8f80-a07755885d0f",
+								"id": "604e1eb7-f853-4444-aab2-9e4ffc9011a1",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Response time is acceptable\", function() {",
@@ -660,7 +849,8 @@
 									"    pm.expect(jsonData.confirmed).to.eql(true);",
 									"    pm.expect(jsonData.accessToken).to.eql(\"\");",
 									"    pm.expect(jsonData.refreshToken).to.eql(\"\");",
-									"});"
+									"});",
+									""
 								]
 							}
 						}
@@ -692,142 +882,635 @@
 					},
 					"response": []
 				}
+			],
+			"description": "Requests related to confirmation of user email.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ff6c6802-a291-47f5-ae5e-92838a88dde3",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.unset(\"userLoginAccessKey\");",
+							"pm.environment.unset(\"userLoginRefreshKey\");",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "4df391bf-a462-44f7-a100-c1f92a0d1513",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
 			]
 		},
 		{
-			"name": "HomeApiV1",
+			"name": "UserLogin",
+			"item": [
+				{
+					"name": "LoginMethodNotAllowed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "169e2220-f215-40e3-9f89-f848a05864d2",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Method not allowed\", function() {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/login",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"login"
+							]
+						},
+						"description": "GET for login not allowed"
+					},
+					"response": []
+				},
+				{
+					"name": "RefreshMethodNotAllowed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "29bf650c-c24f-4506-9e4d-eebc7f8665eb",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Method not allowed\", function() {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/loginRefresh",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"loginRefresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login_NoEmail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d468d20e-3454-470b-9370-86c3154e4261",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Status code is 422\", function() {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.email[0]).to.equal(\"Email is required.\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"password\": \"passw0rd\" }"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/login",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"login"
+							]
+						},
+						"description": "Post request to log in new user fails due to no email provided"
+					},
+					"response": []
+				},
+				{
+					"name": "Login_NoPassword",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d947127e-0974-4323-b8ab-6787439dfb06",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Status code is 422\", function() {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.password[0]).to.equal(\"Password is required.\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"email\": \"login@mail.com\" }"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/login",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"login"
+							]
+						},
+						"description": "Post request to log in new user fails due to no password provided"
+					},
+					"response": []
+				},
+				{
+					"name": "Login_NoUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fd11db2c-afeb-4afa-9895-fa753dd3f1f2",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Login failed\", function() {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.login[0]).to.equal(\"Login failed\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"email\": \"user@nomail.com\", \"password\": \"passw0rd\" }"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/login",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"login"
+							]
+						},
+						"description": "Post request to log in new user fails because email is not registered."
+					},
+					"response": []
+				},
+				{
+					"name": "Login_UserNotConfirmed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "261d4840-f0f3-4be6-91a6-099a9b2658e5",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Login failed\", function() {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.login[0]).to.equal(\"Login failed\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"email\": \"existing@user.com\", \"password\": \"pwd\" }"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/login",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"login"
+							]
+						},
+						"description": "Post request to log in new user because user's email hasn't been confirmed."
+					},
+					"response": []
+				},
+				{
+					"name": "Login_IncorrectPassword",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9f1ddad7-5028-4e94-8b72-371c015831ed",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Login failed\", function() {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Registration response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.login[0]).to.equal(\"Login failed\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"email\": \"confirm@user.com\", \"password\": \"incorrect\" }"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/login",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"login"
+							]
+						},
+						"description": "Post request to log in user because password is incorrect."
+					},
+					"response": []
+				},
+				{
+					"name": "LoginUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "69f0d9db-f48e-423f-a4b5-952001713511",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Login failed\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Login response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.username).to.eql(\"confirm\");",
+									"    pm.expect(jsonData.email).to.eql(\"confirm@user.com\");",
+									"    pm.expect(jsonData.confirmed).to.eql(true);",
+									"    pm.expect(jsonData.accessToken).to.not.eql(\"\");",
+									"    pm.expect(jsonData.refreshToken).to.not.eql(\"\");",
+									"    pm.expect(jsonData.refreshToken).to.not.eql(jsonData.accessToken);",
+									"    pm.environment.set(\"userLoginAccessKey\", jsonData.accessToken);",
+									"    pm.environment.set(\"userLoginRefreshKey\", jsonData.refreshToken);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"email\": \"confirm@user.com\", \"password\": \"pwd\" }"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/login",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"login"
+							]
+						},
+						"description": "Post request to log in user because password is incorrect."
+					},
+					"response": []
+				}
+			],
+			"description": "Requests related to user login",
 			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8b13c84d-4d38-42b8-bd62-b2a0c13e0a66",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.unset(\"userLoginAccessKey\");",
+							"pm.environment.unset(\"userLoginRefreshKey\");",
+							""
+						]
+					}
+				},
 				{
 					"listen": "test",
 					"script": {
-						"id": "af2182dc-2dd1-4ac7-a67d-93d3d64dc248",
+						"id": "7f5a40d2-c8ce-4a09-8186-7982d9697c09",
 						"type": "text/javascript",
 						"exec": [
-							"pm.test(\"Response time is acceptable\", function() {",
-							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
-							"});",
-							"",
-							"pm.test(\"Status code is 200\", function() {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Content-Type is JSON\", function() {",
-							"    pm.response.to.have.header(\"Content-Type\");",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
-							"});",
-							"",
-							"pm.test(\"Reported version is 1\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.version).to.eql(1);",
-							"});",
 							""
 						]
 					}
 				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "{{apiBaseUrl}}/{{apiVersion}}",
-					"host": [
-						"{{apiBaseUrl}}"
-					],
-					"path": [
-						"{{apiVersion}}"
-					]
-				},
-				"description": "Basic GET for home page"
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "HomeApiV1_405",
-			"event": [
+			"name": "UserRefreshLogin",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"id": "3ec2a143-5b04-4bc9-b63b-195d527787a9",
-						"type": "text/javascript",
-						"exec": [
-							"pm.test(\"Response time is acceptable\", function() {",
-							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
-							"});",
-							"",
-							"pm.test(\"Method not allowed\", function() {",
-							"    pm.response.to.have.status(405);",
-							"});",
-							"",
-							"pm.test(\"Content-Type is JSON\", function() {",
-							"    pm.response.to.have.header(\"Content-Type\");",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
-							"});",
-							""
-						]
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "{{apiBaseUrl}}/{{apiVersion}}",
-					"host": [
-						"{{apiBaseUrl}}"
+					"name": "Refresh_NoToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b4a43dba-81fa-4d58-ba78-b815c5a8658c",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"LoginRefresh failed\", function() {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"LoginRefresh response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.auth[0]).to.equal(\"Missing Authorization Header\")",
+									"});",
+									""
+								]
+							}
+						}
 					],
-					"path": [
-						"{{apiVersion}}"
-					]
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/loginRefresh",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"loginRefresh"
+							]
+						}
+					},
+					"response": []
 				},
-				"description": "POST for API version not allowed."
-			},
-			"response": []
-		},
-		{
-			"name": "NotFound404Json",
-			"event": [
 				{
-					"listen": "test",
-					"script": {
-						"id": "a2a447d6-7a07-4bea-ad1a-a587e7391659",
-						"type": "text/javascript",
-						"exec": [
-							"pm.test(\"Response time is acceptable\", function() {",
-							"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
-							"});",
-							"",
-							"pm.test(\"Status code is 404\", function() {",
-							"    pm.response.to.have.status(404);",
-							"});",
-							"",
-							"pm.test(\"Content-Type is JSON\", function() {",
-							"    pm.response.to.have.header(\"Content-Type\");",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
-							"});",
-							""
-						]
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "{{apiBaseUrl}}/{{apiVersion}}/notfound",
-					"host": [
-						"{{apiBaseUrl}}"
+					"name": "Refresh_IncorrectTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "29fe4304-1521-4b49-9dd3-b33184a7d4a8",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"LoginRefresh failed\", function() {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"LoginRefresh response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.auth[0]).to.equal(\"Invalid token\")",
+									"});",
+									""
+								]
+							}
+						}
 					],
-					"path": [
-						"{{apiVersion}}",
-						"notfound"
-					]
-				},
-				"description": "A page that does not exist - we still want to return JSON."
-			},
-			"response": []
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userLoginAccessKey}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/loginRefresh",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"loginRefresh"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
