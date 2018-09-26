@@ -2,7 +2,8 @@
 from flask import Flask
 from . import commands
 from .extensions import jwt, db, migrate, mail
-from run4it.api.user.model import User, UserConfirmation, TokenRegistry
+from run4it.api.user.model import User, UserConfirmation
+from run4it.api.token.model import TokenRegistry
 
 
 def create_app(config_object, app_name):

@@ -958,50 +958,6 @@
 					"response": []
 				},
 				{
-					"name": "RefreshMethodNotAllowed",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "29bf650c-c24f-4506-9e4d-eebc7f8665eb",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Response time is acceptable\", function() {",
-									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
-									"});",
-									"",
-									"pm.test(\"Method not allowed\", function() {",
-									"    pm.response.to.have.status(405);",
-									"});",
-									"",
-									"pm.test(\"Content-Type is JSON\", function() {",
-									"    pm.response.to.have.header(\"Content-Type\");",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
-									"});",
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/loginRefresh",
-							"host": [
-								"{{apiBaseUrl}}"
-							],
-							"path": [
-								"{{apiVersion}}",
-								"users",
-								"loginRefresh"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Login_NoEmail",
 					"event": [
 						{
@@ -1387,6 +1343,50 @@
 			"name": "UserRefreshLogin",
 			"item": [
 				{
+					"name": "RefreshMethodNotAllowed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "29bf650c-c24f-4506-9e4d-eebc7f8665eb",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Method not allowed\", function() {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/loginRefresh",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"loginRefresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Refresh_NoToken",
 					"event": [
 						{
@@ -1481,6 +1481,145 @@
 								{
 									"key": "token",
 									"value": "{{userLoginAccessKey}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/loginRefresh",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"loginRefresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh_InvalidTokenData",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "29fe4304-1521-4b49-9dd3-b33184a7d4a8",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"LoginRefresh failed\", function() {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"LoginRefresh response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.auth[0]).to.equal(\"Invalid token\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "justSome10%RandomData",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/loginRefresh",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"loginRefresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RefreshToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2a167a60-11d3-46b5-acdd-1966a267b509",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"LoginRefresh success\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"LoginRefresh response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.username).to.eql(\"confirm\");",
+									"    pm.expect(jsonData.email).to.eql(\"confirm@user.com\");",
+									"    pm.expect(jsonData.confirmed).to.eql(true);",
+									"    pm.expect(jsonData.accessToken).to.not.eql(\"\");",
+									"    pm.expect(jsonData.refreshToken).to.eql(\"\");",
+									"    pm.environment.set(\"userLoginAccessKey\", jsonData.accessToken);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userLoginRefreshKey}}",
 									"type": "string"
 								}
 							]

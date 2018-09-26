@@ -38,7 +38,8 @@ def init_database_data():
     print('Deleting database data ...')
 
     from run4it.app.database import db  # noqa
-    from run4it.api.user import User, UserConfirmation, TokenRegistry  # noqa
+    from run4it.api.user import User, UserConfirmation
+    from run4it.api.token import TokenRegistry  # noqa
 
     rows = User.query.delete()
     if rows > 0:

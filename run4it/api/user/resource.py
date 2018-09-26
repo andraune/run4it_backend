@@ -8,8 +8,9 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
 
 from run4it.app.database import db
 from run4it.api.exceptions import report_error_and_abort
+from run4it.api.token.model import TokenRegistry
 from .mail import mail_send_confirmation_code
-from .model import User, UserConfirmation, TokenRegistry
+from .model import User, UserConfirmation
 from .schema import user_schema, confirmation_schema, login_schema
 
 

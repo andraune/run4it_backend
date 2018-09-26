@@ -2,6 +2,7 @@
 from flask import Blueprint, Flask
 from flask_restful import Api, Resource
 from run4it.api.user.resource import Register, Confirmation, Login, LoginRefresh
+from run4it.api.token.resource import Token
 
 
 API_VERSION = 1
@@ -25,6 +26,9 @@ def create_api(app):
     api.add_resource(Confirmation, "/users/confirmation")
     api.add_resource(Login, "/users/login")
     api.add_resource(LoginRefresh, "/users/loginRefresh")
+    
+    # Token resources (for user to see/revoke tokens)
+    api.add_resource(Token, "/tokens")
 
     app.register_blueprint(api_blueprint, url_prefix=api_blueprint_url_prefix)
     return api
