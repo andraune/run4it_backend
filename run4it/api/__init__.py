@@ -13,7 +13,8 @@ def webargs_parser_error(err, req, sch):
 
 @jwt.token_in_blacklist_loader
 def jwt_check_if_token_is_blacklisted(decoded_token):
-    return TokenRegistry.is_token_revoked(decoded_token) 
+    jti = decoded_token["jti"]
+    return TokenRegistry.is_token_revoked(jti) 
 
 @jwt.unauthorized_loader
 def jwt_missing_authorization_header(msg):
