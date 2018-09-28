@@ -145,6 +145,9 @@
 					"response": []
 				}
 			],
+			"auth": {
+				"type": "noauth"
+			},
 			"event": [
 				{
 					"listen": "prerequest",
@@ -515,6 +518,9 @@
 				}
 			],
 			"description": "Requests related to user registration.",
+			"auth": {
+				"type": "noauth"
+			},
 			"event": [
 				{
 					"listen": "prerequest",
@@ -884,6 +890,9 @@
 				}
 			],
 			"description": "Requests related to confirmation of user email.",
+			"auth": {
+				"type": "noauth"
+			},
 			"event": [
 				{
 					"listen": "prerequest",
@@ -939,6 +948,9 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"body": {},
@@ -989,6 +1001,9 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1047,6 +1062,9 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1105,6 +1123,9 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1163,6 +1184,9 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1221,6 +1245,9 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1253,14 +1280,14 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "69f0d9db-f48e-423f-a4b5-952001713511",
+								"id": "b9f62c10-3245-41b3-bb33-e26073f8b36a",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Response time is acceptable\", function() {",
 									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
 									"});",
 									"",
-									"pm.test(\"Login failed\", function() {",
+									"pm.test(\"Login OK\", function() {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
@@ -1283,9 +1310,23 @@
 									""
 								]
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5de7eb5b-bdbf-4bdc-aed7-d089df675911",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.unset(\"userLoginAccessKey\");",
+									"pm.environment.unset(\"userLoginRefreshKey\");"
+								]
+							}
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1311,6 +1352,60 @@
 						"description": "Post request to log in user because password is incorrect."
 					},
 					"response": []
+				},
+				{
+					"name": "GetTokens_AfterLogin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7c74f1b1-9387-4837-9cd6-7a851b452afb",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"GetTokens OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Login response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.equal(2)",
+									"    pm.expect(jsonData[0].token_type).to.equal(\"access\")",
+									"    pm.expect(jsonData[0].username).to.equal(\"confirm\")",
+									"    pm.expect(jsonData[0].revoked).to.equal(false)",
+									"    pm.expect(jsonData[1].token_type).to.equal(\"refresh\")",
+									"    pm.expect(jsonData[1].username).to.equal(\"confirm\")",
+									"    pm.expect(jsonData[1].revoked).to.equal(false)",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/tokens",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"tokens"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"description": "Requests related to user login",
@@ -1321,8 +1416,6 @@
 						"id": "8b13c84d-4d38-42b8-bd62-b2a0c13e0a66",
 						"type": "text/javascript",
 						"exec": [
-							"pm.environment.unset(\"userLoginAccessKey\");",
-							"pm.environment.unset(\"userLoginRefreshKey\");",
 							""
 						]
 					}
@@ -1418,6 +1511,9 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1614,16 +1710,6 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{userLoginRefreshKey}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [
 							{
@@ -1648,8 +1734,394 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GetTokens_AfterLoginRefresh",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "18c5d696-a622-48c7-8a04-66d1ae804d60",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"GetTokens OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Login response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.equal(3)",
+									"    pm.expect(jsonData[0].token_type).to.equal(\"access\")",
+									"    pm.expect(jsonData[0].username).to.equal(\"confirm\")",
+									"    pm.expect(jsonData[0].revoked).to.equal(false)",
+									"    pm.expect(jsonData[1].token_type).to.equal(\"refresh\")",
+									"    pm.expect(jsonData[1].username).to.equal(\"confirm\")",
+									"    pm.expect(jsonData[1].revoked).to.equal(false)",
+									"    pm.expect(jsonData[2].token_type).to.equal(\"access\")",
+									"    pm.expect(jsonData[2].username).to.equal(\"confirm\")",
+									"    pm.expect(jsonData[2].revoked).to.equal(false)",
+									"    pm.expect(jsonData[2].expires).to.not.equal(jsonData[0].expires)",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userLoginAccessKey}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/tokens",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"tokens"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{userLoginRefreshKey}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "0879342e-db91-4390-a102-bfde61e1dd08",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e6496f5e-3224-4cd6-acdc-60967ae647e9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			]
+		},
+		{
+			"name": "Token",
+			"item": [
+				{
+					"name": "TokenMethodNotAllowed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "169e2220-f215-40e3-9f89-f848a05864d2",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Method not allowed\", function() {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/tokens",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"tokens"
+							]
+						},
+						"description": "GET for registering not allowed"
+					},
+					"response": []
+				},
+				{
+					"name": "GetTokens_NoToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c07c5180-070d-4e27-9b80-013ac41be6cc",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"GetTokens failed\", function() {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"GetTokens response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.auth[0]).to.equal(\"Missing Authorization Header\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/tokens",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"tokens"
+							]
+						},
+						"description": "GET for registering not allowed"
+					},
+					"response": []
+				},
+				{
+					"name": "GetTokens_IncorrectTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "eda03eca-ce96-4469-bb75-2839f77826f9",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"GetTokens failed\", function() {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"GetTokens response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.auth[0]).to.equal(\"Invalid token\")",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userLoginRefreshKey}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/tokens",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"tokens"
+							]
+						},
+						"description": "GET for registering not allowed"
+					},
+					"response": []
+				},
+				{
+					"name": "GetTokens",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9a2a02cb-9e36-4073-94f8-b26d73495979",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"GetTokens OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Login response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.equal(3)",
+									"    pm.expect(jsonData[0].token_type).to.equal(\"access\")",
+									"    pm.expect(jsonData[0].username).to.equal(\"confirm\")",
+									"    pm.expect(jsonData[0].revoked).to.equal(false)",
+									"    pm.expect(jsonData[1].token_type).to.equal(\"refresh\")",
+									"    pm.expect(jsonData[1].username).to.equal(\"confirm\")",
+									"    pm.expect(jsonData[1].revoked).to.equal(false)",
+									"    pm.expect(jsonData[2].token_type).to.equal(\"access\")",
+									"    pm.expect(jsonData[2].username).to.equal(\"confirm\")",
+									"    pm.expect(jsonData[2].revoked).to.equal(false)",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/tokens",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"tokens"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9b07270f-4576-4913-a5f7-71fd275003f9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e706d291-dcbf-48ef-863b-7113a555d4c7",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{userLoginAccessKey}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "15ed6e62-c84c-40f1-a966-f3e7ab1ba386",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "59aff49f-f071-4974-9da8-7f9abffa2337",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

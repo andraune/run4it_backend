@@ -10,7 +10,7 @@ flask run
 
 flask clean
 
-flask initdata
+flask init_test_data
 
 flask tests
 

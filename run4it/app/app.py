@@ -26,7 +26,7 @@ def register_extensions(app):
 
 def register_commands(app):
     app.cli.add_command(commands.clean)
-    app.cli.add_command(commands.initdata)
+    app.cli.add_command(commands.init_test_data)
     app.cli.add_command(commands.tests)
 
 

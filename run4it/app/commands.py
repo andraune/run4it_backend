@@ -1,14 +1,21 @@
 """Click commands"""
 import click, os
+from flask import current_app
 from flask.cli import with_appcontext
 
 
 @click.command()
 @with_appcontext
-def initdata():
-    """Command used to delete database data. Intended for testing.
-    Should maybe try to guard this against use in production."""
-    ret_code = init_database_data()
+def init_test_data():
+    """Command used to empty database tables and fill with test data.
+    Tailored to be used when running Newman test collection."""
+    ret_code = 0
+
+    if current_app.config["TESTING"] is True:
+        ret_code = init_database_test_data()
+    else:
+        print("Command disabled when not TESTING.")
+
     exit(ret_code)
 
 
@@ -34,7 +41,7 @@ def tests():
     exit(ret_code)
 
 
-def init_database_data():
+def init_database_test_data():
     print('Deleting database data ...')
 
     from run4it.app.database import db  # noqa
