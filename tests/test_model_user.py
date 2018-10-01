@@ -8,7 +8,6 @@ class TestUserModel:
     def test_get_by_id(self):
         new_user = User('foo', 'foo@bar.com')
         new_user.save()
-
         retrieved_user = User.get_by_id(new_user.id)
         assert(retrieved_user == new_user)
 
