@@ -1,7 +1,8 @@
 """The api module, containing the API factory function."""
 from flask import Blueprint, Flask
 from flask_restful import Api, Resource
-from run4it.api.user.resource import Register, Confirmation, Login, LoginRefresh
+from run4it.api.user.resource import (Register, Confirmation, Login, LoginRefresh,
+                                        Logout, LogoutRefresh)
 from run4it.api.token.resource import Token
 
 
@@ -26,6 +27,9 @@ def create_api(app):
     api.add_resource(Confirmation, "/users/confirmation")
     api.add_resource(Login, "/users/login")
     api.add_resource(LoginRefresh, "/users/loginRefresh")
+    api.add_resource(Logout, "/users/logout")
+    api.add_resource(LogoutRefresh, "/users/logoutRefresh")
+
     
     # Token resources (for user to see/revoke tokens)
     api.add_resource(Token, "/tokens")
