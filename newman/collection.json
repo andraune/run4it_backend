@@ -43,7 +43,10 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}",
 							"host": [
@@ -129,7 +132,10 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/notfound",
 							"host": [
@@ -205,7 +211,10 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users",
 							"host": [
@@ -578,7 +587,10 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/confirmation",
 							"host": [
@@ -953,7 +965,10 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/login",
 							"host": [
@@ -1393,7 +1408,10 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/tokens",
 							"host": [
@@ -1464,7 +1482,10 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/loginRefresh",
 							"host": [
@@ -1680,7 +1701,6 @@
 							"listen": "test",
 							"script": {
 								"id": "2a167a60-11d3-46b5-acdd-1966a267b509",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Response time is acceptable\", function() {",
 									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
@@ -1705,7 +1725,20 @@
 									"    pm.environment.set(\"userLoginAccessKey\", jsonData.accessToken);",
 									"});",
 									""
-								]
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c32b0d2c-36b1-4418-bea2-0b12fb1d4785",
+								"exec": [
+									"// Add a timeout here to ensure that refreshed access token has different expiry from the original one (when running collection)",
+									"setTimeout(function(){}, 1000);",
+									""
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1789,7 +1822,10 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/tokens",
 							"host": [
@@ -1931,7 +1967,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/tokens",
 							"host": [
@@ -1995,7 +2034,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/tokens",
 							"host": [
@@ -2053,7 +2095,10 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/tokens",
 							"host": [
@@ -2088,6 +2133,118 @@
 							""
 						]
 					}
+				}
+			]
+		},
+		{
+			"name": "UserLogout",
+			"item": [
+				{
+					"name": "LogoutMethodNotAllowed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "169e2220-f215-40e3-9f89-f848a05864d2",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Method not allowed\", function() {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/login",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"login"
+							]
+						},
+						"description": "GET for login not allowed"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "UserLogoutRefresh",
+			"item": [
+				{
+					"name": "LogoutRefreshMethodNotAllowed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "169e2220-f215-40e3-9f89-f848a05864d2",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Method not allowed\", function() {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/logoutRefresh",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"logoutRefresh"
+							]
+						},
+						"description": "GET for login not allowed"
+					},
+					"response": []
 				}
 			]
 		}
