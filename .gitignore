@@ -9,4 +9,3 @@ __pycache__/
 # Ignore db stuff
 migrations/
 *.db
-run4it/sqlite3.exe
