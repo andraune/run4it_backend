@@ -49,15 +49,16 @@ class TestConfig(Config):
     SECRET_KEY = "very-very-top-secret"
     JWT_SECRET_KEY = "even-more-top-secreterer"
     SQLALCHEMY_DATABASE_URI = os.environ.get("RUN4IT_DBTEST_URL", "postgresql://run4it@localhost/run4it_test")
+    MAIL_DEFAULT_SENDER = os.environ.get("RUN4IT_FASTMAIL_USERNAME", "nousefor@name.com")
 
 class ProductionConfig(Config):
     """Production Configuration"""
     ENV = "production"
     DEBUG = False
     TESTING = False
-    SECRET_KEY = os.environ.get("RUN4IT_SECRET_KEY", "9cef5cfe5b80f523b484d39d4d61d5994748128ce4b97d0d")
-    JWT_SECRET_KEY = os.environ.get("RUN4IT_JWT_SECRET_KEY", "8e2cacb621f833324bca0a13f33f3194ca8bc7cca8ad8145")
-    SQLALCHEMY_DATABASE_URI = os.environ.get("RUN4IT_DB_URL", "postgresql://localhost/run4it")
+    SECRET_KEY = os.environ.get("RUN4IT_SECRET_KEY", "very-secret")
+    JWT_SECRET_KEY = os.environ.get("RUN4IT_JWT_SECRET_KEY", "very-secreterer")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("RUN4IT_DB_URL", "postgresql://run4it:run4it@localhost/run4it")
     MAIL_SERVER = "smtp.fastmail.com"
     MAIL_PORT = 587
     MAIL_USE_TLS = True
