@@ -58,3 +58,7 @@ class ProductionConfig(Config):
     SECRET_KEY = os.environ.get("RUN4IT_SECRET_KEY", "9cef5cfe5b80f523b484d39d4d61d5994748128ce4b97d0d")
     JWT_SECRET_KEY = os.environ.get("RUN4IT_JWT_SECRET_KEY", "8e2cacb621f833324bca0a13f33f3194ca8bc7cca8ad8145")
     SQLALCHEMY_DATABASE_URI = os.environ.get("RUN4IT_DB_URL", "postgresql://localhost/run4it")
+    MAIL_SERVER = "smtp.fastmail.com"
+    MAIL_PORT = "465"
+    MAIL_USE_TLS = True
+    MAIL_PASSWORD = os.environ.get("RUN4IT_FASTMAIL_PASSWORD", "password")
