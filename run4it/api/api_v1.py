@@ -1,5 +1,5 @@
 """The api module, containing the API factory function."""
-from flask import Blueprint, Flask
+from flask import Blueprint, Flask, current_app
 from flask_restful import Api, Resource
 from run4it.api.user.resource import (Register, Confirmation, Login, LoginRefresh,
                                         Logout, LogoutRefresh)
@@ -12,7 +12,7 @@ API_VERSION_STR = 'v{0}'.format(API_VERSION)
 
 class ApiVersion(Resource):
     def get(self):
-        return { 'version': API_VERSION }
+        return { 'version': API_VERSION, 'env': current_app.config['ENV'] }
 
 
 def create_api(app):

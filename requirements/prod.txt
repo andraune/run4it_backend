@@ -8,4 +8,5 @@ flask-migrate==2.2.1
 marshmallow==2.15.3
 passlib==1.7.1
 psycopg2==2.7.6.1
+uWSGI==2.0.17.1
 webargs==4.0.0
