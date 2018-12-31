@@ -4,7 +4,7 @@ from run4it.app.extensions import mail
 
 def mail_send_confirmation_code(username, email, code):
 
-    msg = Message('Run4IT Email Confirmation', sender='jonny@jonnytech.net', recipients=[email])
+    msg = Message('Run4IT Email Confirmation', recipients=[email])
     msg.body = "Hi, {0}!\r\n\r\n".format(username)
     msg.body += "Click the link below to complete your account registration. "
     msg.body += "If the link does not work, you might copy the URL and enter it manually in your browser.\r\n\r\n"
