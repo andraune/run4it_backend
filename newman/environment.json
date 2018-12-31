@@ -1,26 +1,37 @@
 {
-  "id": "88456cc3-f6d0-40fc-b0af-e969b6321076",
-  "name": "run4itDevelopment",
-  "values": [
-    {
-      "key": "apiBaseUrl",
-      "value": "http://127.0.0.1:5000",
-      "enabled": true
-    },
-    {
-      "key": "apiVersion",
-      "value": "v1",
-      "enabled": true
-    },
-    {
-      "key": "acceptableResponseTime",
-      "value": "500",
-      "description": "",
-      "type": "text",
-      "enabled": true
-    }
-  ],
-  "_postman_variable_scope": "environment",
-  "_postman_exported_at": "2018-08-23T12:02:23.977Z",
-  "_postman_exported_using": "Postman/6.2.4"
+	"id": "88456cc3-f6d0-40fc-b0af-e969b6321076",
+	"name": "run4itDevelopment",
+	"values": [
+		{
+			"key": "apiBaseUrl",
+			"value": "http://127.0.0.1:5000",
+			"enabled": true
+		},
+		{
+			"key": "apiVersion",
+			"value": "v1",
+			"enabled": true
+		},
+		{
+			"key": "acceptableResponseTime",
+			"value": "500",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "environmentString",
+			"value": "development",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2018-12-31T14:18:58.081Z",
+	"_postman_exported_using": "Postman/6.6.1"
 }
