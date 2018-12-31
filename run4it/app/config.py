@@ -39,6 +39,7 @@ class DevelopConfig(Config):
     SECRET_KEY = "very-very-top-secret"
     JWT_SECRET_KEY = "even-more-top-secreterer"
     SQLALCHEMY_DATABASE_URI = os.environ.get("RUN4IT_DB_URL", "postgresql://run4it@localhost/run4it")
+    MAIL_DEFAULT_SENDER = os.environ.get("RUN4IT_FASTMAIL_USERNAME", "nousefor@name.com")
 
 class TestConfig(Config):
     """Test Configuration"""
