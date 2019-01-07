@@ -6,6 +6,7 @@ import pytest
 from run4it.app.app import create_app
 from run4it.app.database import db as _db
 from run4it.app.config import TestConfig
+from run4it.api.api_v1 import create_api
 
 
 @pytest.fixture(scope='function')
@@ -22,6 +23,14 @@ def app():
     yield _app
     ctx.pop()
 
+
+@pytest.fixture(scope='function')
+def api(app):
+    """Configure API"""
+    _api = create_api(app)
+    yield _api
+
+
 @pytest.fixture(scope='function')
 def db(app):
     """A database for the tests."""
@@ -34,3 +43,9 @@ def db(app):
 
     _db.session.close()
     _db.drop_all()
+
+@pytest.fixture(scope='function')
+def client(app):
+    """Test client"""
+    _client = app.test_client()
+    yield _client
