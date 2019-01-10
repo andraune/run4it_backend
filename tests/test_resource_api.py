@@ -1,6 +1,6 @@
 import pytest
-import json
 from run4it.api.api_v1 import ApiVersion
+from .helpers import get_response_json
 
 
 class TestApiResource:
@@ -13,7 +13,7 @@ class TestApiResource:
     def test_get_api_version(self, api, client):
         url = api.url_for(ApiVersion)
         response = client.get(url)
-        response_json = json.loads(response.data)
+        response_json = get_response_json(response.data)
         assert(response.status_code == 200)
         assert(response_json["version"] == 1)
         assert(response_json["env"] == "test")
@@ -36,6 +36,6 @@ class TestApiResource:
     def test_api_catch_404s(self, api, client):
         url = '{0}{1}'.format(api.url_for(ApiVersion), 'nonexistant-file')
         response = client.get(url)
-        response_json = json.loads(response.data)
+        response_json = get_response_json(response.data)
         assert(response.status_code == 404)
         assert("URL was not found" in response_json["message"] )
