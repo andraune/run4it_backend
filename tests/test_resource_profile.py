@@ -1,6 +1,6 @@
 import pytest
-import json
 from run4it.api.profile.resource import Profile
+from .helpers import get_response_json
 
 
 @pytest.mark.usefixtures('db')
