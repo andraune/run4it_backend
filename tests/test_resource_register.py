@@ -1,4 +1,5 @@
 import pytest
+from run4it.api.user.model import UserConfirmation
 from run4it.api.user.resource import Register
 from .helpers import get_response_json
 
@@ -21,7 +22,16 @@ class TestRegisterResource:
         assert(response_json["confirmed"] == False)
         assert(response_json["email"] == 'user@mail.com')
         assert(response_json["username"] == 'theUser')
-    
+
+    def test_register_creates_confirmation_code(self, api, client):
+        url = api.url_for(Register)
+        response = client.post(url, data={"username": "theUser", "email": "user@mail.com", "password": "password123" })
+        response_json = get_response_json(response.data)
+        assert(response.status_code == 201)
+        userConf = UserConfirmation.find_by_username("theUser")
+        assert(userConf is not None)
+        assert(len(userConf.code) >= 32)
+
     def test_register_user_email_required(self, api, client):
         url = api.url_for(Register)
         response = client.post(url, data={"username": "theUser", "password": "password123"})
