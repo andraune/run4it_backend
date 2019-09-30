@@ -1,11 +1,12 @@
 """API Resources for handling registration, login, logout etc."""
 import datetime as dt
 from flask_restful import Resource, request
-from flask_apispec import use_kwargs, marshal_with
+from flask_apispec import marshal_with
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 jwt_required, jwt_refresh_token_required,
                                 get_jwt_identity, get_raw_jwt)
 
+from webargs.flaskparser import use_kwargs
 from run4it.app.database import db
 from run4it.api.exceptions import report_error_and_abort
 from run4it.api.token.model import TokenRegistry
@@ -15,7 +16,7 @@ from .schema import user_schema, confirmation_schema, login_schema
 
 
 class Register(Resource):
-    @use_kwargs(user_schema)
+    @use_kwargs(user_schema, error_status_code = 422)
     @marshal_with(user_schema)
     def post(self, username, email, password, **kwargs):
 
@@ -43,7 +44,7 @@ class Register(Resource):
 class Confirmation(Resource):
     CONFIRMATION_CODE_EXPIRY_S = 3600
 
-    @use_kwargs(confirmation_schema)
+    @use_kwargs(confirmation_schema, error_status_code = 422)
     @marshal_with(user_schema)
     def post(self, username, confirmation_code, **kwargs):
 
@@ -77,7 +78,7 @@ class Confirmation(Resource):
 
 
 class Login(Resource):
-    @use_kwargs(login_schema)
+    @use_kwargs(login_schema, error_status_code = 422)
     @marshal_with(user_schema)
     def post(self, email, password, **kwargs):
         user = User.find_by_email(email)

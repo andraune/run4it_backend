@@ -5,10 +5,9 @@ from run4it.api.token.model import TokenRegistry
 
 
 @parser.error_handler
-def webargs_parser_error(err, req, sch):
-    code = getattr(err, "status_code", 400)
+def webargs_parser_error(err, req, sch, status_code, header):
     data = getattr(err, "messages" , "Invalid request.")
-    abort(code, errors=data)
+    abort(status_code, errors=data)
 
 
 @jwt.token_in_blacklist_loader
