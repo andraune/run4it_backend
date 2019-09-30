@@ -1,3 +1,3 @@
 # Production reqs and additional reqs for developer
 -r common.txt
-pytest==4.3.1
+pytest==5.2.0

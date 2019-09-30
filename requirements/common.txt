@@ -1,10 +1,10 @@
-flask==1.0.2
-flask-apispec==0.8.0
+flask==1.1.1
+flask-apispec==0.8.3
 flask-restful==0.3.7
-flask-jwt-extended==3.18.0
+flask-jwt-extended==3.23.0
 flask-sqlalchemy==2.3.2
 flask-mail==0.9.1
-flask-migrate==2.4.0
-marshmallow==2.19.1
+flask-migrate==2.5.2
+marshmallow==3.2.0
 passlib==1.7.1
-webargs==5.2.0
+webargs==5.5.1
