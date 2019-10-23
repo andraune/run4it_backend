@@ -4,7 +4,7 @@ from .helpers import get_response_json
 
 
 @pytest.mark.usefixtures('db')
-class TestRegisterResource:
+class TestProfileResource:
 
     def test_content_type_is_json(self, api, client):
         url = api.url_for(Profile)

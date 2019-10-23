@@ -14,7 +14,7 @@ API_VERSION_STR = 'v{0}'.format(API_VERSION)
 
 class ApiVersion(Resource):
     def get(self):
-        return { 'version': API_VERSION, 'env': current_app.config['ENV'] }
+        return { 'version': API_VERSION, 'env': current_app.config['ENV'], 'todo': 'Logout, LogoutRefresh, ProfileSchema, ProfileResources' }
 
 
 def create_api(app):
