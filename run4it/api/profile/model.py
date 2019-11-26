@@ -1,4 +1,3 @@
-import enum
 from run4it.app.database import (
     Column, SurrogatePK, TimestampedModel, db, reference_col, relationship)
 
@@ -8,10 +7,8 @@ class Profile(SurrogatePK, TimestampedModel):
 
     # id required for primary join
     id = Column(db.Integer, primary_key=True, index=True)
-    weight = Column(db.Integer, nullable=True)
     height = Column(db.Integer, nullable=True)
     birth_date = Column(db.Date, nullable=True)
-    gender_code = Column(db.SmallInteger, nullable=True)
 
     user_id = reference_col('users', unique=True, nullable=False, index=True)
     user = relationship('User', backref='profile', uselist=False)

@@ -44,9 +44,7 @@ class TestProfileModel:
 		new_profile = Profile(user)
 		new_profile.save()
 		assert(new_profile.height is None)
-		assert(new_profile.weight is None) 
 		assert(new_profile.birth_date is None) 
-		assert(new_profile.gender_code is None)
 
 	def test_profile_user_relationship(self):
 		user = User('profileUsername', 'user@mail.com')
