@@ -14,7 +14,7 @@ API_VERSION_STR = 'v{0}'.format(API_VERSION)
 
 class ApiVersion(Resource):
     def get(self):
-        return { 'version': API_VERSION, 'env': current_app.config['ENV'], 'todo': 'Logout, LogoutRefresh, ProfileSchema, ProfileResources' }
+        return { 'version': API_VERSION, 'env': current_app.config['ENV'], 'todo': 'Logout, LogoutRefresh, ProfileSchema, ProfileResources, UnitTestLoginFunctionality, WeightTable' }
 
 
 def create_api(app):
@@ -36,7 +36,7 @@ def create_api(app):
     api.add_resource(Token, "/tokens")
 
     # Profile resources
-    api.add_resource(Profile, "/profile")
+    api.add_resource(Profile, "/profiles")
 
 
     app.register_blueprint(api_blueprint, url_prefix=api_blueprint_url_prefix)
