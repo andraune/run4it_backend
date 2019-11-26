@@ -6,6 +6,5 @@ __pycache__/
 # PyTest
 .pytest_cache
 
-# Ignore db stuff
-migrations/
+# Ignore dev and test db
 *.db
