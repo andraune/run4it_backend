@@ -12,7 +12,7 @@ from .model import Profile
 
 
 class Profile(Resource):
-    #@use_kwargs(user_schema)
-    #@marshal_with(user_schema)
-    def get(self, **kwargs):
-        return None
+	#@marshal_with(user_schema)
+	def get(self, username):
+    	# load profile from db
+		return username, 200

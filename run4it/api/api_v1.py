@@ -36,7 +36,7 @@ def create_api(app):
     api.add_resource(Token, "/tokens")
 
     # Profile resources
-    api.add_resource(Profile, "/profiles")
+    api.add_resource(Profile, "/profiles/<string:username>")
 
 
     app.register_blueprint(api_blueprint, url_prefix=api_blueprint_url_prefix)
