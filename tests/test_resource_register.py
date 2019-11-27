@@ -24,7 +24,6 @@ class TestRegisterResource:
 		assert(response_json["email"] == 'user@mail.com')
 		assert(response_json["username"] == 'theUser')
 
-
 	def test_register_user_creates_userprofile(self, api, client):
 		url = api.url_for(Register)
 		response = client.post(url, data={"username": "theUser", "email": "user@mail.com", "password": "password123" })
@@ -34,7 +33,6 @@ class TestRegisterResource:
 		assert(user is not None)
 		assert(user.profile is not None)
 		assert(user.profile.username == user.username)
-
 
 	def test_register_creates_confirmation_code(self, api, client):
 		url = api.url_for(Register)
