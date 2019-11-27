@@ -11,7 +11,7 @@ class Profile(SurrogatePK, TimestampedModel):
     birth_date = Column(db.Date, nullable=True)
 
     user_id = reference_col('users', unique=True, nullable=False, index=True)
-    user = relationship('User', backref='profile', uselist=False)
+    user = relationship('User', backref=db.backref('profile', uselist=False))
 
     def __init__(self, user, **kwargs):
         db.Model.__init__(self, user=user, **kwargs)
