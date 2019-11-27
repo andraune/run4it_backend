@@ -41,6 +41,7 @@ def db(app):
 
     yield _db
 
+    _db.session.commit()
     _db.session.close()
     _db.drop_all()
 
