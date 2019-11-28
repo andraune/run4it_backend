@@ -50,7 +50,7 @@ class TestLoginResource:
 		response = client.put(url)
 		assert(response.status_code == 405) # not allowed
 
-	def test_delete_register_not_supported(self, api, client):
+	def test_delete_login_not_supported(self, api, client):
 		url = api.url_for(Login)
 		response = client.delete(url)
 		assert(response.status_code == 405) # not allowed
