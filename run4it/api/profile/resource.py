@@ -1,11 +1,7 @@
 import datetime as dt
 from flask_restful import Resource, request
-from flask_apispec import use_kwargs, marshal_with
-from flask_jwt_extended import (jwt_required
-#                                get_jwt_identity, get_raw_jwt
-)
-
-#from run4it.api.exceptions import report_error_and_abort
+from flask_apispec import marshal_with
+from webargs.flaskparser import use_kwargs
 from .model import Profile
 from .schema import profile_schema
 

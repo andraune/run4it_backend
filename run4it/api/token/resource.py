@@ -1,7 +1,7 @@
 """API Resources for handling user tokens."""
 import datetime as dt
 from flask_restful import Resource
-from flask_apispec import use_kwargs, marshal_with
+from flask_apispec import marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from run4it.app.database import db
