@@ -17,6 +17,12 @@ class Profile(SurrogatePK, TimestampedModel):
 	def __init__(self, user, **kwargs):
 		db.Model.__init__(self, user=user, **kwargs)
 
+	def set_height(self, height):
+		if height > 0:
+			self.height = height
+		else:
+			self.height = None
+
 	def set_birth_date(self, year, month, day):
 		self.birth_date = dt.date(year, month, day)
 

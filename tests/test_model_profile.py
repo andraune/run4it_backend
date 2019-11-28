@@ -56,6 +56,17 @@ class TestProfileModel:
 		assert(new_profile.birth_date.month == 1)
 		assert(new_profile.birth_date.day == 2)
 
+	def test_profile_height(self):
+		user = User('user', 'user@mail.com')
+		user.save()
+		new_profile = Profile(user)
+		new_profile.set_height(180)
+		new_profile.save()
+		assert(new_profile.height == 180)
+		new_profile.set_height(0)
+		new_profile.save()
+		assert(new_profile.height is None)
+
 	def test_profile_user_relationship(self):
 		user = User('profileUsername', 'user@mail.com')
 		user.save()
