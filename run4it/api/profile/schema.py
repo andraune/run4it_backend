@@ -13,5 +13,13 @@ class ProfileSchema(Schema):
 	class Meta:
 		strict = True
 
+class WeightSchema(Schema):
+	weight = fields.Float(validate=[validate.Range(0.0, 999.9)])
+	createdAt = fields.DateTime(attribute='created_at', dump_only=True)
+
+	class Meta:
+		strict = True
+
 
 profile_schema = ProfileSchema()
+weights_schema = WeightSchema(many=True)

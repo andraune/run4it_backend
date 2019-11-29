@@ -149,7 +149,6 @@ class TestProfileResource:
 
 	def test_update_many_params_in_same_request(self, api, client):
 		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
-		old_user = User
 		url = api.url_for(Profile, username="profiler")
 		response = client.put(url, data={ "birthDate":"2001-02-03", "height":180, "weight":70.1 }, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
