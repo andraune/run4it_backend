@@ -2,9 +2,9 @@
 from flask import Flask
 from . import commands
 from .extensions import jwt, db, migrate, mail
-from run4it.api.user.model import User, UserConfirmation
-from run4it.api.profile.model import Profile
-from run4it.api.token.model import TokenRegistry
+from run4it.api.user import User, UserConfirmation
+from run4it.api.profile import Profile, ProfileWeightHistory
+from run4it.api.token import TokenRegistry
 
 
 def create_app(config_object, app_name):
@@ -40,6 +40,7 @@ def register_shell_context(app):
             'User': User,
             'UserConfirmation': UserConfirmation,
             'Profile': Profile,
+			'ProfileWeightHistory': ProfileWeightHistory,
             'TokenRegistry': TokenRegistry
         }
 
