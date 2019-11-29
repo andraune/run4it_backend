@@ -2,9 +2,9 @@
 from flask import Blueprint, Flask, current_app
 from flask_restful import Api, Resource
 from run4it.api.user.resource import (Register, Confirmation, Login, LoginRefresh,
-                                        Logout, LogoutRefresh)
+										Logout, LogoutRefresh)
 
-from run4it.api.token.resource import Token
+from run4it.api.token.resource import Token, TokenList
 from run4it.api.profile.resource import Profile
 
 
@@ -13,31 +13,32 @@ API_VERSION_STR = 'v{0}'.format(API_VERSION)
 
 
 class ApiVersion(Resource):
-    def get(self):
-        return { 'version': API_VERSION, 'env': current_app.config['ENV'], 'todo': 'Logout, LogoutRefresh, WeightTable, TestTokenResource (support no data found)' }
+	def get(self):
+		return { 'version': API_VERSION, 'env': current_app.config['ENV'], 'todo': 'Logout, LogoutRefresh, WeightTable' }
 
 
 def create_api(app):
-    api_blueprint_name = 'api_{0}'.format(API_VERSION_STR)
-    api_blueprint_url_prefix = "/{0}".format(API_VERSION_STR)
-    api_blueprint = Blueprint(api_blueprint_name, __name__)
-    api = Api(api_blueprint, catch_all_404s=True)
-    api.add_resource(ApiVersion, "/")
+	api_blueprint_name = 'api_{0}'.format(API_VERSION_STR)
+	api_blueprint_url_prefix = "/{0}".format(API_VERSION_STR)
+	api_blueprint = Blueprint(api_blueprint_name, __name__)
+	api = Api(api_blueprint, catch_all_404s=True)
+	api.add_resource(ApiVersion, "/")
 
-    # User resources
-    api.add_resource(Register, "/users")
-    api.add_resource(Confirmation, "/users/confirmation")
-    api.add_resource(Login, "/users/login")
-    api.add_resource(LoginRefresh, "/users/loginRefresh")
-    api.add_resource(Logout, "/users/logout")
-    api.add_resource(LogoutRefresh, "/users/logoutRefresh")
-    
-    # Token resources (for user to see/revoke tokens)
-    api.add_resource(Token, "/tokens")
+	# User resources
+	api.add_resource(Register, "/users")
+	api.add_resource(Confirmation, "/users/confirmation")
+	api.add_resource(Login, "/users/login")
+	api.add_resource(LoginRefresh, "/users/loginRefresh")
+	api.add_resource(Logout, "/users/logout")
+	api.add_resource(LogoutRefresh, "/users/logoutRefresh")
+	
+	# Token resources (for user to see/revoke tokens)
+	api.add_resource(TokenList, "/tokens")
+	api.add_resource(Token, "/tokens/<int:token_id>")
 
-    # Profile resources
-    api.add_resource(Profile, "/profiles/<string:username>")
+	# Profile resources
+	api.add_resource(Profile, "/profiles/<string:username>")
 
 
-    app.register_blueprint(api_blueprint, url_prefix=api_blueprint_url_prefix)
-    return api
+	app.register_blueprint(api_blueprint, url_prefix=api_blueprint_url_prefix)
+	return api

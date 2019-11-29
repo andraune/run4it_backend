@@ -49,46 +49,42 @@ def init_database_test_data():
 	from run4it.api.profile import Profile  # noqa
 	from run4it.api.token import TokenRegistry  # noqa
 
-	rows = User.query.delete()
+	# delete most stuff
+	rows = User.query.delete(False)
 	if rows > 0:
 		print('Deleted {0} rows from User table'.format(rows))
 
-	rows = Profile.query.delete()
+	rows = Profile.query.delete(False)
 	if rows > 0:
 		print('Deleted {0} rows from Profile table'.format(rows))
 
-	rows = UserConfirmation.query.delete()
+	rows = UserConfirmation.query.delete(False)
 	if rows > 0:
 		print('Deleted {0} rows from UserConfirmation table'.format(rows))
 
-	rows = TokenRegistry.query.delete()
+	rows = TokenRegistry.query.delete(False)
 	if rows > 0:
 		print('Deleted {0} rows from TokenRegistry table'.format(rows))
+	
+	db.session.commit()
 
-
+	# create test items
 	user = User('existing', 'existing@user.com', 'pwd')
-	user.save()
+	profile = Profile(user)
+	user.save(commit=False)
+	profile.save(commit=False)
 	print("Added User '{0}'".format(user.username))
 
-
 	user = User('confirm', 'confirm@user.com', 'pwd')
-	user.save()
+	profile = Profile(user)
+	user.save(commit=False)
+	profile.save(commit=False)
 	print("Added User '{0}'".format(user.username)) 
 
-
 	confirmation = UserConfirmation('confirm', 'correct')
-	confirmation.save()
+	confirmation.save(commit=False)
 	print("Added UserConfirmation '{0} : {1}'".format(confirmation.username, confirmation.code))
 
-		
-	"""
-	state_names = ['TODO', 'In Progress', 'Review', 'Done']
-
-	for state_name in state_names:
-		state = ProgressState(state_name)
-		state.save()
-		
-	"""
 	db.session.commit()
 	print('Application data initialized!')
 	return 0
