@@ -11,9 +11,9 @@ from .schema import tokens_schema
 
 
 class Token(Resource):
-    @jwt_required
-    @marshal_with(tokens_schema)
-    def get(self, **kwargs):
-        username = get_jwt_identity()
-        user_tokens = TokenRegistry.find_by_username(username)
-        return user_tokens, 200
+	@jwt_required
+	@marshal_with(tokens_schema)
+	def get(self, **kwargs):
+		auth_username = get_jwt_identity()
+		user_tokens = TokenRegistry.find_by_username(auth_username)
+		return user_tokens, 200
