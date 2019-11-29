@@ -4,7 +4,7 @@ from flask_restful import Api, Resource
 from run4it.api.user.resource import (Register, Confirmation, Login, LoginRefresh,
                                         Logout, LogoutRefresh)
 
-from run4it.api.token.resource import Token
+from run4it.api.token.resource import TokenList
 from run4it.api.profile.resource import Profile
 
 
@@ -33,7 +33,7 @@ def create_api(app):
     api.add_resource(LogoutRefresh, "/users/logoutRefresh")
     
     # Token resources (for user to see/revoke tokens)
-    api.add_resource(Token, "/tokens")
+    api.add_resource(TokenList, "/tokens")
 
     # Profile resources
     api.add_resource(Profile, "/profiles/<string:username>")

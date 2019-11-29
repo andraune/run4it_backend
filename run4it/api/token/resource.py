@@ -7,10 +7,10 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from run4it.app.database import db
 from run4it.api.exceptions import report_error_and_abort
 from .model import TokenRegistry
-from .schema import tokens_schema
+from .schema import token_schema, tokens_schema
 
 
-class Token(Resource):
+class TokenList(Resource):
 	@jwt_required
 	@marshal_with(tokens_schema)
 	def get(self, **kwargs):
