@@ -21,16 +21,17 @@ class TestProfileResource:
 		assert(response_json["errors"]["auth"] is not None)
 
 	def test_get_profile_logged_in(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, dt.date(1980, 2, 29))
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
 		url = api.url_for(Profile, username="profiler")
 		response = client.get(url, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 200)	
 		assert(response_json["username"] == 'profiler')
 		assert(response_json["height"] == 179)
+		assert(response_json["weight"] == 75)
 		assert(str(response_json["birthDate"]) == '1980-02-29')
 
-	def test_get_profile_logged_in_height_and_birthdate_not_set(self, api, client):
+	def test_get_profile_data_not_set(self, api, client):
 		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd")
 		url = api.url_for(Profile, username="profiler")
 		response = client.get(url, headers=get_authorization_header(token))
@@ -38,6 +39,7 @@ class TestProfileResource:
 		assert(response.status_code == 200)	
 		assert(response_json["username"] == 'profiler')
 		assert(response_json["height"] is None)
+		assert(response_json["weight"] is None)
 		assert(response_json["birthDate"] is None)
 
 	def test_get_profile_for_another_user(self, api, client):
@@ -65,7 +67,7 @@ class TestProfileResource:
 		assert(response_json["errors"]["auth"] is not None)
 
 	def test_update_profile_username_not_allowed_in_json_data(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, dt.date(1980, 2, 29))
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
 		url = api.url_for(Profile, username="profiler")
 		response = client.put(url, data={ "username":"smart" }, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
@@ -73,7 +75,7 @@ class TestProfileResource:
 		assert(response_json["errors"]["username"] is not None)
 
 	def test_update_profile_height(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, dt.date(1980, 2, 29))
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
 		url = api.url_for(Profile, username="profiler")
 		response = client.put(url, data={ "height":180 }, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
@@ -81,7 +83,7 @@ class TestProfileResource:
 		assert(response_json["height"] == 180)
 
 	def test_update_profile_height_to_none(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, dt.date(1980, 2, 29))
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
 		url = api.url_for(Profile, username="profiler")
 		response = client.put(url, data={ "height":0 }, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
@@ -89,15 +91,39 @@ class TestProfileResource:
 		assert(response_json["height"] is None)
 
 	def test_update_height_out_of_range(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, dt.date(1980, 2, 29))
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
 		url = api.url_for(Profile, username="profiler")
 		response = client.put(url, data={ "height":300 }, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 422)
 		assert(response_json["errors"]["height"] is not None)		
+
+	def test_update_profile_weight(self, api, client):
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
+		url = api.url_for(Profile, username="profiler")
+		response = client.put(url, data={ "weight":76.3 }, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(response_json["weight"] == 76.3)
+
+	def test_update_weight_to_none(self, api, client):
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
+		url = api.url_for(Profile, username="profiler")
+		response = client.put(url, data={ "weight":0 }, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(response_json["weight"] is None)
 	
+	def test_update_height_out_of_range(self, api, client):
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
+		url = api.url_for(Profile, username="profiler")
+		response = client.put(url, data={ "weight":1000.0 }, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 422)
+		assert(response_json["errors"]["weight"] is not None)
+
 	def test_update_birth_date(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, dt.date(1980, 2, 29))
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
 		url = api.url_for(Profile, username="profiler")
 		response = client.put(url, data={ "birthDate":"2001-02-03" }, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
@@ -105,7 +131,7 @@ class TestProfileResource:
 		assert(response_json["birthDate"] == '2001-02-03')		
 	
 	def test_update_birth_date_too_old(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, dt.date(1980, 2, 29))
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
 		url = api.url_for(Profile, username="profiler")
 		response = client.put(url, data={ "birthDate":"1899-12-31" }, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
@@ -114,35 +140,37 @@ class TestProfileResource:
 
 	def test_update_birth_date_future(self, api, client):
 		tomorrow = dt.date.today() + dt.timedelta(days=1)
-		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, dt.date(1980, 2, 29))
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
 		url = api.url_for(Profile, username="profiler")
 		response = client.put(url, data={ "birthDate": str(tomorrow) }, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 422)
 		assert(response_json["errors"]["birthDate"] is not None)
 
-	def test_update_height_and_birth_date(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, dt.date(1980, 2, 29))
+	def test_update_many_params_in_same_request(self, api, client):
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
 		old_user = User
 		url = api.url_for(Profile, username="profiler")
-		response = client.put(url, data={ "birthDate":"2001-02-03", "height":180 }, headers=get_authorization_header(token))
+		response = client.put(url, data={ "birthDate":"2001-02-03", "height":180, "weight":70.1 }, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 200)
 		assert(response_json["birthDate"] == '2001-02-03')
 		assert(response_json["height"] == 180)
+		assert(response_json["weight"] == 70.1)
 
 	def test_update_profile_actually_saved(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, dt.date(1980, 2, 29))
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
 		url = api.url_for(Profile, username="profiler")
 		profile = User.find_by_username("profiler").profile
 		old_updated_at = profile.updated_at
-		response = client.put(url, data={ "birthDate":"2001-02-03", "height":180 }, headers=get_authorization_header(token))
+		response = client.put(url, data={ "birthDate":"2001-02-03", "height":180, "weight":70.1 }, headers=get_authorization_header(token))
 		assert(profile.height == 180)
+		assert(profile.weight == 70.1)
 		assert(str(profile.birth_date) == "2001-02-03")
 		assert(profile.updated_at > old_updated_at)
 
 	def test_no_update_if_no_data(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, dt.date(1980, 2, 29))
+		token = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
 		url = api.url_for(Profile, username="profiler")
 		profile = User.find_by_username("profiler").profile
 		old_updated_at = profile.updated_at

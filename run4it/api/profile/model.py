@@ -9,6 +9,7 @@ class Profile(SurrogatePK, TimestampedModel):
 	# id required for primary join
 	id = Column(db.Integer, primary_key=True, index=True)
 	height = Column(db.Integer, nullable=True)
+	weight = Column(db.Float, nullable=True)
 	birth_date = Column(db.Date, nullable=True)
 
 	user_id = reference_col('users', unique=True, nullable=False, index=True)
@@ -22,6 +23,12 @@ class Profile(SurrogatePK, TimestampedModel):
 			self.height = height
 		else:
 			self.height = None
+	
+	def set_weight(self, weight):
+		if weight > 0.0:
+			self.weight = weight
+		else:
+			self.weight = None
 
 	def set_birth_date(self, year, month, day):
 		self.birth_date = dt.date(year, month, day)

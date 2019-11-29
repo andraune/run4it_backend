@@ -30,7 +30,7 @@ class Profile(Resource):
 	@jwt_required
 	@use_kwargs(profile_schema, error_status_code = 422)
 	@marshal_with(profile_schema)
-	def put(self, username, height=None, birth_date=None, **kwargs):
+	def put(self, username, height=None, weight=None, birth_date=None, **kwargs):
 		auth_username = get_jwt_identity()
 
 		if auth_username != username:
@@ -46,7 +46,11 @@ class Profile(Resource):
 		if (height is not None):
 			user.profile.set_height(height)
 			was_updated = True
-		
+
+		if (weight is not None):
+			user.profile.set_weight(weight)
+			was_updated = True
+
 		if birth_date is not None:
 			user.profile.birth_date = birth_date
 			was_updated = True
