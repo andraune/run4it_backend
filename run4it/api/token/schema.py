@@ -3,7 +3,7 @@ from marshmallow import Schema, validate, fields
 
 class TokenSchema(Schema):
 	id = fields.Integer(dump_only=True, required=True)
-	token_type = fields.Str(dump_only=True, required=True)
+	tokenType = fields.Str(attribute='token_type', dump_only=True, required=True)
 	username = fields.Str(dump_only=True, required=True)
 	revoked = fields.Bool(dump_only=True, required=True)
 	expires = fields.DateTime(dump_only=True, required=True)
