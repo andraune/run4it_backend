@@ -15,3 +15,8 @@ flask init-test-data (init_test_data)
 flask tests
 
 flask shell
+
+.flaskenv:
+FLASK_APP=run4it_backend.py
+FLASK_DEBUG=1
+FLASK_ENV=development
