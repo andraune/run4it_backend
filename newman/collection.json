@@ -2841,6 +2841,7 @@
 									"    pm.expect(jsonData.username).to.equal(\"confirm\")",
 									"    pm.expect(jsonData.height).to.equal(null)",
 									"    pm.expect(jsonData.birthDate).to.equal(null)",
+									"    pm.expect(jsonData.weight).to.equal(70.1)",
 									"});",
 									""
 								],
@@ -2996,6 +2997,71 @@
 					"response": []
 				},
 				{
+					"name": "UpdateWeight",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9a2a02cb-9e36-4073-94f8-b26d73495979",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"GetTokens OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"GetProfile response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.username).to.equal(\"confirm\")",
+									"    pm.expect(jsonData.birthDate).to.equal(\"1998-06-23\")",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"weight\" : 78.9\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/confirm",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"confirm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "UpdateInvalidValues",
 					"event": [
 						{
@@ -3020,6 +3086,7 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.errors.birthDate.length).to.equal(1)",
 									"    pm.expect(jsonData.errors.height.length).to.equal(1)",
+									"    pm.expect(jsonData.errors.weight.length).to.equal(1)",
 									"    ",
 									"});",
 									""
@@ -3040,7 +3107,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"height\" : 999,\n\t\"birthDate\" : \"1899-12.31\"\n}",
+							"raw": "{\n\t\"height\" : 999,\n\t\"birthDate\" : \"1899-12.31\",\n\t\"weight\" : 1010\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3087,6 +3154,7 @@
 									"    pm.expect(jsonData.username).to.equal(\"confirm\")",
 									"    pm.expect(jsonData.height).to.equal(180)",
 									"    pm.expect(jsonData.birthDate).to.equal(\"1998-06-23\")",
+									"    pm.expect(jsonData.weight).to.equal(78.9)",
 									"});",
 									""
 								],
@@ -3106,6 +3174,59 @@
 								"{{apiVersion}}",
 								"profiles",
 								"confirm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetProfileWeigths",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9a2a02cb-9e36-4073-94f8-b26d73495979",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"GetTokens OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"GetProfile response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.equal(2)",
+									"    pm.expect(jsonData[0].weight).to.be.above(0.0)",
+									"    pm.expect(jsonData[0].weight).to.be.below(1000.0)",
+									"    pm.expect(jsonData[1].weight).to.be.above(0.0)",
+									"    pm.expect(jsonData[1].weight).to.be.below(1000.0)",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/confirm/weight",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"confirm",
+								"weight"
 							]
 						}
 					},
