@@ -8,3 +8,6 @@ __pycache__/
 
 # Ignore dev and test db
 *.db
+
+#Ignore flaskenv file
+.flaskenv
