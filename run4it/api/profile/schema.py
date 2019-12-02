@@ -3,14 +3,23 @@ from marshmallow import Schema, validate, fields
 
 
 class ProfileSchema(Schema):
-    height = fields.Integer(validate=[validate.Range(0, 280)])
-    birthDate = fields.Date(attribute='birth_date', validate=[validate.Range(dt.date(1900, 1, 1), dt.date.today())])
-    createdAt = fields.DateTime(attribute='created_at', dump_only=True)
-    updatedAt = fields.DateTime(attribute='updated_at', dump_only=True)
-    username = fields.Str(dump_only=True, required=True)
+	height = fields.Integer(validate=[validate.Range(0, 280)])
+	weight = fields.Float(validate=[validate.Range(0.0, 999.9)])
+	birthDate = fields.Date(attribute='birth_date', validate=[validate.Range(dt.date(1900, 1, 1), dt.date.today())])
+	createdAt = fields.DateTime(attribute='created_at', dump_only=True)
+	updatedAt = fields.DateTime(attribute='updated_at', dump_only=True)
+	username = fields.Str(dump_only=True, required=True)
 
-    class Meta:
-        strict = True
+	class Meta:
+		strict = True
+
+class WeightSchema(Schema):
+	weight = fields.Float(validate=[validate.Range(0.0, 999.9)])
+	createdAt = fields.DateTime(attribute='created_at', dump_only=True)
+
+	class Meta:
+		strict = True
 
 
 profile_schema = ProfileSchema()
+weights_schema = WeightSchema(many=True)

@@ -1,7 +1,7 @@
 """Model unit tests."""
 import pytest
-from run4it.api.profile.model import Profile
-from run4it.api.user.model import User
+from run4it.api.profile import Profile, ProfileWeightHistory
+from run4it.api.user import User
 
 @pytest.mark.usefixtures('db')
 class TestProfileModel:
@@ -44,7 +44,9 @@ class TestProfileModel:
 		new_profile = Profile(user)
 		new_profile.save()
 		assert(new_profile.height is None)
+		assert(new_profile.weight is None)
 		assert(new_profile.birth_date is None) 
+		assert(new_profile.weights.count() == 0)
 
 	def test_profile_birth_date(self):
 		user = User('user', 'user@mail.com')
@@ -66,6 +68,62 @@ class TestProfileModel:
 		new_profile.set_height(0)
 		new_profile.save()
 		assert(new_profile.height is None)
+
+	def test_profile_weight(self):
+		user = User('user', 'user@mail.com')
+		user.save()
+		new_profile = Profile(user)
+		new_profile.set_weight(80)
+		new_profile.save()
+		assert(new_profile.weight == 80)
+		new_profile.set_weight(0)
+		new_profile.save()
+		assert(new_profile.weight is None)
+
+	def test_profile_updates_weight_history_on_new_weight(self):
+		user = User('user', 'user@mail.com')
+		user.save()		
+		new_profile = Profile(user)
+		new_profile.set_weight(69.0)
+		new_profile.save()
+		assert(new_profile.weights.count() == 1)
+		assert(new_profile.weights[0].weight == 69.0)
+
+	def test_profile_updates_weight_history_on_new_weight_but_not_when_none(self):
+		user = User('user', 'user@mail.com')
+		user.save()		
+		new_profile = Profile(user)
+		new_profile.set_weight(69.0)
+		new_profile.set_weight(0)
+		new_profile.set_weight(70.0)
+		new_profile.save()
+		assert(new_profile.weights.count() == 2)
+		assert(new_profile.weights[1].weight == 70.0)
+
+	def test_profile_updates_weight_history_on_several_new_weights(self):
+		user = User('user', 'user@mail.com')
+		user.save()		
+		new_profile = Profile(user)
+		new_profile.set_weight(69.0)
+		new_profile.set_weight(70.0)
+		new_profile.set_weight(71.0)
+		new_profile.save()
+		assert(new_profile.weights.count() == 3)
+		assert(new_profile.weights[0].weight == 69.0)
+		assert(new_profile.weights[1].weight == 70.0)	
+		assert(new_profile.weights[2].weight == 71.0)		
+
+	def test_profile_weight_history_relationship(self):
+		user = User('user', 'user@mail.com')
+		user.save()		
+		new_profile = Profile(user)
+		new_profile.set_weight(69.0)
+		new_profile.save()
+		weight_history_record = ProfileWeightHistory.get_by_id(1)
+		assert(weight_history_record is not None)
+		assert(weight_history_record.profile_id == new_profile.id)
+		assert(weight_history_record.weight == 69.0)
+
 
 	def test_profile_user_relationship(self):
 		user = User('profileUsername', 'user@mail.com')

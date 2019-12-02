@@ -5,7 +5,7 @@ from run4it.api.user.resource import (Register, Confirmation, Login, LoginRefres
 										Logout, LogoutRefresh)
 
 from run4it.api.token.resource import Token, TokenList
-from run4it.api.profile.resource import Profile
+from run4it.api.profile.resource import Profile, ProfileWeight
 
 
 API_VERSION = 1
@@ -14,7 +14,7 @@ API_VERSION_STR = 'v{0}'.format(API_VERSION)
 
 class ApiVersion(Resource):
 	def get(self):
-		return { 'version': API_VERSION, 'env': current_app.config['ENV'], 'todo': 'Logout, LogoutRefresh, WeightTable' }
+		return { 'version': API_VERSION, 'env': current_app.config['ENV'], 'todo': 'Logout, LogoutRefresh' }
 
 
 def create_api(app):
@@ -38,6 +38,7 @@ def create_api(app):
 
 	# Profile resources
 	api.add_resource(Profile, "/profiles/<string:username>")
+	api.add_resource(ProfileWeight, "/profiles/<string:username>/weight")
 
 
 	app.register_blueprint(api_blueprint, url_prefix=api_blueprint_url_prefix)

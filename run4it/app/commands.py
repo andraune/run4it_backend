@@ -46,7 +46,7 @@ def init_database_test_data():
 
 	from run4it.app.database import db  # noqa
 	from run4it.api.user import User, UserConfirmation # noqa
-	from run4it.api.profile import Profile  # noqa
+	from run4it.api.profile import Profile, ProfileWeightHistory  # noqa
 	from run4it.api.token import TokenRegistry  # noqa
 
 	# delete most stuff
@@ -66,6 +66,10 @@ def init_database_test_data():
 	if rows > 0:
 		print('Deleted {0} rows from TokenRegistry table'.format(rows))
 	
+	rows = ProfileWeightHistory.query.delete(False)
+	if rows > 0:
+		print('Deleted {0} rows from ProfileWeightHistory table'.format(rows))
+	
 	db.session.commit()
 
 	# create test items
@@ -77,6 +81,7 @@ def init_database_test_data():
 
 	user = User('confirm', 'confirm@user.com', 'pwd')
 	profile = Profile(user)
+	profile.set_weight(70.1)
 	user.save(commit=False)
 	profile.save(commit=False)
 	print("Added User '{0}'".format(user.username)) 
