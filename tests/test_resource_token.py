@@ -64,7 +64,7 @@ class TestTokenResource:
 		response = client.delete(url, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 200)
-		assert(response_json["message"] is not None)
+		assert(response_json["messages"]["token"] is not None)
 		assert(TokenRegistry.get_by_id(1) is not None)
 		assert(TokenRegistry.get_by_id(2) is None) # should have been deleted
 
