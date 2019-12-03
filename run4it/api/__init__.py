@@ -1,6 +1,6 @@
 from webargs.flaskparser import use_kwargs, parser, abort
 from run4it.app.extensions import jwt
-from run4it.api.exceptions import report_error_and_abort
+from run4it.api.templates import report_error_and_abort
 from run4it.api.token.model import TokenRegistry
 
 

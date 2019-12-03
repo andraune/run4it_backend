@@ -7,7 +7,7 @@ from webargs.flaskparser import use_kwargs
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from run4it.app.database import db
-from run4it.api.exceptions import report_error_and_abort
+from run4it.api.templates import generate_message_response, report_error_and_abort
 from .model import TokenRegistry
 from .schema import token_schema, tokens_schema, token_update_schema
 
@@ -76,4 +76,4 @@ class Token(Resource):
 			db.session.rollback()
 			report_error_and_abort(500, "profile", "Unable to delete profile")			
 
-		return {"message":"Token deleted."}
+		return generate_message_response(200, "token", "Token deleted.")
