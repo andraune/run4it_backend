@@ -8,7 +8,7 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
 
 from webargs.flaskparser import use_kwargs
 from run4it.app.database import db
-from run4it.api.templates import report_error_and_abort
+from run4it.api.templates import generate_message_response, report_error_and_abort
 from run4it.api.token.model import TokenRegistry
 from run4it.api.profile.model import Profile
 from .mail import mail_send_confirmation_code
@@ -120,9 +120,32 @@ class LoginRefresh(Resource):
 class Logout(Resource):
 	@jwt_required
 	def delete(self):
-		pass
+		jti = get_raw_jwt()["jti"]
+		token = TokenRegistry.find_by_jti(jti)
+
+		if token is not None:
+			try:
+				token.revoked = False
+				token.save()
+			except:
+				db.session.rollback()
+				report_error_and_abort(500, "logout", "Logout failed(1).")				
+
+		return generate_message_response(200, "logout", "Logged out.")	
 
 
 class LogoutRefresh(Resource):
-	def post(self):
-		pass
+	@jwt_refresh_token_required
+	def delete(self):
+		jti = get_raw_jwt()["jti"]
+		token = TokenRegistry.find_by_jti(jti)
+
+		if token is not None:
+			try:
+				token.revoked = False
+				token.save()
+			except:
+				db.session.rollback()
+				report_error_and_abort(500, "logout", "Logout failed(2).")				
+
+		return generate_message_response(200, "logout", "Logged out.")
