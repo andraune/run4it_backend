@@ -2451,7 +2451,7 @@
 									"",
 									"pm.test(\"DeleteToken response\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.message).to.equal(\"Token deleted.\")",
+									"    pm.expect(jsonData.messages[\"token\"][0]).to.equal(\"Token deleted.\")",
 									"});",
 									""
 								],
