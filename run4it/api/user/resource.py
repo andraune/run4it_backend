@@ -95,11 +95,33 @@ class Login(Resource):
 		if not user.check_password(password):
 			report_error_and_abort(401, "login", "Login failed")
 		
-		user.access_token = create_access_token(identity=user.username)
+		user.access_token = create_access_token(identity=user.username, fresh=True)
 		user.refresh_token = create_refresh_token(identity=user.username)
 		TokenRegistry.add_token(user.access_token)
 		TokenRegistry.add_token(user.refresh_token)
 		return user, 200   
+
+
+class LoginFresh(Resource):
+	# Same as login, but no refresh token created.
+	# Used when we need to confirm user properly (before changing password etc.)
+	@use_kwargs(login_schema, error_status_code = 422)
+	@marshal_with(user_schema)
+	def post(self, email, password, **kwargs):
+		user = User.find_by_email(email)
+
+		if user is None:
+		   report_error_and_abort(401, "login", "Login failed") 
+
+		if not user.confirmed:
+			report_error_and_abort(401, "login", "Login failed")
+
+		if not user.check_password(password):
+			report_error_and_abort(401, "login", "Login failed")
+		
+		user.access_token = create_access_token(identity=user.username, fresh=True)
+		TokenRegistry.add_token(user.access_token)
+		return user, 200
 
 
 class LoginRefresh(Resource): 
@@ -112,7 +134,7 @@ class LoginRefresh(Resource):
 		if user is None:
 			report_error_and_abort(401, "refresh", "Login refresh failed")
 		
-		user.access_token = create_access_token(identity=user.username)
+		user.access_token = create_access_token(identity=user.username, fresh=False)
 		TokenRegistry.add_token(user.access_token)
 		return user, 200
 
