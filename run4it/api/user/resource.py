@@ -116,6 +116,7 @@ class LoginRefresh(Resource):
 		TokenRegistry.add_token(user.access_token)
 		return user, 200
 
+
 class Logout(Resource):
 	def post(self):
 		pass

@@ -21,4 +21,12 @@ def jwt_missing_authorization_header(msg):
 
 @jwt.invalid_token_loader
 def jwt_invalid_token_or_token_type(msg):
-    report_error_and_abort(422, "auth", "Invalid token")
+    report_error_and_abort(422, "auth", "Invalid token.")
+
+@jwt.expired_token_loader
+def jwt_expired_token_handler(expired_token):
+	report_error_and_abort(401, "auth", "Expired token.")
+
+@jwt.revoked_token_loader
+def jwt_revoked_token_handler():
+	report_error_and_abort(401, "auth", "Revoked token.")

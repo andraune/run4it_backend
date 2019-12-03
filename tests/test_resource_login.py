@@ -1,4 +1,5 @@
 import pytest
+import datetime as dt
 from run4it.api.user.model import User
 from run4it.api.user.resource import Login, LoginRefresh
 from run4it.api.token import TokenRegistry
@@ -72,7 +73,7 @@ class TestLoginResource:
 		assert(tokens_before_req == tokens_after_req)
 
 	def test_loginrefresh_logged_in(self, api, client):
-		_, refreshtoken = register_and_login_confirmed_user(api, client, "refresher", "re@fresh.com", "passwd")
+		_,refreshtoken = register_and_login_confirmed_user(api, client, "refresher", "re@fresh.com", "passwd")
 		url = api.url_for(LoginRefresh)
 		response = client.post(url, headers=get_authorization_header(refreshtoken))
 		response_json = get_response_json(response.data)
@@ -80,6 +81,28 @@ class TestLoginResource:
 		assert(response_json["accessToken"] != '')
 		assert(response_json["refreshToken"] == '')
 
+	def test_loginrefresh_token_generated(self, api, client):
+		_,refreshtoken = register_and_login_confirmed_user(api, client, "refresher", "re@fresh.com", "passwd")
+		url = api.url_for(LoginRefresh)
+		tokens_before_req = TokenRegistry.query.filter_by(token_type="access").count()
+		refresh_before_req = TokenRegistry.query.filter_by(token_type="refresh").count()
+		client.post(url, headers=get_authorization_header(refreshtoken))
+		tokens_after_req = TokenRegistry.query.filter_by(token_type="access").count()
+		refresh_after_req = TokenRegistry.query.filter_by(token_type="refresh").count()
+		assert((tokens_before_req + 1) == tokens_after_req)
+		assert(refresh_before_req == refresh_after_req)
+
+	def test_token_loginrefresh_revoked_refreshtoken(self, api, client):
+		_,refreshtoken = register_and_login_confirmed_user(api, client, "refresher", "re@fresh.com", "passwd")
+		stored_token = TokenRegistry.get_by_id(2)
+		assert(stored_token.token_type == "refresh")
+		stored_token.revoked = True
+		stored_token.save()
+		url = api.url_for(LoginRefresh)
+		response = client.post(url, headers=get_authorization_header(refreshtoken))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 401)
+		assert(response_json["errors"]["auth"] is not None)
 
 	def test_get_loginrefresh_not_supported(self, api, client):
 		url = api.url_for(LoginRefresh)
