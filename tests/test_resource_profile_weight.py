@@ -21,7 +21,7 @@ class TestProfileWeightHistoryResource:
 		assert(response_json["errors"]["auth"] is not None)
 
 	def test_get_profileweight_logged_in(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "tyson", "mike@tyson.com", "knockout", 178, 95.0, dt.date(1966, 6, 30))
+		token,_ = register_and_login_confirmed_user(api, client, "tyson", "mike@tyson.com", "knockout", 178, 95.0, dt.date(1966, 6, 30))
 		url = api.url_for(ProfileWeight, username="tyson")
 		profile = User.find_by_username("tyson").profile
 		profile.set_weight(101.0)
@@ -33,7 +33,7 @@ class TestProfileWeightHistoryResource:
 		assert(response_json[0]["weight"] == 101.0)
 
 	def test_get_profileweight_no_data(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "tyson", "mike@tyson.com", "knockout", 178, 95.0, dt.date(1966, 6, 30))
+		token,_ = register_and_login_confirmed_user(api, client, "tyson", "mike@tyson.com", "knockout", 178, 95.0, dt.date(1966, 6, 30))
 		url = api.url_for(ProfileWeight, username="tyson")
 		response = client.get(url, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
@@ -41,7 +41,7 @@ class TestProfileWeightHistoryResource:
 		assert(len(response_json) == 0)
 
 	def test_get_profileweight_several_items(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "tyson", "mike@tyson.com", "knockout", 178, 95.0, dt.date(1966, 6, 30))
+		token,_ = register_and_login_confirmed_user(api, client, "tyson", "mike@tyson.com", "knockout", 178, 95.0, dt.date(1966, 6, 30))
 		url = api.url_for(ProfileWeight, username="tyson")
 		profile = User.find_by_username("tyson").profile
 		profile.set_weight(101.0)
@@ -62,7 +62,7 @@ class TestProfileWeightHistoryResource:
 		other_profile.set_weight(66.6)
 		other_profile.save()
 	
-		token = register_and_login_confirmed_user(api, client, "tyson", "mike@tyson.com", "knockout", 178, 95.0, dt.date(1966, 6, 30))
+		token,_ = register_and_login_confirmed_user(api, client, "tyson", "mike@tyson.com", "knockout", 178, 95.0, dt.date(1966, 6, 30))
 		profile = User.find_by_username("tyson").profile
 		profile.set_weight(101.0)
 		profile.save()
@@ -76,7 +76,7 @@ class TestProfileWeightHistoryResource:
 
 	def test_get_profileweight_for_another_user(self, api, client):
 		register_confirmed_user("another", "an@other.com", "different")
-		token = register_and_login_confirmed_user(api, client, "tyson", "mike@tyson.com", "knockout", 178, 95.0, dt.date(1966, 6, 30))
+		token,_ = register_and_login_confirmed_user(api, client, "tyson", "mike@tyson.com", "knockout", 178, 95.0, dt.date(1966, 6, 30))
 		url = api.url_for(ProfileWeight, username="another")
 		response = client.get(url, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
@@ -84,7 +84,7 @@ class TestProfileWeightHistoryResource:
 		assert(response_json["errors"]["profile"] is not None)
 
 	def test_get_profileweight_for_nonexistant_user(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "tyson", "mike@tyson.com", "knockout", 178, 95.0, dt.date(1966, 6, 30))
+		token,_ = register_and_login_confirmed_user(api, client, "tyson", "mike@tyson.com", "knockout", 178, 95.0, dt.date(1966, 6, 30))
 		url = api.url_for(ProfileWeight, username="nouser")
 		response = client.get(url, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)

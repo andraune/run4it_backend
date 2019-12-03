@@ -1,7 +1,8 @@
 import pytest
 from run4it.api.user.model import User
-from run4it.api.user.resource import Login
-from .helpers import get_response_json, register_confirmed_user
+from run4it.api.user.resource import Login, LoginRefresh
+from run4it.api.token import TokenRegistry
+from .helpers import get_response_json, get_authorization_header, register_confirmed_user, register_and_login_confirmed_user
 
 
 @pytest.mark.usefixtures('db')
@@ -10,7 +11,7 @@ class TestLoginResource:
 	def setup(self):
 		register_confirmed_user("confirmedUser", "confirmedUser@mail.com", "confirmed123")
 
-	def test_content_type_is_json(self, api, client):
+	def test_login_content_type_is_json(self, api, client):
 		url = api.url_for(Login)
 		response = client.post(url)
 		assert(response.headers["Content-Type"] == 'application/json')
@@ -52,5 +53,45 @@ class TestLoginResource:
 
 	def test_delete_login_not_supported(self, api, client):
 		url = api.url_for(Login)
+		response = client.delete(url)
+		assert(response.status_code == 405) # not allowed
+
+	def test_loginrefresh_content_type_is_json(self, api, client):
+		url = api.url_for(LoginRefresh)
+		response = client.post(url)
+		assert(response.headers["Content-Type"] == 'application/json')
+
+	def test_loginrefresh_not_logged_in(self, api, client):
+		tokens_before_req = TokenRegistry.query.count()
+		url = api.url_for(LoginRefresh)
+		response = client.post(url)
+		response_json = get_response_json(response.data)
+		tokens_after_req = TokenRegistry.query.count()
+		assert(response.status_code == 401)
+		assert(response_json["errors"]["auth"] is not None)
+		assert(tokens_before_req == tokens_after_req)
+
+	def test_loginrefresh_logged_in(self, api, client):
+		_, refreshtoken = register_and_login_confirmed_user(api, client, "refresher", "re@fresh.com", "passwd")
+		url = api.url_for(LoginRefresh)
+		response = client.post(url, headers=get_authorization_header(refreshtoken))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(response_json["accessToken"] != '')
+		assert(response_json["refreshToken"] == '')
+
+
+	def test_get_loginrefresh_not_supported(self, api, client):
+		url = api.url_for(LoginRefresh)
+		response = client.get(url)
+		assert(response.status_code == 405) # not allowed
+
+	def test_put_loginrefresh_not_supported(self, api, client):
+		url = api.url_for(LoginRefresh)
+		response = client.put(url)
+		assert(response.status_code == 405) # not allowed
+
+	def test_delete_loginrefresh_not_supported(self, api, client):
+		url = api.url_for(LoginRefresh)
 		response = client.delete(url)
 		assert(response.status_code == 405) # not allowed

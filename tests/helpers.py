@@ -22,7 +22,7 @@ def register_and_login_confirmed_user(testapi, testclient, username, email, pass
 	url = testapi.url_for(Login)
 	response = testclient.post(url, data={"email": email, "password": password })
 	response_json = get_response_json(response.data)
-	return response_json["accessToken"]
+	return response_json["accessToken"], response_json["refreshToken"]
 
 def get_authorization_header(token):
 	return {'Authorization': 'Bearer {}'.format(token)}
