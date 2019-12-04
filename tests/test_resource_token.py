@@ -2,7 +2,11 @@ import pytest
 import datetime as dt
 from run4it.api.token.model import TokenRegistry
 from run4it.api.token.resource import Token
-from .helpers import get_response_json, register_and_login_confirmed_user, get_authorization_header
+from .helpers import (
+	get_response_json,
+	register_and_login_confirmed_user,
+	register_and_login_user_with_unfresh_token,
+	get_authorization_header)
 
 
 @pytest.mark.usefixtures('db')
@@ -32,6 +36,13 @@ class TestTokenResource:
 		assert(response_json["username"] == "tokenreader")
 		assert(response_json["revoked"] == False)
 		assert(response_json["expires"] is not None)
+
+	def test_get_token_with_unfresh_token(self, api, client):
+		unfresh_token = register_and_login_user_with_unfresh_token(api, client, "tokenreader", "token@reader.com", "passwd")
+		url = api.url_for(Token, token_id=3)
+		response = client.get(url, headers=get_authorization_header(unfresh_token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
 
 	def test_get_other_user_token(self, api, client):
 		new_token = TokenRegistry('12345', 'access', 'another_user', False, dt.datetime.now() + dt.timedelta(hours=1))
@@ -67,6 +78,14 @@ class TestTokenResource:
 		assert(response_json["messages"]["token"] is not None)
 		assert(TokenRegistry.get_by_id(1) is not None)
 		assert(TokenRegistry.get_by_id(2) is None) # should have been deleted
+
+	def test_delete_token_with_unfresh_token(self, api, client):
+		unfresh_token = register_and_login_user_with_unfresh_token(api, client, "tokenreader", "token@reader.com", "passwd")
+		url = api.url_for(Token, token_id=2)
+		response = client.delete(url, headers=get_authorization_header(unfresh_token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 401)
+		assert(response_json["errors"]["auth"] is not None)
 
 	def test_delete_other_user_token(self, api, client):
 		new_token = TokenRegistry('12345', 'access', 'another_user', False, dt.datetime.now() + dt.timedelta(hours=1))
@@ -123,6 +142,14 @@ class TestTokenResource:
 		assert(update_token.username == 'tokenreader')
 		assert(update_token.revoked == True)
 		assert(update_token.expires == dt.datetime(2001, 1, 2, 12, 11, 10, 9))
+
+	def test_update_token_with_unfresh_token(self, api, client):
+		unfresh_token = register_and_login_user_with_unfresh_token(api, client, "tokenreader", "token@reader.com", "passwd")
+		url = api.url_for(Token, token_id=2)
+		response = client.put(url, data={'revoked' : 'True'}, headers=get_authorization_header(unfresh_token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 401)
+		assert(response_json["errors"]["auth"] is not None)
 
 	def test_update_other_user_token(self, api, client):
 		new_token = TokenRegistry('12345', 'access', 'another_user', False, dt.datetime.now() + dt.timedelta(hours=1))

@@ -1897,6 +1897,83 @@
 					"response": []
 				},
 				{
+					"name": "LoginUserFresh",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b9f62c10-3245-41b3-bb33-e26073f8b36a",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Login OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Login response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.username).to.eql(\"confirm\");",
+									"    pm.expect(jsonData.email).to.eql(\"confirm@user.com\");",
+									"    pm.expect(jsonData.confirmed).to.eql(true);",
+									"    pm.expect(jsonData.accessToken).to.not.eql(\"\");",
+									"    pm.expect(jsonData.refreshToken).to.not.eql(jsonData.accessToken);",
+									"    pm.environment.set(\"userLoginAccessKey\", jsonData.accessToken);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5de7eb5b-bdbf-4bdc-aed7-d089df675911",
+								"exec": [
+									"pm.environment.unset(\"userLoginAccessKey\");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"email\": \"confirm@user.com\", \"password\": \"pwd\" }"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/loginFresh",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"loginFresh"
+							]
+						},
+						"description": "Post request to log in user because password is incorrect."
+					},
+					"response": []
+				},
+				{
 					"name": "GetTokens_NoToken",
 					"event": [
 						{
@@ -2038,16 +2115,19 @@
 									"",
 									"pm.test(\"GetTokens response\", function () { // sorted by type",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.length).to.equal(3)",
+									"    pm.expect(jsonData.length).to.equal(4)",
 									"    pm.expect(jsonData[0].tokenType).to.equal(\"access\")",
 									"    pm.expect(jsonData[0].username).to.equal(\"confirm\")",
 									"    pm.expect(jsonData[0].revoked).to.equal(false)",
 									"    pm.expect(jsonData[1].tokenType).to.equal(\"access\")",
 									"    pm.expect(jsonData[1].username).to.equal(\"confirm\")",
 									"    pm.expect(jsonData[1].revoked).to.equal(false)",
-									"    pm.expect(jsonData[2].tokenType).to.equal(\"refresh\")",
+									"    pm.expect(jsonData[2].tokenType).to.equal(\"access\")",
 									"    pm.expect(jsonData[2].username).to.equal(\"confirm\")",
 									"    pm.expect(jsonData[2].revoked).to.equal(false)",
+									"    pm.expect(jsonData[3].tokenType).to.equal(\"refresh\")",
+									"    pm.expect(jsonData[3].username).to.equal(\"confirm\")",
+									"    pm.expect(jsonData[3].revoked).to.equal(false)",
 									"});",
 									""
 								],

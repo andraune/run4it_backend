@@ -23,6 +23,10 @@ def jwt_missing_authorization_header(msg):
 def jwt_invalid_token_or_token_type(msg):
     report_error_and_abort(422, "auth", "Invalid token.")
 
+@jwt.needs_fresh_token_loader
+def jwt_fresh_token_required():
+    report_error_and_abort(401, "auth", "Fresh token required.")
+
 @jwt.expired_token_loader
 def jwt_expired_token_handler(expired_token):
 	report_error_and_abort(401, "auth", "Expired token.")
