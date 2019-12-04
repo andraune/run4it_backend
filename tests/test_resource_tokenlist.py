@@ -21,7 +21,7 @@ class TestTokenListResource:
 		assert(response_json["errors"]["auth"] is not None)
 
 	def test_get_tokens_logged_in(self, api, client):
-		token = register_and_login_confirmed_user(api, client, "tokenreader", "token@reader.com", "passwd")
+		token,_ = register_and_login_confirmed_user(api, client, "tokenreader", "token@reader.com", "passwd")
 		url = api.url_for(TokenList)
 		response = client.get(url, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
@@ -31,7 +31,7 @@ class TestTokenListResource:
 	def test_another_user_tokens_not_included(self, api, client):
 		new_token = TokenRegistry('12345', 'access', 'another_user', False, dt.datetime.now() + dt.timedelta(hours=1))
 		new_token.save()
-		token = register_and_login_confirmed_user(api, client, "tokenreader", "token@reader.com", "passwd")
+		token,_ = register_and_login_confirmed_user(api, client, "tokenreader", "token@reader.com", "passwd")
 		url = api.url_for(TokenList)
 		response = client.get(url, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)

@@ -4,10 +4,10 @@ from flask import jsonify
 from flask_restful import Resource
 from flask_apispec import marshal_with
 from webargs.flaskparser import use_kwargs
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import fresh_jwt_required, jwt_required, get_jwt_identity
 
 from run4it.app.database import db
-from run4it.api.exceptions import report_error_and_abort
+from run4it.api.templates import generate_message_response, report_error_and_abort
 from .model import TokenRegistry
 from .schema import token_schema, tokens_schema, token_update_schema
 
@@ -36,7 +36,7 @@ class Token(Resource):
 		return user_token
 
 	
-	@jwt_required
+	@fresh_jwt_required
 	@use_kwargs(token_update_schema)
 	@marshal_with(token_schema)
 	def put(self, token_id, revoked, **kwargs):
@@ -59,7 +59,7 @@ class Token(Resource):
 		return user_token
 
 
-	@jwt_required
+	@fresh_jwt_required
 	def delete(self, token_id, **kwargs):
 		auth_username = get_jwt_identity()
 		user_token = TokenRegistry.get_by_id(token_id)
@@ -76,4 +76,4 @@ class Token(Resource):
 			db.session.rollback()
 			report_error_and_abort(500, "profile", "Unable to delete profile")			
 
-		return {"message":"Token deleted."}
+		return generate_message_response(200, "token", "Token deleted.")

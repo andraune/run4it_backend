@@ -1,6 +1,6 @@
 import json
 from run4it.api.user.model import User
-from run4it.api.user.resource import Login
+from run4it.api.user.resource import Login, LoginRefresh
 from run4it.api.profile.model import Profile
 
 
@@ -21,6 +21,13 @@ def register_and_login_confirmed_user(testapi, testclient, username, email, pass
 	register_confirmed_user(username, email, password, height, weight, birth_date)
 	url = testapi.url_for(Login)
 	response = testclient.post(url, data={"email": email, "password": password })
+	response_json = get_response_json(response.data)
+	return response_json["accessToken"], response_json["refreshToken"]
+
+def register_and_login_user_with_unfresh_token(testapi, testclient, username, email, password, height=None, weight=None, birth_date=None):
+	accesstoken,refreshtoken = register_and_login_confirmed_user(testapi, testclient, username, email, password, height, weight, birth_date)
+	url = testapi.url_for(LoginRefresh)
+	response = testclient.post(url, headers=get_authorization_header(refreshtoken))
 	response_json = get_response_json(response.data)
 	return response_json["accessToken"]
 

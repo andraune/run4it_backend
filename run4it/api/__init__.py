@@ -1,6 +1,6 @@
 from webargs.flaskparser import use_kwargs, parser, abort
 from run4it.app.extensions import jwt
-from run4it.api.exceptions import report_error_and_abort
+from run4it.api.templates import report_error_and_abort
 from run4it.api.token.model import TokenRegistry
 
 
@@ -21,4 +21,16 @@ def jwt_missing_authorization_header(msg):
 
 @jwt.invalid_token_loader
 def jwt_invalid_token_or_token_type(msg):
-    report_error_and_abort(422, "auth", "Invalid token")
+    report_error_and_abort(422, "auth", "Invalid token.")
+
+@jwt.needs_fresh_token_loader
+def jwt_fresh_token_required():
+    report_error_and_abort(401, "auth", "Fresh token required.")
+
+@jwt.expired_token_loader
+def jwt_expired_token_handler(expired_token):
+	report_error_and_abort(401, "auth", "Expired token.")
+
+@jwt.revoked_token_loader
+def jwt_revoked_token_handler():
+	report_error_and_abort(401, "auth", "Revoked token.")

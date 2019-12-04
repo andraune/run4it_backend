@@ -8,7 +8,7 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
 
 from webargs.flaskparser import use_kwargs
 from run4it.app.database import db
-from run4it.api.exceptions import report_error_and_abort
+from run4it.api.templates import generate_message_response, report_error_and_abort
 from run4it.api.token.model import TokenRegistry
 from run4it.api.profile.model import Profile
 from .mail import mail_send_confirmation_code
@@ -95,11 +95,33 @@ class Login(Resource):
 		if not user.check_password(password):
 			report_error_and_abort(401, "login", "Login failed")
 		
-		user.access_token = create_access_token(identity=user.username)
+		user.access_token = create_access_token(identity=user.username, fresh=True)
 		user.refresh_token = create_refresh_token(identity=user.username)
 		TokenRegistry.add_token(user.access_token)
 		TokenRegistry.add_token(user.refresh_token)
 		return user, 200   
+
+
+class LoginFresh(Resource):
+	# Same as login, but no refresh token created.
+	# Used when we need to confirm user properly (before changing password etc.)
+	@use_kwargs(login_schema, error_status_code = 422)
+	@marshal_with(user_schema)
+	def post(self, email, password, **kwargs):
+		user = User.find_by_email(email)
+
+		if user is None:
+		   report_error_and_abort(401, "login", "Login failed") 
+
+		if not user.confirmed:
+			report_error_and_abort(401, "login", "Login failed")
+
+		if not user.check_password(password):
+			report_error_and_abort(401, "login", "Login failed")
+		
+		user.access_token = create_access_token(identity=user.username, fresh=True)
+		TokenRegistry.add_token(user.access_token)
+		return user, 200
 
 
 class LoginRefresh(Resource): 
@@ -112,15 +134,40 @@ class LoginRefresh(Resource):
 		if user is None:
 			report_error_and_abort(401, "refresh", "Login refresh failed")
 		
-		user.access_token = create_access_token(identity=user.username)
+		user.access_token = create_access_token(identity=user.username, fresh=False)
 		TokenRegistry.add_token(user.access_token)
 		return user, 200
 
+
 class Logout(Resource):
-	def post(self):
-		pass
+	@jwt_required
+	def delete(self):
+		jti = get_raw_jwt()["jti"]
+		token = TokenRegistry.find_by_jti(jti)
+
+		if token is not None:
+			try:
+				token.revoked = False
+				token.save()
+			except:
+				db.session.rollback()
+				report_error_and_abort(500, "logout", "Logout failed(1).")				
+
+		return generate_message_response(200, "logout", "Logged out.")	
 
 
 class LogoutRefresh(Resource):
-	def post(self):
-		pass
+	@jwt_refresh_token_required
+	def delete(self):
+		jti = get_raw_jwt()["jti"]
+		token = TokenRegistry.find_by_jti(jti)
+
+		if token is not None:
+			try:
+				token.revoked = False
+				token.save()
+			except:
+				db.session.rollback()
+				report_error_and_abort(500, "logout", "Logout failed(2).")				
+
+		return generate_message_response(200, "logout", "Logged out.")

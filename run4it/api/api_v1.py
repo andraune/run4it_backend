@@ -1,7 +1,7 @@
 """The api module, containing the API factory function."""
 from flask import Blueprint, Flask, current_app
 from flask_restful import Api, Resource
-from run4it.api.user.resource import (Register, Confirmation, Login, LoginRefresh,
+from run4it.api.user.resource import (Register, Confirmation, Login, LoginFresh, LoginRefresh,
 										Logout, LogoutRefresh)
 
 from run4it.api.token.resource import Token, TokenList
@@ -14,7 +14,7 @@ API_VERSION_STR = 'v{0}'.format(API_VERSION)
 
 class ApiVersion(Resource):
 	def get(self):
-		return { 'version': API_VERSION, 'env': current_app.config['ENV'], 'todo': 'Logout, LogoutRefresh' }
+		return { 'version': API_VERSION, 'env': current_app.config['ENV'], 'todo': 'Newman for Logout/LogoutRefresh/LoginFresh,TokenRevokeForFreshTokensOnly' }
 
 
 def create_api(app):
@@ -28,6 +28,7 @@ def create_api(app):
 	api.add_resource(Register, "/users")
 	api.add_resource(Confirmation, "/users/confirmation")
 	api.add_resource(Login, "/users/login")
+	api.add_resource(LoginFresh, "/users/loginFresh")
 	api.add_resource(LoginRefresh, "/users/loginRefresh")
 	api.add_resource(Logout, "/users/logout")
 	api.add_resource(LogoutRefresh, "/users/logoutRefresh")
