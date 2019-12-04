@@ -1,0 +1,133 @@
+import pytest
+from run4it.api.discipline import DisciplineModel, DisciplineListResource
+from .helpers import get_response_json
+
+@pytest.mark.usefixtures('db')
+class TestDisciplineResource:
+
+	def _create_disciplines(self, num, db):
+		i = 0
+		max = 100
+		while i < num and i < max:
+			disc = DisciplineModel("disc{}".format(i + 1), max - i)
+			disc.save(False)
+			i += 1
+		db.session.commit()
+
+	def test_disciplinelist_content_type_is_json(self, api, client):
+		url = api.url_for(DisciplineListResource)
+		response = client.get(url)
+		assert(response.headers["Content-Type"] == 'application/json')
+
+	def test_get_disciplinelist_no_data(self, api, client):
+		url = api.url_for(DisciplineListResource)
+		response = client.get(url)
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(len(response_json) == 0)		
+
+	def test_get_disciplinelist_with_data(self, api, client):
+		disc_1 = DisciplineModel("disc1", 1000, "user1")
+		disc_1.save()
+		
+		url = api.url_for(DisciplineListResource)
+		response = client.get(url)
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(len(response_json) == 1)	
+		assert(response_json[0]["id"] == 1)
+		assert(response_json[0]["length"] == 1000)
+		assert(response_json[0]["username"] == "user1")
+
+	def test_get_disciplinelist_with_data(self, api, client):
+		disc_1 = DisciplineModel("disc1", 1000, "user1")
+		disc_1.save()
+		url = api.url_for(DisciplineListResource)
+		response = client.get(url)
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(len(response_json) == 1)	
+		assert(response_json[0]["id"] == 1)
+		assert(response_json[0]["length"] == 1000)
+		assert(response_json[0]["username"] == "user1")
+
+	def test_create_discipines_helper(self, api, client, db):
+		self._create_disciplines(10, db)
+		assert(DisciplineModel.query.count() == 10)
+		disc_first = DisciplineModel.get_by_id(1)
+		disc_last = DisciplineModel.get_by_id(10)
+		assert(disc_first.name == "disc1")
+		assert(disc_first.length == 100)
+		assert(disc_last.name == "disc10")
+		assert(disc_last.length == 91)
+
+	def test_disciplinelist_ordered_by_length_ascending(self, api, client, db):
+		self._create_disciplines(10, db)
+		url = api.url_for(DisciplineListResource)
+		response = client.get(url)
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(len(response_json) == 10)
+		assert(response_json[0]["id"] == 10)
+		assert(response_json[0]["length"] == 91)
+		assert(response_json[1]["id"] == 9)
+		assert(response_json[1]["length"] == 92)
+		assert(response_json[9]["id"] == 1)
+		assert(response_json[9]["length"] == 100)
+
+	def test_disciplinelist_default_limit(self, api, client, db):
+		self._create_disciplines(21, db)
+		url = api.url_for(DisciplineListResource)
+		response = client.get(url)
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(len(response_json) == 20) # default limit 20
+
+	def test_disciplinelist_limit_param_large(self, api, client, db):
+		self._create_disciplines(30, db)
+		url = api.url_for(DisciplineListResource, limit=23)
+		response = client.get(url)
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(len(response_json) == 23) # default is 20
+
+	def test_disciplinelist_limit_param_small(self, api, client, db):
+		self._create_disciplines(10, db)
+		url = api.url_for(DisciplineListResource, limit=3)
+		response = client.get(url)
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(len(response_json) == 3)
+
+	def test_disciplinelist_pagination(self, api, client, db):
+		self._create_disciplines(10, db)
+		url = api.url_for(DisciplineListResource, limit=4, offset=0)
+		response_json1 = get_response_json(client.get(url).data)
+		url = api.url_for(DisciplineListResource, limit=4, offset=4)
+		response_json2 = get_response_json(client.get(url).data)
+		url = api.url_for(DisciplineListResource, limit=4, offset=8)
+		response_json3 = get_response_json(client.get(url).data)
+		assert(len(response_json1) == 4)
+		assert(len(response_json2) == 4)
+		assert(len(response_json3) == 2)
+		assert(response_json1[0]["id"] == 10)
+		assert(response_json1[3]["id"] == 7)
+		assert(response_json2[0]["id"] == 6)
+		assert(response_json2[3]["id"] == 3)
+		assert(response_json3[0]["id"] == 2)
+		assert(response_json3[1]["id"] == 1)
+
+	def test_post_disciplinelist_not_supported(self, api, client):
+		url = api.url_for(DisciplineListResource)
+		response = client.post(url)
+		assert(response.status_code == 405) # not allowed
+
+	def test_put_disciplinelist_not_supported(self, api, client):
+		url = api.url_for(DisciplineListResource)
+		response = client.put(url)
+		assert(response.status_code == 405) # not allowed
+
+	def test_delete_disciplinelist_not_supported(self, api, client):
+		url = api.url_for(DisciplineListResource)
+		response = client.delete(url)
+		assert(response.status_code == 405) # not allowed

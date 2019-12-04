@@ -5,7 +5,7 @@ from .extensions import jwt, db, migrate, mail
 from run4it.api.user import User, UserConfirmation
 from run4it.api.profile import Profile, ProfileWeightHistory
 from run4it.api.token import TokenRegistry
-from run4it.api.discipline import Discipline
+from run4it.api.discipline import DisciplineModel
 
 
 def create_app(config_object, app_name):
@@ -43,7 +43,7 @@ def register_shell_context(app):
             'Profile': Profile,
 			'ProfileWeightHistory': ProfileWeightHistory,
             'TokenRegistry': TokenRegistry,
-			'Discipline': Discipline
+			'Discipline': DisciplineModel
         }
 
     app.shell_context_processor(shell_context)
