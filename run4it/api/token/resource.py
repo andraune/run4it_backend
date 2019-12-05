@@ -37,7 +37,7 @@ class Token(Resource):
 
 	
 	@fresh_jwt_required
-	@use_kwargs(token_update_schema)
+	@use_kwargs(token_update_schema, error_status_code = 422)
 	@marshal_with(token_schema)
 	def put(self, token_id, revoked, **kwargs):
 		auth_username = get_jwt_identity()

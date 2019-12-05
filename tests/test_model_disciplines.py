@@ -37,6 +37,14 @@ class TestDisciplineModel:
 		disc.save()
 		assert(disc.username is None)
 
+	def test_discipline_find_by_name(self):
+		disc = DisciplineModel("10,000 m", 10000)
+		disc.save()
+		retrieved_disc = DisciplineModel.find_by_name("10,000 m")
+		no_disc = DisciplineModel.find_by_name("not_found")
+		assert(retrieved_disc.id == disc.id)
+		assert(no_disc is None)
+
 	def test_username_column_settings(self):
 		disc_username = DisciplineModel.username
 		user_username = User.username

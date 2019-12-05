@@ -1,6 +1,6 @@
 import pytest
 from run4it.api.discipline import DisciplineModel, DisciplineListResource
-from .helpers import get_response_json
+from .helpers import get_response_json, register_and_login_confirmed_user, get_authorization_header
 
 @pytest.mark.usefixtures('db')
 class TestDisciplineResource:
@@ -117,10 +117,57 @@ class TestDisciplineResource:
 		assert(response_json3[0]["id"] == 2)
 		assert(response_json3[1]["id"] == 1)
 
-	def test_post_disciplinelist_not_supported(self, api, client):
+	def test_post_discipline_not_logged_in(self, api, client):
 		url = api.url_for(DisciplineListResource)
 		response = client.post(url)
-		assert(response.status_code == 405) # not allowed
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 401)
+		assert(response_json["errors"]["auth"] is not None)
+
+	def test_post_disciplinelist_new_discipline(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
+		url = api.url_for(DisciplineListResource)
+		response = client.post(url, data={ "name":"new_disc", "length":1234 }, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(response_json["id"] == 1)
+		assert(response_json["name"] == "new_disc")
+		assert(response_json["length"] == 1234)
+		assert(response_json["username"] == "run4it")
+
+	def test_post_disciplinelist_new_discipline_duplicate_name(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
+		url = api.url_for(DisciplineListResource)
+		client.post(url, data={ "name":"new_disc", "length":1234 }, headers=get_authorization_header(token))
+		response = client.post(url, data={ "name":"new_disc", "length":12345 }, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 409)
+		assert(response_json["errors"]["discipline"] is not None)
+
+	def test_post_disciplinelist_new_discipline_invalid_name(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
+		url = api.url_for(DisciplineListResource)
+		response = client.post(url, data={ "name":"d", "length":1234 }, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 422)
+		assert(response_json["errors"]["name"] is not None)		
+
+	def test_post_disciplinelist_new_discipline_invalid_length(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
+		url = api.url_for(DisciplineListResource)
+		response = client.post(url, data={ "name":"disc", "length":0 }, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 422)
+		assert(response_json["errors"]["length"] is not None)
+
+	def test_post_disciplinelist_new_discipline_missing_params(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
+		url = api.url_for(DisciplineListResource)
+		response = client.post(url, data={}, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 422)
+		assert(response_json["errors"]["name"] is not None)
+		assert(response_json["errors"]["length"] is not None)
 
 	def test_put_disciplinelist_not_supported(self, api, client):
 		url = api.url_for(DisciplineListResource)

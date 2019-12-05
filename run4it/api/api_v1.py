@@ -6,7 +6,7 @@ from run4it.api.user.resource import (Register, Confirmation, Login, LoginFresh,
 
 from run4it.api.token.resource import Token, TokenList
 from run4it.api.profile.resource import Profile, ProfileWeight
-from run4it.api.discipline import DisciplineListResource
+from run4it.api.discipline import DisciplineResource, DisciplineListResource
 
 
 API_VERSION = 1
@@ -44,6 +44,7 @@ def create_api(app):
 
 	# Discipline resources
 	api.add_resource(DisciplineListResource, "/disciplines")
+	#api.add_resource(DisciplineResource, "/disciplines/<int:disc_id>")
 
 
 	app.register_blueprint(api_blueprint, url_prefix=api_blueprint_url_prefix)

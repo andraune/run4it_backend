@@ -14,8 +14,8 @@ class DisciplineSchema(Schema):
 
 class DisciplineUpdateSchema(Schema):
 	id = fields.Int(dump_only=True, required=True)
-	name = fields.Str(required=True, validate=[validate.Length(min=2, max=16)], error_messages={'required': 'Name is required.'})
-	length = fields.Int(required=True, validate=[validate.Length(min=1, max=999999)], error_messages={'required': 'Length is required.'})
+	name = fields.Str(required=True, validate=[validate.Length(min=2, max=128)], error_messages={'required': 'Name is required.'})
+	length = fields.Int(required=True, validate=[validate.Range(min=1, max=999999)], error_messages={'required': 'Length is required.'})
 	username = fields.Str(dump_only=True, required=True)
 
 	class Meta:
