@@ -1,4 +1,4 @@
-# Production reqs and additional reqs for developer
+# Development reqs and additional reqs for developer
 -r common.txt
 pytest==5.0.1
 python-dotenv==0.10.3

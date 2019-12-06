@@ -2,6 +2,8 @@ from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy, Model
 from flask_migrate import Migrate
 from flask_mail import Mail
+from flask_caching import Cache
+from flask_cors import CORS
 
 
 class CRUDMixin(Model):
@@ -37,3 +39,5 @@ jwt = JWTManager()
 db = SQLAlchemy(model_class=CRUDMixin)
 migrate = Migrate()
 mail = Mail()
+cache = Cache()
+cors = CORS()
