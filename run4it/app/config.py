@@ -23,6 +23,12 @@ class Config(object):
 	JWT_BLACKLIST_ENABLED = True
 	JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
 
+	CACHE_TYPE = 'simple'
+	CORS_ORIGIN_WHITELIST = [
+		'http://localhost:5000',
+		'http://0.0.0.0:5000'
+	]
+
 	# Define in sub-classes
 	#ENV = None
 	#DEBUG = False
