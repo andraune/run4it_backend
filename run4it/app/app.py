@@ -1,10 +1,11 @@
 """The app module, containing the app factory function."""
 from flask import Flask
-from . import commands
+from .commands import clean, init_test_data, tests
 from .extensions import jwt, db, migrate, mail
 from run4it.api.user import User, UserConfirmation
 from run4it.api.profile import Profile, ProfileWeightHistory
 from run4it.api.token import TokenRegistry
+from run4it.api.discipline import DisciplineModel
 
 
 def create_app(config_object, app_name):
@@ -26,9 +27,9 @@ def register_extensions(app):
     mail.init_app(app)
 
 def register_commands(app):
-    app.cli.add_command(commands.clean)
-    app.cli.add_command(commands.init_test_data)
-    app.cli.add_command(commands.tests)
+    app.cli.add_command(clean)
+    app.cli.add_command(init_test_data)
+    app.cli.add_command(tests)
 
 
 def register_shell_context(app):
@@ -41,7 +42,8 @@ def register_shell_context(app):
             'UserConfirmation': UserConfirmation,
             'Profile': Profile,
 			'ProfileWeightHistory': ProfileWeightHistory,
-            'TokenRegistry': TokenRegistry
+            'TokenRegistry': TokenRegistry,
+			'Discipline': DisciplineModel
         }
 
     app.shell_context_processor(shell_context)

@@ -48,6 +48,7 @@ def init_database_test_data():
 	from run4it.api.user import User, UserConfirmation # noqa
 	from run4it.api.profile import Profile, ProfileWeightHistory  # noqa
 	from run4it.api.token import TokenRegistry  # noqa
+	from run4it.api.discipline import DisciplineModel # noqa
 
 	# delete most stuff
 	rows = User.query.delete(False)
@@ -70,6 +71,10 @@ def init_database_test_data():
 	if rows > 0:
 		print('Deleted {0} rows from ProfileWeightHistory table'.format(rows))
 	
+	rows = DisciplineModel.query.delete(False)
+	if rows > 0:
+		print('Deleted {0} rows from Discipline table'.format(rows))
+
 	db.session.commit()
 
 	# create test items
@@ -77,18 +82,28 @@ def init_database_test_data():
 	profile = Profile(user)
 	user.save(commit=False)
 	profile.save(commit=False)
-	print("Added User '{0}'".format(user.username))
+	print("Added {0}".format(user))
 
 	user = User('confirm', 'confirm@user.com', 'pwd')
 	profile = Profile(user)
 	profile.set_weight(70.1)
 	user.save(commit=False)
 	profile.save(commit=False)
-	print("Added User '{0}'".format(user.username)) 
+	print("Added {0}".format(user)) 
 
 	confirmation = UserConfirmation('confirm', 'correct')
 	confirmation.save(commit=False)
-	print("Added UserConfirmation '{0} : {1}'".format(confirmation.username, confirmation.code))
+	print("Added {0}".format(confirmation))
+
+	discipline = DisciplineModel('10,000m', 10000)
+	discipline.save(commit=False)
+	print("Added {0}".format(discipline))
+	discipline = DisciplineModel('5,000m', 5000)
+	discipline.save(commit=False)
+	print("Added {0}".format(discipline))
+	discipline = DisciplineModel('1,500m', 1500)
+	discipline.save(commit=False)
+	print("Added {0}".format(discipline))
 
 	db.session.commit()
 	print('Application data initialized!')
