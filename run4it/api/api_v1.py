@@ -44,8 +44,7 @@ def create_api(app):
 
 	# Discipline resources
 	api.add_resource(DisciplineListResource, "/disciplines")
-	#api.add_resource(DisciplineResource, "/disciplines/<int:disc_id>")
-
+	api.add_resource(DisciplineResource, "/disciplines/<int:disc_id>")
 
 	app.register_blueprint(api_blueprint, url_prefix=api_blueprint_url_prefix)
 	return api

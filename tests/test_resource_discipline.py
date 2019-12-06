@@ -1,5 +1,5 @@
 import pytest
-from run4it.api.discipline import DisciplineModel, DisciplineListResource
+from run4it.api.discipline import DisciplineModel, DisciplineResource, DisciplineListResource
 from .helpers import get_response_json, register_and_login_confirmed_user, get_authorization_header
 
 @pytest.mark.usefixtures('db')
@@ -135,6 +135,12 @@ class TestDisciplineResource:
 		assert(response_json["length"] == 1234)
 		assert(response_json["username"] == "run4it")
 
+	def test_post_discipline_list_new_discipline_location_header(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
+		url = api.url_for(DisciplineListResource)
+		response = client.post(url, data={ "name":"new_disc", "length":1234 }, headers=get_authorization_header(token))
+		assert(response.headers["Location"] == api.url_for(DisciplineResource, disc_id=1, _external=True))		
+
 	def test_post_disciplinelist_new_discipline_duplicate_name(self, api, client):
 		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
 		url = api.url_for(DisciplineListResource)
@@ -176,5 +182,47 @@ class TestDisciplineResource:
 
 	def test_delete_disciplinelist_not_supported(self, api, client):
 		url = api.url_for(DisciplineListResource)
+		response = client.delete(url)
+		assert(response.status_code == 405) # not allowed
+
+	def test_get_discipline_doesnt_exist(self, api, client):
+		url = api.url_for(DisciplineResource, disc_id=1)
+		response = client.get(url)
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 404)
+		assert(response_json["errors"]["discipline"] is not None)
+
+	def test_get_discipline_invalid_id(self, api, client):
+		url = api.url_for(DisciplineResource, disc_id=-1)
+		response = client.get(url)
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 404)
+
+	def test_get_discipline_by_id(self, api, client, db):
+		self._create_disciplines(3, db)
+		url = api.url_for(DisciplineResource, disc_id=2)
+		response = client.get(url)
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(response_json["id"] == 2)
+		assert(response_json["name"] == "disc2")
+
+
+# PUT: Requires login, can only edit own disciplines
+
+
+
+	def test_put_discipline_not_supported(self, api, client):
+		url = api.url_for(DisciplineResource, disc_id=1)
+		response = client.put(url)
+		assert(response.status_code == 405) # not allowed
+
+	def test_post_discipline_not_supported(self, api, client):
+		url = api.url_for(DisciplineResource, disc_id=1)
+		response = client.post(url)
+		assert(response.status_code == 405) # not allowed
+
+	def test_delete_disciplinelist_not_supported(self, api, client):
+		url = api.url_for(DisciplineResource, disc_id=1)
 		response = client.delete(url)
 		assert(response.status_code == 405) # not allowed

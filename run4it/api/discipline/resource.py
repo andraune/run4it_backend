@@ -1,4 +1,4 @@
-from flask_restful import Resource
+from flask_restful import request, Resource
 from flask_apispec import marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from webargs.flaskparser import use_kwargs
@@ -6,7 +6,6 @@ from run4it.app.database import db
 from run4it.api.templates import report_error_and_abort
 from .model import Discipline as DisciplineModel
 from .schema import discipline_schema, disciplines_schema, discipline_update_schema
-
 
 class DisciplineList(Resource):
 	@use_kwargs(discipline_schema, locations={"query"})
@@ -33,10 +32,17 @@ class DisciplineList(Resource):
 			db.session.rollback()
 			report_error_and_abort(500, "discipline", "Unable to create discipline.")
 
-		return new_discipline
+		return new_discipline, 200, {'Location': '{}/{}'.format(request.path, new_discipline.id)}
 
 
 class Discipline(Resource):
-	pass
-	
+	@marshal_with(discipline_schema)
+	def get(self, disc_id, **kwargs):
+		discipline = DisciplineModel.get_by_id(disc_id)
+
+		if discipline is None:
+			report_error_and_abort(404, "discipline", "Discipline not found.")
+
+		return discipline
+
 
