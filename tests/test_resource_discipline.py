@@ -207,15 +207,64 @@ class TestDisciplineResource:
 		assert(response_json["id"] == 2)
 		assert(response_json["name"] == "disc2")
 
-
-# PUT: Requires login, can only edit own disciplines
-
-
-
-	def test_put_discipline_not_supported(self, api, client):
+	def test_update_discipline_not_logged_in(self, api, client):
 		url = api.url_for(DisciplineResource, disc_id=1)
 		response = client.put(url)
-		assert(response.status_code == 405) # not allowed
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 401)
+		assert(response_json["errors"]["auth"] is not None)		
+
+	def test_update_discipline(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
+		disc = DisciplineModel("disc1", 1000, "run4it")
+		disc.save()
+		url = api.url_for(DisciplineResource, disc_id=1)
+		response = client.put(url, data={'name':'new_name','length':999}, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(response_json["name"] == "new_name")
+		assert(response_json["length"] == 999)
+		assert(response_json["username"] == "run4it")
+
+	def test_update_discipline_other_user(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
+		disc = DisciplineModel("disc1", 1000, "other")
+		disc.save()
+		url = api.url_for(DisciplineResource, disc_id=1)
+		response = client.put(url, data={'name':'new_name','length':999}, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 403)
+		assert(response_json["errors"]["discipline"] is not None)
+
+	def test_update_discipline_not_found(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
+		url = api.url_for(DisciplineResource, disc_id=1)
+		response = client.put(url, data={'name':'new_name','length':999}, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 404)
+		assert(response_json["errors"]["discipline"] is not None)
+
+	def test_update_discipline_missing_params(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
+		disc = DisciplineModel("disc1", 1000, "run4it")
+		disc.save()
+		url = api.url_for(DisciplineResource, disc_id=1)
+		response = client.put(url, data={}, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 422)
+		assert(response_json["errors"]["name"] is not None)
+		assert(response_json["errors"]["length"] is not None)
+
+	def test_update_discipline_invalid_params(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
+		disc = DisciplineModel("disc1", 1000, "run4it")
+		disc.save()
+		url = api.url_for(DisciplineResource, disc_id=1)
+		response = client.put(url, data={"name":"","length":99999999}, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 422)
+		assert(response_json["errors"]["name"] is not None)
+		assert(response_json["errors"]["length"] is not None)
 
 	def test_post_discipline_not_supported(self, api, client):
 		url = api.url_for(DisciplineResource, disc_id=1)

@@ -45,4 +45,27 @@ class Discipline(Resource):
 
 		return discipline
 
+	@jwt_required
+	@use_kwargs(discipline_update_schema, error_status_code = 422)
+	@marshal_with(discipline_schema)
+	def put(self, disc_id, name, length, **kwargs):
+		auth_username = get_jwt_identity()
+
+		discipline = DisciplineModel.get_by_id(disc_id)
+
+		if discipline is None:
+			report_error_and_abort(404, "discipline", "Discipline not found.")
+		
+		if discipline.username != auth_username:
+			report_error_and_abort(403, "discipline", "Cannot update other user's token.")
+
+		try:
+			discipline.name = name
+			discipline.length = length
+			discipline.save()
+		except:
+			db.session.rollback()
+			report_error_and_abort(500, "discipline", "Unable to update discipline.")
+		
+		return discipline
 
