@@ -1,5 +1,7 @@
 # run4it_backend
 
+[![CircleCI](https://circleci.com/gh/andraune/run4it_backend.svg?style=svg)](https://circleci.com/gh/andraune/run4it_backend)
+
 flask db init
 
 flask db migrate
