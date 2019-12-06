@@ -7,10 +7,10 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.6.1
-          environment:
-            FLASK_APP: run4it_backend.py
-            FLASK_DEBUG: 1
-            FLASK_ENV: development
+        environment:
+          FLASK_APP: run4it_backend.py
+          FLASK_DEBUG: 1
+          FLASK_ENV: development
 
     working_directory: ~/repo
 
