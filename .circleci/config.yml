@@ -41,7 +41,7 @@ jobs:
           name: run unittests
           command: |
             . flaskenv/bin/activate
-            python tests
+            flask tests
 
       - store_artifacts:
           path: test-reports
