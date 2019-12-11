@@ -14,6 +14,7 @@ def get_environment_config():
 
 class Config(object):
 	"""Base Configuration (abstract)"""
+	PROPAGATE_EXCEPTIONS = True
 	ENV = "undefined"
 	APP_DIR = os.path.abspath(os.path.dirname(__file__))  # This directory
 	PROJECT_ROOT = os.path.abspath(os.path.join(APP_DIR, os.pardir)) # Parent, i.e. 'run4it'
