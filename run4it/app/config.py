@@ -26,8 +26,10 @@ class Config(object):
 
 	CACHE_TYPE = 'simple'
 	CORS_ORIGIN_WHITELIST = [
-		'http://localhost:5000',
-		'http://0.0.0.0:5000'
+		'http://localhost:4200',
+		'http://127.0.0.1:4200',
+		'http://10.0.0.117:4200',
+		'http://0.0.0.0:4200'
 	]
 
 	# Define in sub-classes
