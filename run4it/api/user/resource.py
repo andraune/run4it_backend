@@ -16,6 +16,18 @@ from .model import User, UserConfirmation
 from .schema import user_schema, confirmation_schema, login_schema
 
 
+class UserResource(Resource):
+	@jwt_required
+	@marshal_with(user_schema)
+	def get(self, **kwargs):
+		auth_username = get_jwt_identity()
+		user = User.find_by_username(auth_username)
+
+		if user is None: # should not be possible as we are auth'ed
+			report_error_and_abort(422, "user", "User not found")
+		
+		return user
+
 class Register(Resource):
 	@use_kwargs(user_schema, error_status_code = 422)
 	@marshal_with(user_schema)
@@ -94,7 +106,7 @@ class Login(Resource):
 
 		if not user.check_password(password):
 			report_error_and_abort(401, "login", "Login failed")
-		
+			
 		user.access_token = create_access_token(identity=user.username, fresh=True)
 		user.refresh_token = create_refresh_token(identity=user.username)
 		TokenRegistry.add_token(user.access_token)
