@@ -66,18 +66,18 @@ class Confirmation(Resource):
 		user = User.find_by_username(username)
 
 		if not user:
-			report_error_and_abort(422, "confirmation", "Confirmation failed(1)")
+			report_error_and_abort(422, "confirmation", "Confirmation failed.")
 		
 		confirmation = UserConfirmation.find_by_username(username)
 		
 		if not confirmation:
-			report_error_and_abort(422, "confirmation", "Confirmation failed(2)")
+			report_error_and_abort(422, "confirmation", "Confirmation failed.")
 
 		if not confirmation.check_code(confirmation_code):
-			report_error_and_abort(422, "confirmation", "Confirmation failed(3)")
+			report_error_and_abort(422, "confirmation", "Confirmation failed (invalid code)")
 
 		if not confirmation.check_expiration(self.CONFIRMATION_CODE_EXPIRY_S):
-			report_error_and_abort(422, "confirmation", "Confirmation failed(4)")
+			report_error_and_abort(422, "confirmation", "Confirmation failed (activation code expired)")
 
 		# If we reach here we have a valid user and confirmation code
 		try:
