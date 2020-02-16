@@ -78,7 +78,14 @@ def init_database_test_data():
 	db.session.commit()
 
 	# create test items
-	user = User('existing', 'existing@user.com', 'pwd')
+	user = User('existing', 'existing@user.com', 'pwd') #not confirmed
+	profile = Profile(user)
+	user.save(commit=False)
+	profile.save(commit=False)
+	print("Added {0}".format(user))
+
+	user = User('active', 'active@user.com', 'pwd')
+	user.confirmed = True
 	profile = Profile(user)
 	user.save(commit=False)
 	profile.save(commit=False)

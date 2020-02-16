@@ -16,6 +16,18 @@ from .model import User, UserConfirmation
 from .schema import user_schema, confirmation_schema, login_schema
 
 
+class UserResource(Resource):
+	@jwt_required
+	@marshal_with(user_schema)
+	def get(self, **kwargs):
+		auth_username = get_jwt_identity()
+		user = User.find_by_username(auth_username)
+
+		if user is None: # should not be possible as we are auth'ed
+			report_error_and_abort(422, "user", "User not found")
+		
+		return user
+
 class Register(Resource):
 	@use_kwargs(user_schema, error_status_code = 422)
 	@marshal_with(user_schema)
@@ -54,18 +66,18 @@ class Confirmation(Resource):
 		user = User.find_by_username(username)
 
 		if not user:
-			report_error_and_abort(422, "confirmation", "Confirmation failed(1)")
+			report_error_and_abort(422, "confirmation", "Confirmation failed.")
 		
 		confirmation = UserConfirmation.find_by_username(username)
 		
 		if not confirmation:
-			report_error_and_abort(422, "confirmation", "Confirmation failed(2)")
+			report_error_and_abort(422, "confirmation", "Confirmation failed.")
 
 		if not confirmation.check_code(confirmation_code):
-			report_error_and_abort(422, "confirmation", "Confirmation failed(3)")
+			report_error_and_abort(422, "confirmation", "Confirmation failed (invalid code)")
 
 		if not confirmation.check_expiration(self.CONFIRMATION_CODE_EXPIRY_S):
-			report_error_and_abort(422, "confirmation", "Confirmation failed(4)")
+			report_error_and_abort(422, "confirmation", "Confirmation failed (activation code expired)")
 
 		# If we reach here we have a valid user and confirmation code
 		try:
@@ -94,7 +106,7 @@ class Login(Resource):
 
 		if not user.check_password(password):
 			report_error_and_abort(401, "login", "Login failed")
-		
+			
 		user.access_token = create_access_token(identity=user.username, fresh=True)
 		user.refresh_token = create_refresh_token(identity=user.username)
 		TokenRegistry.add_token(user.access_token)

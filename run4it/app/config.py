@@ -26,8 +26,9 @@ class Config(object):
 
 	CACHE_TYPE = 'simple'
 	CORS_ORIGIN_WHITELIST = [
-		'http://localhost:5000',
-		'http://0.0.0.0:5000'
+		'http://localhost:4200',
+		'http://127.0.0.1:4200',
+		'http://10.0.0.117:4200',
 	]
 
 	# Define in sub-classes
@@ -67,6 +68,13 @@ class ProductionConfig(Config):
 	SECRET_KEY = os.environ.get("RUN4IT_SECRET_KEY", "very-secret")
 	JWT_SECRET_KEY = os.environ.get("RUN4IT_JWT_SECRET_KEY", "very-secreterer")
 	SQLALCHEMY_DATABASE_URI = os.environ.get("RUN4IT_DB_URL", "postgresql://run4it:run4it@localhost/run4it")
+
+	CORS_ORIGIN_WHITELIST = [
+		'https://localhost:4200',
+		'https://127.0.0.1:4200'
+		'https://run4it.jonnytech.net'
+	]
+
 	MAIL_SERVER = "smtp.fastmail.com"
 	MAIL_PORT = 587
 	MAIL_USE_TLS = True

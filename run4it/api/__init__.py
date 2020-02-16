@@ -1,3 +1,4 @@
+from flask import jsonify
 from webargs.flaskparser import use_kwargs, parser, abort
 from run4it.app.extensions import jwt
 from run4it.api.templates import report_error_and_abort
@@ -17,20 +18,21 @@ def jwt_check_if_token_is_blacklisted(decoded_token):
 
 @jwt.unauthorized_loader
 def jwt_missing_authorization_header(msg):
-    report_error_and_abort(401, "auth", msg)
+    return jsonify({'errors': {'auth':[msg]}}), 401
 
 @jwt.invalid_token_loader
 def jwt_invalid_token_or_token_type(msg):
-    report_error_and_abort(422, "auth", "Invalid token.")
+    return jsonify({'errors': {'auth':['Invalid token.']}}), 422
 
 @jwt.needs_fresh_token_loader
 def jwt_fresh_token_required():
-    report_error_and_abort(401, "auth", "Fresh token required.")
+    return jsonify({'errors': {'auth':['Fresh token required.']}}), 401
 
 @jwt.expired_token_loader
 def jwt_expired_token_handler(expired_token):
-	report_error_and_abort(401, "auth", "Expired token.")
+	return jsonify({'errors': {'auth':['Expired token.']}}), 401
 
 @jwt.revoked_token_loader
 def jwt_revoked_token_handler():
-	report_error_and_abort(401, "auth", "Revoked token.")
+	return jsonify({'errors': {'auth':['Revoked token.']}}), 401
+
