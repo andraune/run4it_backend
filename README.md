@@ -28,6 +28,8 @@ In order to create database tables and create inital migration:
 	flask db migrate
 	flask db upgrade
 
+When making database changes, create migration scripts and upgrade using 'migrate' and 'upgrade'. Only 'upgrade' must be used after pulling new migration scripts.
+
 Repeat the last two commands to update database when models have been added or modified. To run the web application, use:
 
 	flask run
@@ -39,7 +41,7 @@ Run unit tests:
 Other useful commands defined in app:
 
 	flask clean
-	flask init-test-data	// init_test_data in Windows
+	flask init-test-data	// init_test_data in some Python versions
 	flask shell
 	init_and_test.bat		// run tests with newman, Windows
 	./init_and_test.sh		// run tests with newman, Linux

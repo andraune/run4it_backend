@@ -1,3 +1,3 @@
 @echo off
-flask init_test_data
+flask init-test-data
 newman run newman/collection.json -e newman/environment.json
