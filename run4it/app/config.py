@@ -71,7 +71,7 @@ class ProductionConfig(Config):
 
 	CORS_ORIGIN_WHITELIST = [
 		'https://localhost:4200',
-		'https://127.0.0.1:4200'
+		'https://127.0.0.1:4200',
 		'https://run4it.jonnytech.net'
 	]
 
