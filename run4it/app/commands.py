@@ -84,9 +84,12 @@ def init_database_test_data():
 	profile.save(commit=False)
 	print("Added {0}".format(user))
 
-	user = User('active', 'active@user.com', 'pwd')
+	user = User('JonnyIT', 'active@user.com', 'pwd')
 	user.confirmed = True
 	profile = Profile(user)
+	profile.set_weight(79.1)
+	profile.set_height(176)
+	profile.set_birth_date(1979, 5, 1)
 	user.save(commit=False)
 	profile.save(commit=False)
 	print("Added {0}".format(user))
