@@ -1404,6 +1404,55 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GetUser_AfterLogin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7c74f1b1-9387-4837-9cd6-7a851b452afb",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"GetUser OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"GetUser response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.username).to.equal(\"confirm\")",
+									"    pm.expect(jsonData.accessToken).to.equal(\"\")",
+									"    pm.expect(jsonData.refreshToken).to.equal(\"\")",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/user",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"description": "Requests related to user login",
