@@ -1,6 +1,9 @@
 import datetime as dt
+from run4it.api.goal import GoalModel
 from run4it.app.database import (
 	Column, SurrogatePK, TimestampedModel, Model, db, reference_col, relationship)
+
+from sqlalchemy import and_
 
 
 
@@ -22,6 +25,19 @@ class Profile(SurrogatePK, TimestampedModel):
 	def __init__(self, user, weights=[], **kwargs):
 		db.Model.__init__(self, user=user, weights=weights, **kwargs)
 
+	@property
+	def username(self):
+		return self.user.username
+
+	def get_active_goals(self, timestamp=dt.datetime.utcnow()):
+		return self.goals.filter(and_(GoalModel.start_at <= timestamp), (GoalModel.end_at >= timestamp)).order_by(GoalModel.end_at.asc()).all()
+
+	def get_expired_goals(self, timestamp=dt.datetime.utcnow()):
+		return self.goals.filter(GoalModel.end_at <= timestamp).order_by(GoalModel.end_at.desc()).all()
+
+	def get_future_goals(self, timestamp=dt.datetime.utcnow()):
+		return self.goals.filter(GoalModel.start_at > timestamp).order_by(GoalModel.start_at.asc()).all()
+
 	def set_height(self, height):
 		if height > 0:
 			self.height = height
@@ -39,10 +55,6 @@ class Profile(SurrogatePK, TimestampedModel):
 
 	def set_birth_date(self, year, month, day):
 		self.birth_date = dt.date(year, month, day)
-
-	@property
-	def username(self):
-		return self.user.username
 
 	def __repr__(self):
 		return '<UserProfile({username!r})>'.format(username=self.username)
