@@ -2,10 +2,12 @@
 from flask import Flask
 from .commands import clean, init_test_data, tests
 from .extensions import jwt, db, migrate, mail, cache, cors
-from run4it.api.user import User, UserConfirmation
+from run4it.api.discipline import DisciplineModel
+from run4it.api.goal import GoalModel, GoalCategoryModel
 from run4it.api.profile import Profile, ProfileWeightHistory
 from run4it.api.token import TokenRegistry
-from run4it.api.discipline import DisciplineModel
+from run4it.api.user import User, UserConfirmation
+
 
 
 def create_app(config_object, app_name):
@@ -40,12 +42,14 @@ def register_shell_context(app):
 		"""Shell context objects."""
 		return {
 			'db': db,
-			'User': User,
-			'UserConfirmation': UserConfirmation,
+			'Discipline': DisciplineModel,
+			'Goal': GoalModel,
+			'GoalCategory': GoalCategoryModel,
 			'Profile': Profile,
 			'ProfileWeightHistory': ProfileWeightHistory,
 			'TokenRegistry': TokenRegistry,
-			'Discipline': DisciplineModel
+			'User': User,
+			'UserConfirmation': UserConfirmation		
 		}
 
 	app.shell_context_processor(shell_context)

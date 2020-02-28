@@ -1,5 +1,6 @@
 """Click commands"""
-import click, os
+import click, os, datetime as dt
+from calendar import monthrange
 from flask import current_app
 from flask.cli import with_appcontext
 
@@ -49,6 +50,7 @@ def init_database_test_data():
 	from run4it.api.profile import Profile, ProfileWeightHistory  # noqa
 	from run4it.api.token import TokenRegistry  # noqa
 	from run4it.api.discipline import DisciplineModel # noqa
+	from run4it.api.goal import GoalModel, GoalCategoryModel # noqa
 
 	# delete most stuff
 	rows = User.query.delete(False)
@@ -74,6 +76,14 @@ def init_database_test_data():
 	rows = DisciplineModel.query.delete(False)
 	if rows > 0:
 		print('Deleted {0} rows from Discipline table'.format(rows))
+	
+	rows = GoalModel.query.delete(False)
+	if rows > 0:
+		print('Deleted {0} rows from Goal table'.format(rows))	
+
+	rows = GoalCategoryModel.query.delete(False)
+	if rows > 0:
+		print('Deleted {0} rows from GoalCategory table'.format(rows))
 
 	db.session.commit()
 
@@ -114,6 +124,36 @@ def init_database_test_data():
 	discipline = DisciplineModel('1,500m', 1500)
 	discipline.save(commit=False)
 	print("Added {0}".format(discipline))
+
+	goalcat1 = GoalCategoryModel('DistanceRun')
+	goalcat1.save(commit=False)
+	print("Added {0}".format(goalcat1))
+	goalcat2 = GoalCategoryModel('WeightTarget')
+	goalcat2.save(commit=False)
+	print("Added {0}".format(goalcat2))
+	db.session.commit()
+
+	now = dt.datetime.utcnow()
+	this_month_first = dt.datetime(now.year, now.month, 1)
+	next_month_first = this_month_first + dt.timedelta(days=monthrange(this_month_first.year, this_month_first.month)[1])
+	last_day_prev_month = this_month_first + dt.timedelta(days=-1)
+	prev_month_first = this_month_first + dt.timedelta(days=-monthrange(last_day_prev_month.year, last_day_prev_month.month)[1])
+	prev_monday = now + dt.timedelta(days=-now.weekday())
+	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat1, next_month_first, next_month_first + dt.timedelta(days=monthrange(next_month_first.year, next_month_first.month)[1]), 0, 100, 0)
+	goal.save(commit=False)
+	print("Added {0}".format(goal))
+	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat2, prev_monday, prev_monday + dt.timedelta(days=7), 79, 76, 75)
+	goal.save(commit=False)
+	print("Added {0}".format(goal))
+	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat1, this_month_first, next_month_first, 0, 100, 102)
+	goal.save(commit=False)
+	print("Added {0}".format(goal))
+	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat1, prev_month_first, this_month_first, 0, 100, 98)
+	goal.save(commit=False)
+	print("Added {0}".format(goal))
+	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat2, prev_month_first, this_month_first, 82, 80, 79)
+	goal.save(commit=False)
+	print("Added {0}".format(goal))
 
 	db.session.commit()
 	print('Application data initialized!')

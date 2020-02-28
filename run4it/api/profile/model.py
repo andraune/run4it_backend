@@ -16,7 +16,8 @@ class Profile(SurrogatePK, TimestampedModel):
 
 	user_id = reference_col('users', unique=True, nullable=False, index=True)
 	user = relationship('User', backref=db.backref('profile', uselist=False))
-	weights = relationship('ProfileWeightHistory', backref='profile', lazy='dynamic')
+	weights = relationship('ProfileWeightHistory', lazy='dynamic')
+	goals = relationship('Goal', lazy='dynamic')
 
 	def __init__(self, user, weights=[], **kwargs):
 		db.Model.__init__(self, user=user, weights=weights, **kwargs)
