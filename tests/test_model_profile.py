@@ -147,9 +147,9 @@ class TestProfileModel:
 		previous_start_at = dt.datetime.utcnow() + dt.timedelta(days=-5)
 		current_start_at = dt.datetime.utcnow() + dt.timedelta(days=-2)
 		later_start_at = dt.datetime.utcnow() + dt.timedelta(days=1)
-		GoalModel(profile.id, goal_cat, current_start_at, current_start_at + dt.timedelta(days=4)).save()
-		GoalModel(profile.id, goal_cat, later_start_at, later_start_at + dt.timedelta(days=4)).save()
-		GoalModel(profile.id, goal_cat, previous_start_at, previous_start_at + dt.timedelta(days=4)).save()
+		GoalModel(profile.id, goal_cat, current_start_at, current_start_at + dt.timedelta(days=4), 0, 10, 11).save() # completed but still active positive-going
+		GoalModel(profile.id, goal_cat, later_start_at, later_start_at + dt.timedelta(days=4), 0, 10, 0).save() # not completed, future
+		GoalModel(profile.id, goal_cat, previous_start_at, previous_start_at + dt.timedelta(days=4), 0, 5, 4).save() # not completed, pos.going
 		return profile
 
 	def test_init_profile_with_goals(self):
@@ -176,7 +176,7 @@ class TestProfileModel:
 		profile = self._init_profile_with_goals()
 		adjusted_now = dt.datetime.utcnow() + dt.timedelta(days=10)
 		cat = GoalCategoryModel('new').save()
-		GoalModel(profile.id, cat, start_at=adjusted_now + dt.timedelta(days=-20), end_at=adjusted_now + dt.timedelta(days=-1)).save()
+		GoalModel(profile.id, cat, adjusted_now + dt.timedelta(days=-20), adjusted_now + dt.timedelta(days=-1)).save()
 		goals = profile.get_expired_goals(adjusted_now)
 		assert(len(goals) == 4)
 		assert(goals[0].end_at > goals[1].end_at > goals[2].end_at > goals[3].end_at)
@@ -186,7 +186,33 @@ class TestProfileModel:
 		profile = self._init_profile_with_goals()
 		adjusted_now = dt.datetime.utcnow() + dt.timedelta(days=-10)
 		cat = GoalCategoryModel('new').save()
-		GoalModel(profile.id, cat, start_at=adjusted_now + dt.timedelta(days=1), end_at=adjusted_now + dt.timedelta(days=20)).save()
+		GoalModel(profile.id, cat, adjusted_now + dt.timedelta(days=1), adjusted_now + dt.timedelta(days=20)).save()
 		goals = profile.get_future_goals(adjusted_now)
 		assert(len(goals) == 4)
 		assert(goals[0].start_at < goals[1].start_at < goals[2].start_at < goals[3].start_at)
+
+	def test_get_completed_goals(self):
+		# sorted with most recently ended first
+		profile = self._init_profile_with_goals()
+		cat = GoalCategoryModel('new').save()
+		start_at = dt.datetime.utcnow() + dt.timedelta(days=-5)
+		GoalModel(profile.id, cat, start_at, start_at + dt.timedelta(days=2), 10, 2, 2).save() # completed, negative-going
+		GoalModel(profile.id, cat, start_at, start_at + dt.timedelta(days=3), 2, 10, 11).save() # completed, positive-going
+		GoalModel(profile.id, cat, start_at + dt.timedelta(days=6), start_at + dt.timedelta(days=8), 10, 2, 2).save() # completed per se, but in future
+		goals = profile.get_completed_goals()
+		assert(len(goals) == 2)
+		assert(goals[0].end_at > goals[1].end_at)
+		assert(goals[0].id == 5)
+		assert(goals[1].id == 4)
+
+	def test_get_incompleted_goals(self):
+		# sorted with most recently ended first
+		profile = self._init_profile_with_goals()
+		cat = GoalCategoryModel('new').save()
+		start_at = dt.datetime.utcnow() + dt.timedelta(days=-5)
+		GoalModel(profile.id, cat, start_at, start_at + dt.timedelta(days=2), 10, 2, 3).save() # not completed, positive-going
+		goals = profile.get_incompleted_goals()
+		assert(len(goals) == 2)
+		assert(goals[0].end_at > goals[1].end_at)
+		assert(goals[0].id == 3)
+		assert(goals[1].id == 4)

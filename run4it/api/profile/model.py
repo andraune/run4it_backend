@@ -3,7 +3,7 @@ from run4it.api.goal import GoalModel
 from run4it.app.database import (
 	Column, SurrogatePK, TimestampedModel, Model, db, reference_col, relationship)
 
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 
 
 
@@ -37,6 +37,20 @@ class Profile(SurrogatePK, TimestampedModel):
 
 	def get_future_goals(self, timestamp=dt.datetime.utcnow()):
 		return self.goals.filter(GoalModel.start_at > timestamp).order_by(GoalModel.start_at.asc()).all()
+
+	def get_completed_goals(self, timestamp=dt.datetime.utcnow()):
+		return self.goals.filter(
+			GoalModel.end_at <= timestamp,
+			or_(and_(GoalModel.start_value < GoalModel.target_value, GoalModel.current_value >= GoalModel.target_value),
+				and_(GoalModel.start_value > GoalModel.target_value, GoalModel.current_value <= GoalModel.target_value))
+			).order_by(GoalModel.end_at.desc()).all()
+
+	def get_incompleted_goals(self, timestamp=dt.datetime.utcnow()):
+		return self.goals.filter(
+			GoalModel.end_at <= timestamp,
+			or_(and_(GoalModel.start_value < GoalModel.target_value, GoalModel.current_value < GoalModel.target_value),
+				and_(GoalModel.start_value > GoalModel.target_value, GoalModel.current_value > GoalModel.target_value))
+			).order_by(GoalModel.end_at.desc()).all()
 
 	def set_height(self, height):
 		if height > 0:
