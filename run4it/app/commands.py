@@ -139,15 +139,21 @@ def init_database_test_data():
 	last_day_prev_month = this_month_first + dt.timedelta(days=-1)
 	prev_month_first = this_month_first + dt.timedelta(days=-monthrange(last_day_prev_month.year, last_day_prev_month.month)[1])
 	prev_monday = now + dt.timedelta(days=-now.weekday())
+
+	# future goal
 	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat1, next_month_first, next_month_first + dt.timedelta(days=monthrange(next_month_first.year, next_month_first.month)[1]), 0, 100, 0)
 	goal.save(commit=False)
 	print("Added {0}".format(goal))
+
+	# active goals
 	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat2, prev_monday, prev_monday + dt.timedelta(days=7), 79, 76, 75)
 	goal.save(commit=False)
 	print("Added {0}".format(goal))
 	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat1, this_month_first, next_month_first, 0, 100, 102)
 	goal.save(commit=False)
 	print("Added {0}".format(goal))
+
+	# expired goals
 	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat1, prev_month_first, this_month_first, 0, 100, 98)
 	goal.save(commit=False)
 	print("Added {0}".format(goal))
