@@ -10,7 +10,7 @@ class GoalSchema(Schema):
 	startValue = fields.Float(attribute='start_value', dump_only=True, required=True)
 	targetValue = fields.Float(attribute='target_value', dump_only=True, required=True)
 	currentValue = fields.Float(attribute='current_value', dump_only=True, required=True)
-	category= fields.Str(attribute='category_name', dump_only=True, required=True)
+	categoryName = fields.Str(attribute='category_name', dump_only=True, required=True)
 
 	class Meta:
 		strict = True

@@ -105,4 +105,4 @@ class TestProfileGoalListResource:
 		response = client.get(url, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 200)	
-		assert(response_json[0]['category'] == 'RunDistance')
+		assert(response_json[0]['categoryName'] == 'RunDistance')
