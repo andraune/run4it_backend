@@ -73,7 +73,6 @@ class Profile(SurrogatePK, TimestampedModel):
 	def __repr__(self):
 		return '<UserProfile({username!r})>'.format(username=self.username)
 
-
 class ProfileWeightHistory(SurrogatePK, Model):
 	__tablename__ = 'profile_weight_history'
 

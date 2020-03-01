@@ -27,10 +27,6 @@ class Goal(SurrogatePK, db.Model):
 
 	def __init__(self, profile_id, category, start_at=dt.datetime.utcnow(), end_at=dt.datetime.utcnow()+dt.timedelta(days=1), start_value=0, target_value=0, current_value=0):
 		db.Model.__init__(self, profile_id=profile_id, category=category, start_at=start_at, end_at=end_at, start_value=start_value, current_value=current_value, target_value=target_value)
-		
-	@property
-	def period_name(self):
-		return self.period.name
 
 	@property
 	def category_name(self):
