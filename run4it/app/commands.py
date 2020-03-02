@@ -138,7 +138,7 @@ def init_database_test_data():
 	next_month_first = this_month_first + dt.timedelta(days=monthrange(this_month_first.year, this_month_first.month)[1])
 	last_day_prev_month = this_month_first + dt.timedelta(days=-1)
 	prev_month_first = this_month_first + dt.timedelta(days=-monthrange(last_day_prev_month.year, last_day_prev_month.month)[1])
-	prev_monday = now + dt.timedelta(days=-now.weekday())
+	prev_monday = dt.datetime(now.year, now.month, now.day) + dt.timedelta(days=-now.weekday())
 
 	# future goal
 	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat1, next_month_first, next_month_first + dt.timedelta(days=monthrange(next_month_first.year, next_month_first.month)[1]), 0, 100, 0)
