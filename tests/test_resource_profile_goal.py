@@ -8,7 +8,7 @@ from .helpers import get_response_json, register_and_login_confirmed_user, get_a
 class TestProfileGoalListResource:
 
 	def setup(self): # register some goals
-		cat = GoalCategoryModel('RunDistance')
+		cat = GoalCategoryModel('RunDistance', 'km')
 		cat.save()
 		now = dt.datetime.utcnow()
 		future_goal = GoalModel(1, cat, now + dt.timedelta(days=2), now + dt.timedelta(days=3), 0, 2, 0)
@@ -106,3 +106,4 @@ class TestProfileGoalListResource:
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 200)	
 		assert(response_json[0]['categoryName'] == 'RunDistance')
+		assert(response_json[0]['categoryUnit'] == 'km')

@@ -11,6 +11,7 @@ class GoalSchema(Schema):
 	targetValue = fields.Float(attribute='target_value', dump_only=True, required=True)
 	currentValue = fields.Float(attribute='current_value', dump_only=True, required=True)
 	categoryName = fields.Str(attribute='category_name', dump_only=True, required=True)
+	categoryUnit = fields.Str(attribute='category_unit', dump_only=True, required=True)
 
 	class Meta:
 		strict = True
