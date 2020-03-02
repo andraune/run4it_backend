@@ -6,9 +6,10 @@ class GoalCategory(SurrogatePK, db.Model):
 	__tablename__ = 'training_goal_categories'
 	id = Column(db.Integer, primary_key=True, index=True)
 	name = Column(db.String(32), nullable=False, unique=True)
+	unit = Column(db.String(16), nullable=True)
 
-	def __init__(self, name):
-		db.Model.__init__(self, name=name)
+	def __init__(self, name, unit=None):
+		db.Model.__init__(self, name=name, unit=unit)
 	
 	def __repr__(self):
 		return '<GoalCategory({name!r})>'.format(name=self.name)
@@ -31,7 +32,13 @@ class Goal(SurrogatePK, db.Model):
 	@property
 	def category_name(self):
 		return self.category.name
-	
+
+	@property
+	def category_unit(self):
+		if (self.category.unit is not None):
+			return self.category.unit
+		return ''
+
 	@property
 	def duration(self):
 		return (self.end_at - self.start_at).days

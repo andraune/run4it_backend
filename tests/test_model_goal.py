@@ -22,11 +22,16 @@ class TestGoalCategoryModel:
 
 		num_items = db.session.query(GoalCategoryModel).count()
 		assert(num_items == 1)
+	
+	def test_category_unit(self, db):
+		item = GoalCategoryModel("Run Kms", "km")
+		item.save()
+		assert(item.unit == 'km')	
 
 @pytest.mark.usefixtures('db')
 class TestGoalModel:
 	def setup(self):
-		GoalCategoryModel("RunKms").save()
+		GoalCategoryModel("RunKms", "km").save()
 		GoalCategoryModel("WeightTarget").save()
 
 	def test_setup(self, db):
@@ -46,6 +51,14 @@ class TestGoalModel:
 		assert(new_goal.category.id == 1)
 		assert(new_goal.category.name == 'RunKms')
 		assert(new_goal.category_name == 'RunKms')
+		assert(new_goal.category_unit == 'km')
+
+	def test_goal_category_none_gives_empty_string(self):
+		category = GoalCategoryModel.get_by_id(2)
+		new_goal = GoalModel(1, category)
+		new_goal.save()
+		assert(new_goal.category.id == 2)
+		assert(new_goal.category_unit == '')
 
 	def test_two_goals_with_same_category_and_profile(self):
 		category = GoalCategoryModel.get_by_id(1)

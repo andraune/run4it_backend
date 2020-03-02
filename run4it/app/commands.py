@@ -125,10 +125,10 @@ def init_database_test_data():
 	discipline.save(commit=False)
 	print("Added {0}".format(discipline))
 
-	goalcat1 = GoalCategoryModel('DistanceRun')
+	goalcat1 = GoalCategoryModel('DistanceRun', 'km')
 	goalcat1.save(commit=False)
 	print("Added {0}".format(goalcat1))
-	goalcat2 = GoalCategoryModel('WeightTarget')
+	goalcat2 = GoalCategoryModel('WeightTarget', 'kg')
 	goalcat2.save(commit=False)
 	print("Added {0}".format(goalcat2))
 	db.session.commit()
