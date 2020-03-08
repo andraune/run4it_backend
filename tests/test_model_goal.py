@@ -53,7 +53,7 @@ class TestGoalModel:
 		assert(new_goal.category_name == 'RunKms')
 		assert(new_goal.category_unit == 'km')
 
-	def test_goal_category_none_gives_empty_string(self):
+	def test_goal_category_unit_none_gives_empty_string(self):
 		category = GoalCategoryModel.get_by_id(2)
 		new_goal = GoalModel(1, category)
 		new_goal.save()
@@ -78,7 +78,7 @@ class TestGoalModel:
 		assert((item.end_at - item.start_at).seconds <= 1)
 		assert(item.duration == 1)
 
-	def test_start_date_and_duration(self):
+	def test_start_date_duration(self):
 		category = GoalCategoryModel.get_by_id(1)
 		start_at = dt.datetime.utcnow() + dt.timedelta(days=3)
 		end_at = start_at + dt.timedelta(days=7)
@@ -86,7 +86,22 @@ class TestGoalModel:
 		item.save()
 		assert(item.start_at == start_at)
 		assert(item.end_at == end_at)
-		assert(item.duration == 7)
+		assert(item.duration == 7.0000)
+
+	def test_misc_durations(self):
+		category = GoalCategoryModel.get_by_id(1)
+		start_at = dt.datetime(2020, 1, 1, 0, 0, 0)
+
+		end_at = dt.datetime(2020, 1, 1, 13, 0, 0)
+		item = GoalModel(1, category, start_at, end_at)
+		expected_duration = round(13*60*60 / 86400, 4)
+		assert(item.duration == expected_duration)
+
+		end_at = dt.datetime(2021, 1, 1, 13, 0, 0)
+		item = GoalModel(1, category, start_at, end_at)
+		expected_duration = 366 + round(13*60*60 / 86400, 4)
+		assert(item.duration == expected_duration)
+
 
 	def test_profile_id(self):
 		category = GoalCategoryModel.get_by_id(1)

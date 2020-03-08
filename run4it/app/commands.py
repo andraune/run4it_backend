@@ -125,10 +125,10 @@ def init_database_test_data():
 	discipline.save(commit=False)
 	print("Added {0}".format(discipline))
 
-	goalcat1 = GoalCategoryModel('DistanceRun', 'km')
+	goalcat1 = GoalCategoryModel('Distance', 'km')
 	goalcat1.save(commit=False)
 	print("Added {0}".format(goalcat1))
-	goalcat2 = GoalCategoryModel('WeightTarget', 'kg')
+	goalcat2 = GoalCategoryModel('Weight target', 'kg')
 	goalcat2.save(commit=False)
 	print("Added {0}".format(goalcat2))
 	db.session.commit()
@@ -146,10 +146,10 @@ def init_database_test_data():
 	print("Added {0}".format(goal))
 
 	# active goals
-	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat2, prev_monday, prev_monday + dt.timedelta(days=7), 79, 76, 75)
+	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat2, prev_monday, prev_monday + dt.timedelta(days=7), 79, 76, 77)
 	goal.save(commit=False)
 	print("Added {0}".format(goal))
-	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat1, this_month_first, next_month_first, 0, 100, 102)
+	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat1, this_month_first, next_month_first, 0, 100, 18)
 	goal.save(commit=False)
 	print("Added {0}".format(goal))
 

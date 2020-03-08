@@ -40,8 +40,8 @@ class Goal(SurrogatePK, db.Model):
 		return ''
 
 	@property
-	def duration(self):
-		return (self.end_at - self.start_at).days
+	def duration(self):	# returns days as decimal number with four digits after the decimal point
+		return (self.end_at - self.start_at).days + round((self.end_at - self.start_at).seconds/86400, 4)
 		
 	def __repr__(self):
 		return '<Goal({year!r}-{month!r}-{day!r}:{duration!r})>'.format(
