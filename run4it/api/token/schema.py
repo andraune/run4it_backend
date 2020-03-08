@@ -10,6 +10,7 @@ class TokenSchema(Schema):
 	
 	class Meta:
 		strict = True
+		datetimeformat = '%Y-%m-%dT%H:%M:%S+00:00' # not: sets timezone to UTC, should only be used on dump
 
 
 class TokenUpdateSchema(Schema):

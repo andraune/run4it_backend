@@ -12,6 +12,7 @@ class ProfileSchema(Schema):
 
 	class Meta:
 		strict = True
+		datetimeformat = '%Y-%m-%dT%H:%M:%S+00:00' # not: sets timezone to UTC, should only be used on dump
 
 class WeightSchema(Schema):
 	weight = fields.Float(validate=[validate.Range(0.0, 999.9)])
@@ -19,6 +20,7 @@ class WeightSchema(Schema):
 
 	class Meta:
 		strict = True
+		datetimeformat = '%Y-%m-%dT%H:%M:%S+00:00' # not: sets timezone to UTC, should only be used on dump
 
 
 profile_schema = ProfileSchema()
