@@ -3676,6 +3676,378 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "ProfileGoals",
+			"item": [
+				{
+					"name": "LoginActiveUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b9f62c10-3245-41b3-bb33-e26073f8b36a",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Login OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Login response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.username).to.eql(\"JonnyIT\");",
+									"    pm.expect(jsonData.confirmed).to.eql(true);",
+									"    pm.expect(jsonData.accessToken).to.not.eql(\"\");",
+									"    pm.expect(jsonData.refreshToken).to.not.eql(\"\");",
+									"    pm.environment.set(\"userLoginAccessKey\", jsonData.accessToken);",
+									"    pm.environment.set(\"userLoginRefreshKey\", jsonData.refreshToken);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5de7eb5b-bdbf-4bdc-aed7-d089df675911",
+								"exec": [
+									"pm.environment.unset(\"userLoginAccessKey\");",
+									"pm.environment.unset(\"userLoginRefreshKey\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"email\": \"active@user.com\", \"password\": \"pwd\" }"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/login",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"login"
+							]
+						},
+						"description": "Post request to log in user because password is incorrect."
+					},
+					"response": []
+				},
+				{
+					"name": "GetActiveGoals",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "58b09a74-d843-4b97-beeb-7d3a0d9988e8",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Active goal response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.equal(2);",
+									"    pm.expect(jsonData[0].id).to.eql(2);",
+									"    pm.expect(jsonData[0].duration).to.eql(7);",
+									"    pm.expect(jsonData[0].categoryName).to.eql(\"Weight target\");",
+									"    pm.expect(jsonData[0].startValue).to.be.above(0);",
+									"    pm.expect(jsonData[0].targetValue).to.be.above(0);",
+									"    pm.expect(jsonData[0].currentValue).to.be.above(0);",
+									"    pm.expect(jsonData[0].startAt).to.not.equal(\"\");",
+									"    pm.expect(jsonData[0].endAt).to.not.equal(\"\");",
+									"    pm.expect(jsonData[1].id).to.eql(3);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/goals?filter=active",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"goals"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "active"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetExpiredGoals",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "58b09a74-d843-4b97-beeb-7d3a0d9988e8",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Expired goal response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.equal(2);",
+									"    pm.expect(jsonData[0].id).to.eql(4);",
+									"    pm.expect(jsonData[1].id).to.eql(5);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/goals?filter=expired",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"goals"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "expired"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCompletedGoals",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "58b09a74-d843-4b97-beeb-7d3a0d9988e8",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Completed goal response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.equal(1);",
+									"    pm.expect(jsonData[0].id).to.eql(5);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/goals?filter=completed",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"goals"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "completed"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetIncompletedGoals",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "58b09a74-d843-4b97-beeb-7d3a0d9988e8",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Incompleted goal response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.equal(1);",
+									"    pm.expect(jsonData[0].id).to.eql(4);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/goals?filter=incompleted",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"goals"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "incompleted"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetIncompletedGoals Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "58b09a74-d843-4b97-beeb-7d3a0d9988e8",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Future goal response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.equal(1);",
+									"    pm.expect(jsonData[0].id).to.eql(1);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/goals?filter=future",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"goals"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "future"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"auth": {
