@@ -39,18 +39,6 @@ class TestDisciplineResource:
 		assert(response_json[0]["length"] == 1000)
 		assert(response_json[0]["username"] == "user1")
 
-	def test_get_disciplinelist_with_data(self, api, client):
-		disc_1 = DisciplineModel("disc1", 1000, "user1")
-		disc_1.save()
-		url = api.url_for(DisciplineListResource)
-		response = client.get(url)
-		response_json = get_response_json(response.data)
-		assert(response.status_code == 200)
-		assert(len(response_json) == 1)	
-		assert(response_json[0]["id"] == 1)
-		assert(response_json[0]["length"] == 1000)
-		assert(response_json[0]["username"] == "user1")
-
 	def test_create_discipines_helper(self, api, client, db):
 		self._create_disciplines(10, db)
 		assert(DisciplineModel.query.count() == 10)
@@ -195,7 +183,7 @@ class TestDisciplineResource:
 	def test_get_discipline_invalid_id(self, api, client):
 		url = api.url_for(DisciplineResource, disc_id=-1)
 		response = client.get(url)
-		response_json = get_response_json(response.data)
+		get_response_json(response.data)
 		assert(response.status_code == 404)
 
 	def test_get_discipline_by_id(self, api, client, db):
@@ -271,7 +259,7 @@ class TestDisciplineResource:
 		response = client.post(url)
 		assert(response.status_code == 405) # not allowed
 
-	def test_delete_disciplinelist_not_supported(self, api, client):
+	def test_delete_discipline_not_supported(self, api, client):
 		url = api.url_for(DisciplineResource, disc_id=1)
 		response = client.delete(url)
 		assert(response.status_code == 405) # not allowed
