@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from run4it.app.database import db
 from run4it.api.templates import report_error_and_abort
 from run4it.api.user import User
-from .model import Profile, ProfileWeightHistory
+from .model import ProfileWeightHistory
 from .schema import profile_schema, weights_schema
 
 
