@@ -180,7 +180,8 @@
 						]
 					}
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserRegister",
@@ -545,7 +546,8 @@
 						]
 					}
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserConfirmation",
@@ -916,7 +918,8 @@
 						]
 					}
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserLogin",
@@ -1477,7 +1480,8 @@
 						]
 					}
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserRefreshLogin",
@@ -1888,7 +1892,8 @@
 						]
 					}
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Token",
@@ -2656,7 +2661,8 @@
 						]
 					}
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserLogout",
@@ -2708,7 +2714,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserLogoutRefresh",
@@ -2760,11 +2767,67 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserProfile",
 			"item": [
+				{
+					"name": "UsernameRequiredInUrl",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "169e2220-f215-40e3-9f89-f848a05864d2",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Method not allowed\", function() {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles"
+							]
+						},
+						"description": "GET for registering not allowed"
+					},
+					"response": []
+				},
 				{
 					"name": "ProfilePostNotAllowed",
 					"event": [
@@ -2867,61 +2930,6 @@
 								"username"
 							]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "UsernameRequiredInUrl",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "169e2220-f215-40e3-9f89-f848a05864d2",
-								"exec": [
-									"pm.test(\"Response time is acceptable\", function() {",
-									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
-									"});",
-									"",
-									"pm.test(\"Method not allowed\", function() {",
-									"    pm.response.to.have.status(404);",
-									"});",
-									"",
-									"pm.test(\"Content-Type is JSON\", function() {",
-									"    pm.response.to.have.header(\"Content-Type\");",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles",
-							"host": [
-								"{{apiBaseUrl}}"
-							],
-							"path": [
-								"{{apiVersion}}",
-								"profiles"
-							]
-						},
-						"description": "GET for registering not allowed"
 					},
 					"response": []
 				},
@@ -3097,6 +3105,66 @@
 					"response": []
 				},
 				{
+					"name": "UpdateWeight",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9a2a02cb-9e36-4073-94f8-b26d73495979",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"GetTokens OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"GetProfile response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.username).to.equal(\"confirm\")",
+									"    pm.expect(jsonData.birthDate).to.equal(\"1998-06-23\")",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"weight\" : 78.9\n}"
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/confirm",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"confirm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "UpdateInvalidValues",
 					"event": [
 						{
@@ -3184,7 +3252,7 @@
 									"    pm.expect(jsonData.username).to.equal(\"confirm\")",
 									"    pm.expect(jsonData.height).to.equal(180)",
 									"    pm.expect(jsonData.birthDate).to.equal(\"1998-06-23\")",
-									"    pm.expect(jsonData.weight).to.equal(70.1)",
+									"    pm.expect(jsonData.weight).to.equal(78.9)",
 									"});",
 									""
 								],
@@ -3195,66 +3263,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/confirm",
-							"host": [
-								"{{apiBaseUrl}}"
-							],
-							"path": [
-								"{{apiVersion}}",
-								"profiles",
-								"confirm"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateWeight",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "9a2a02cb-9e36-4073-94f8-b26d73495979",
-								"exec": [
-									"pm.test(\"Response time is acceptable\", function() {",
-									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
-									"});",
-									"",
-									"pm.test(\"GetTokens OK\", function() {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Content-Type is JSON\", function() {",
-									"    pm.response.to.have.header(\"Content-Type\");",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
-									"});",
-									"",
-									"pm.test(\"GetProfile response\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.username).to.equal(\"confirm\")",
-									"    pm.expect(jsonData.birthDate).to.equal(\"1998-06-23\")",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"weight\" : 78.9\n}"
-						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/confirm",
 							"host": [
@@ -3349,7 +3357,7 @@
 									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
 									"});",
 									"",
-									"pm.test(\"GetProfile response\", function () {",
+									"pm.test(\"GetDisciplines response\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.length).to.be.above(2)",
 									"    pm.expect(jsonData[0][\"length\"]).to.be.above(0)",
@@ -3401,7 +3409,7 @@
 									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
 									"});",
 									"",
-									"pm.test(\"GetProfile response\", function () {",
+									"pm.test(\"GetDisciplines response\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.length).to.equal(2)",
 									"});",
@@ -3519,7 +3527,7 @@
 									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
 									"});",
 									"",
-									"pm.test(\"GetProfile response\", function () {",
+									"pm.test(\"GetDisciplineByID response\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData[\"id\"]).to.equal(2)",
 									"    pm.expect(jsonData[\"name\"].length).to.be.above(1)",
@@ -3740,7 +3748,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{ \"email\": \"active@user.com\", \"password\": \"pwd\" }"
+							"raw": "{ \"email\": \"active@user.com\", \"password\": \"pwd\" }",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/login",
@@ -3991,7 +4002,7 @@
 					"response": []
 				},
 				{
-					"name": "GetIncompletedGoals Copy",
+					"name": "GetFutureGoals",
 					"event": [
 						{
 							"listen": "test",
@@ -4045,6 +4056,175 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GetGoalByID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "53201eea-4e6f-4d17-8e61-e8b782e79192",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Goal by ID response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[\"id\"]).to.eql(2);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/goals/2",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"goals",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateGoal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b62c7925-57d1-4346-9198-6e6cd7dcccdf",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"CreateGoal response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[\"startValue\"]).to.eql(1.0);",
+									"    pm.expect(jsonData[\"targetValue\"]).to.eql(23.0);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"startAt\" : \"2021-07-08 12:13:14-01:00\",\r\n    \"duration\": 365,\r\n\t\"startValue\": 1.0,\r\n    \"targetValue\": 23.0,\r\n    \"categoryID\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/goals",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"goals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateGoal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f2713d49-0051-4091-898e-d8a771f5d6b7",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"CreateGoal response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[\"startValue\"]).to.eql(81.0);",
+									"    pm.expect(jsonData[\"targetValue\"]).to.eql(70.0);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"startAt\" : \"2021-07-08 12:13:14-01:00\",\r\n    \"duration\": 365,\r\n\t\"startValue\": 81.0,\r\n    \"targetValue\": 70.0,\r\n    \"categoryID\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/goals/1",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"goals",
+								"1"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -4081,5 +4261,6 @@
 				]
 			}
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }
