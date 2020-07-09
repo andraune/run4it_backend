@@ -7,6 +7,7 @@ from run4it.api.goal import GoalModel, GoalCategoryModel
 from run4it.api.profile import Profile, ProfileWeightHistory
 from run4it.api.token import TokenRegistry
 from run4it.api.user import User, UserConfirmation
+from run4it.api.workout import WorkoutCategoryModel, WorkoutModel
 
 
 
@@ -49,7 +50,9 @@ def register_shell_context(app):
 			'ProfileWeightHistory': ProfileWeightHistory,
 			'TokenRegistry': TokenRegistry,
 			'User': User,
-			'UserConfirmation': UserConfirmation		
+			'UserConfirmation': UserConfirmation,
+			'Workout': WorkoutModel,
+			'WorkoutCategory': WorkoutCategoryModel		
 		}
 
 	app.shell_context_processor(shell_context)

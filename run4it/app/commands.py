@@ -51,6 +51,7 @@ def init_database_test_data():
 	from run4it.api.token import TokenRegistry  # noqa
 	from run4it.api.discipline import DisciplineModel # noqa
 	from run4it.api.goal import GoalModel, GoalCategoryModel # noqa
+	from run4it.api.workout import WorkoutCategoryModel, WorkoutModel #noqa
 
 	# delete most stuff
 	rows = User.query.delete(False)
@@ -84,6 +85,14 @@ def init_database_test_data():
 	rows = GoalCategoryModel.query.delete(False)
 	if rows > 0:
 		print('Deleted {0} rows from GoalCategory table'.format(rows))
+	
+	rows = WorkoutModel.query.delete(False)
+	if rows > 0:
+		print('Deleted {0} rows from Workout table'.format(rows))
+
+	rows = WorkoutCategoryModel.query.delete(False)
+	if rows > 0:
+		print('Deleted {0} rows from WorkoutCategory table'.format(rows))
 
 	db.session.commit()
 
@@ -160,7 +169,19 @@ def init_database_test_data():
 	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalcat2, prev_month_first, this_month_first, 82, 80, 79)
 	goal.save(commit=False)
 	print("Added {0}".format(goal))
-
 	db.session.commit()
+
+	# Workout stuff
+	workout_cat = WorkoutCategoryModel('Running')
+	workout_cat.save(commit=False)
+	print("Added {0}".format(workout_cat))
+	workout = WorkoutModel(User.find_by_username('JonnyIT').profile.id, workout_cat, "Åsen run", dt.datetime.utcnow(), 7321, 1921, 43)
+	workout.save(commit=False)
+	print("Added {0}".format(workout))
+	workout = WorkoutModel(User.find_by_username('JonnyIT').profile.id, workout_cat, "Åsen run", dt.datetime.utcnow(), 3000, 658, 0, '/home/user/file.gpx', 1)
+	workout.save(commit=False)
+	print("Added {0}".format(workout))
+	db.session.commit()
+
 	print('Application data initialized!')
 	return 0
