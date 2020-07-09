@@ -7,7 +7,7 @@ from run4it.api.user.resource import (UserResource, Register, Confirmation, Logi
 from run4it.api.token.resource import Token, TokenList
 from run4it.api.profile.resource import Profile, ProfileWeight
 from run4it.api.discipline import DisciplineResource, DisciplineListResource
-from run4it.api.goal import ProfileGoalListResource
+from run4it.api.goal import ProfileGoalListResource, ProfileGoalResource
 
 
 API_VERSION = 1
@@ -46,6 +46,7 @@ def create_api(app):
 	
 	# Profile goal resources
 	api.add_resource(ProfileGoalListResource, "/profiles/<string:username>/goals")
+	api.add_resource(ProfileGoalResource, "/profiles/<string:username>/goals/<int:goal_id>")
 
 	# Discipline resources
 	api.add_resource(DisciplineListResource, "/disciplines")

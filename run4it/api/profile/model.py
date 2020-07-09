@@ -52,6 +52,9 @@ class Profile(SurrogatePK, TimestampedModel):
 				and_(GoalModel.start_value > GoalModel.target_value, GoalModel.current_value > GoalModel.target_value))
 			).order_by(GoalModel.end_at.desc()).all()
 
+	def get_goal_by_id(self, goal_id):
+		return self.goals.filter(GoalModel.id == goal_id).first()
+
 	def set_height(self, height):
 		if height > 0:
 			self.height = height

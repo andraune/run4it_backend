@@ -25,7 +25,7 @@ def register_and_login_confirmed_user(testapi, testclient, username, email, pass
 	return response_json["accessToken"], response_json["refreshToken"]
 
 def register_and_login_user_with_unfresh_token(testapi, testclient, username, email, password, height=None, weight=None, birth_date=None):
-	accesstoken,refreshtoken = register_and_login_confirmed_user(testapi, testclient, username, email, password, height, weight, birth_date)
+	_,refreshtoken = register_and_login_confirmed_user(testapi, testclient, username, email, password, height, weight, birth_date)
 	url = testapi.url_for(LoginRefresh)
 	response = testclient.post(url, headers=get_authorization_header(refreshtoken))
 	response_json = get_response_json(response.data)

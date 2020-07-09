@@ -113,14 +113,6 @@ class TestProfileResource:
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 200)
 		assert(response_json["weight"] is None)
-	
-	def test_update_height_out_of_range(self, api, client):
-		token,_ = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
-		url = api.url_for(Profile, username="profiler")
-		response = client.put(url, data={ "weight":1000.0 }, headers=get_authorization_header(token))
-		response_json = get_response_json(response.data)
-		assert(response.status_code == 422)
-		assert(response_json["errors"]["weight"] is not None)
 
 	def test_update_birth_date(self, api, client):
 		token,_ = register_and_login_confirmed_user(api, client, "profiler", "pro@filer.com", "passwd", 179, 75.0, dt.date(1980, 2, 29))
@@ -162,7 +154,7 @@ class TestProfileResource:
 		url = api.url_for(Profile, username="profiler")
 		profile = User.find_by_username("profiler").profile
 		old_updated_at = profile.updated_at
-		response = client.put(url, data={ "birthDate":"2001-02-03", "height":180, "weight":70.1 }, headers=get_authorization_header(token))
+		client.put(url, data={ "birthDate":"2001-02-03", "height":180, "weight":70.1 }, headers=get_authorization_header(token))
 		assert(profile.height == 180)
 		assert(profile.weight == 70.1)
 		assert(str(profile.birth_date) == "2001-02-03")

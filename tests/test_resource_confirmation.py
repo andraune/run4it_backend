@@ -33,7 +33,7 @@ class TestConfirmationResource:
 	def test_confirm_user_deletes_confirmation_code_record(self, api, client):
 		url = api.url_for(Confirmation)
 		response = client.post(url, data={ "username": "confUser", "confirmationCode": "correctConfirmationCode" })
-		response_json = get_response_json(response.data)
+		get_response_json(response.data)
 		conf_record = UserConfirmation.find_by_username("confUser")
 		assert(response.status_code == 200)
 		assert(conf_record is None)

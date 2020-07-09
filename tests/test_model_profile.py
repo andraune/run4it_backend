@@ -216,3 +216,12 @@ class TestProfileModel:
 		assert(goals[0].end_at > goals[1].end_at)
 		assert(goals[0].id == 3)
 		assert(goals[1].id == 4)
+
+	def test_get_goal_by_id(self):
+		profile = self._init_profile_with_goals()
+		goal1 = profile.get_goal_by_id(1)
+		goal2 = profile.get_goal_by_id(2)
+		goal3 = profile.get_goal_by_id(99)
+		assert(goal1.id == 1)
+		assert(goal2.id == 2)
+		assert(goal3 is None)
