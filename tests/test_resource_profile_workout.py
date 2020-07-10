@@ -1,6 +1,6 @@
 import pytest
 import datetime as dt
-from run4it.api.workout import ProfileWorkoutListResource, ProfileWorkoutResource, WorkoutModel, WorkoutCategoryModel
+from run4it.api.workout import ProfileWorkoutListResource, ProfileWorkoutResource, ProfileWorkoutGpxResource, WorkoutModel, WorkoutCategoryModel
 from .helpers import get_response_json, register_confirmed_user, register_and_login_confirmed_user, get_authorization_header
 
 
@@ -251,5 +251,30 @@ class TestProfileWorkoutResource:
 
 	def test_delete_workout_not_supported(self, api, client):
 		url = api.url_for(ProfileWorkoutResource, username="jonny", workout_id=1)
+		response = client.delete(url)
+		assert(response.status_code == 405) # not allowed
+
+@pytest.mark.usefixtures('db')
+class TestProfileWorkoutGpxResource:
+
+	def test_content_type_is_json(self, api, client):
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		response = client.post(url)
+		assert(response.headers["Content-Type"] == 'application/json')
+
+
+
+	def test_put_gpx_not_supported(self, api, client):
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		response = client.put(url)
+		assert(response.status_code == 405) # not allowed
+
+	def test_get_gpx_not_supported(self, api, client):
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		response = client.get(url)
+		assert(response.status_code == 405) # not allowed
+
+	def test_delete_not_supported(self, api, client):
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
 		response = client.delete(url)
 		assert(response.status_code == 405) # not allowed

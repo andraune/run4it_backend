@@ -31,6 +31,8 @@ class Config(object):
 		'http://10.0.0.117:4200',
 	]
 
+	ALLOWED_UPLOAD_EXTENSIONS = { 'gpx' } # 'tcx'
+
 	# Define in sub-classes
 	#ENV = None
 	#DEBUG = False
@@ -50,7 +52,6 @@ class DevelopConfig(Config):
 	SQLALCHEMY_DATABASE_URI = "sqlite:///{0}".format(os.path.join(Config.PROJECT_ROOT, 'dev.db'))
 	MAIL_DEFAULT_SENDER = os.environ.get("RUN4IT_FASTMAIL_USERNAME", "nousefor@name.com")
 	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads\\gpx")
-	ALLOWED_UPLOAD_EXTENSIONS = { 'gpx' } # 'tcx'
 
 class TestConfig(Config):
 	"""Test Configuration"""
