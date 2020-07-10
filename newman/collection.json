@@ -4647,6 +4647,71 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "UploadWorkoutGpx",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "34870ac0-62cd-425a-8378-0e876576d154",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableUploadResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"CreateWorkout response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[\"id\"]).to.be.above(0);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "gpxfile",
+									"type": "file",
+									"src": "test.gpx"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/workouts/gpx",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"workouts",
+								"gpx"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}
