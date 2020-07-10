@@ -33,7 +33,7 @@ def save_uploaded_file_or_abort(uploaded_file, profile_name):
 	return filepath	
 
 def rename_uploaded_file(tmp_filepath, profile_name, workout_id):
-	filename = "{0}_workout_{1}".format(profile_name, workout_id)
+	filename = "{0}_workout_{1}.gpx".format(profile_name, workout_id)
 	filepath = path.join(current_app.config["GPX_UPLOAD_DIR"], filename)
 	rename(tmp_filepath, filepath)
 	return filepath

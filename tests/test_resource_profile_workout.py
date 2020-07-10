@@ -1,5 +1,8 @@
+import io
+import os
 import pytest
 import datetime as dt
+from flask import current_app
 from run4it.api.workout import ProfileWorkoutListResource, ProfileWorkoutResource, ProfileWorkoutGpxResource, WorkoutModel, WorkoutCategoryModel
 from .helpers import get_response_json, register_confirmed_user, register_and_login_confirmed_user, get_authorization_header
 
@@ -256,13 +259,76 @@ class TestProfileWorkoutResource:
 
 @pytest.mark.usefixtures('db')
 class TestProfileWorkoutGpxResource:
+	def setup(self):
+		cat1 = WorkoutCategoryModel('Running')
+		cat1.save(commit=False)
+	
+	def teardown(self):
+		try:
+			tmp_filename = os.path.join(current_app.config["GPX_UPLOAD_DIR"], "jonny_test.gpx")
+			os.remove(tmp_filename)
+		except:
+			pass
+		try:
+			filename = os.path.join(current_app.config["GPX_UPLOAD_DIR"], "jonny_workout_1.gpx")
+			os.remove(filename)
+		except:
+			pass
 
 	def test_content_type_is_json(self, api, client):
 		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
 		response = client.post(url)
 		assert(response.headers["Content-Type"] == 'application/json')
 
+	def test_upload_gpx_not_logged_in(self, api, client):
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		response = client.post(url)
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 401)
+		assert(response_json["errors"]["auth"] is not None)
 
+	def test_upload_gpx_for_another_user(self, api, client):
+		register_confirmed_user("test", "test@test.com", "pwd")
+		token,_ = register_and_login_confirmed_user(api, client, "jonny", "jonny@vikan.no", "jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		response = client.post(url, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 422)
+		assert(response_json["errors"]["workout"] is not None)
+
+	def test_upload_gpx(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "jonny", "jonny@vikan.no", "jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		fileinfo = {"gpxfile" : (io.BytesIO(b"abcdef"), 'test.gpx')}
+		response = client.post(url, data=fileinfo, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(response_json["id"] == 1)
+		assert(response_json["resourceFile"] == "jonny_workout_1.gpx")
+
+	def test_upload_gpx_invalid_file_label(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "jonny", "jonny@vikan.no", "jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		fileinfo = {"filelabel" : (io.BytesIO(b"abcdef"), 'test.gpx')}
+		response = client.post(url, data=fileinfo, headers=get_authorization_header(token))
+		assert(response.status_code == 400)
+
+	def test_upload_gpx_invalid_file_extension(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "jonny", "jonny@vikan.no", "jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		fileinfo = {"gpxfile" : (io.BytesIO(b"abcdef"), 'test.tcx')}
+		response = client.post(url, data=fileinfo, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 422)
+		assert(response_json["errors"]["workout"][0] == "Workout filename invalid.")
+
+	def test_upload_gpx_with_no_file(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "jonny", "jonny@vikan.no", "jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		response = client.post(url, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 422)
+		assert(response_json["errors"]["workout"][0] == "Workout file not provided.")
 
 	def test_put_gpx_not_supported(self, api, client):
 		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
