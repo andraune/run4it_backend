@@ -1,4 +1,4 @@
-from os import path
+from os import path, rename
 import pytz
 import datetime as dt
 from flask import current_app
@@ -22,15 +22,21 @@ def is_valid_gpx_filename(filename):
 		return False
 
 def save_uploaded_file_or_abort(uploaded_file, profile_name):
-	tmp_filename = secure_filename("{0}_{1}".format(profile_name, uploaded_file.filename))
-	tmp_filepath = path.join(current_app.config["GPX_UPLOAD_DIR"], tmp_filename)
+	filename = secure_filename("{0}_{1}".format(profile_name, uploaded_file.filename))
+	filepath = path.join(current_app.config["GPX_UPLOAD_DIR"], filename)
 
 	try:
-		uploaded_file.save(tmp_filepath)
+		uploaded_file.save(filepath)
 	except:
 		report_error_and_abort(422, "workout", "Workout file could not be read.")
 
-	return tmp_filepath	
+	return filepath	
+
+def rename_uploaded_file(tmp_filepath, profile_name, workout_id):
+	filename = "{0}_workout_{1}".format(profile_name, workout_id)
+	filepath = path.join(current_app.config["GPX_UPLOAD_DIR"], filename)
+	rename(tmp_filepath, filepath)
+	return filepath
 
 
 class ProfileWorkoutList(Resource):
@@ -145,7 +151,10 @@ class ProfileWorkoutGpx(Resource):
 
 		try:
 			category = WorkoutCategory.get_by_id(1)
-			new_workout = Workout(profile.id, category, "Uploaded workout", dt.datetime.utcnow(), 1234, 181, 1, tmp_filepath, False)
+			new_workout = Workout(profile.id, category, "Uploaded workout", dt.datetime.utcnow(), 1234, 181, 1, None, False)
+			new_workout.save()
+			workout_filepath = rename_uploaded_file(tmp_filepath, profile.username, new_workout.id)
+			new_workout.resource_path = workout_filepath
 			new_workout.save()
 		except:
 			db.session.rollback()
