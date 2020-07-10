@@ -1,11 +1,10 @@
 import datetime as dt
 from run4it.api.goal import GoalModel
+from run4it.api.workout import WorkoutModel
 from run4it.app.database import (
 	Column, SurrogatePK, TimestampedModel, Model, db, reference_col, relationship)
 
 from sqlalchemy import and_, or_
-
-
 
 
 class Profile(SurrogatePK, TimestampedModel):
@@ -21,6 +20,7 @@ class Profile(SurrogatePK, TimestampedModel):
 	user = relationship('User', backref=db.backref('profile', uselist=False))
 	weights = relationship('ProfileWeightHistory', lazy='dynamic')
 	goals = relationship('Goal', lazy='dynamic')
+	workouts = relationship('Workout', lazy='dynamic')
 
 	def __init__(self, user, weights=[], **kwargs):
 		db.Model.__init__(self, user=user, weights=weights, **kwargs)
@@ -54,6 +54,15 @@ class Profile(SurrogatePK, TimestampedModel):
 
 	def get_goal_by_id(self, goal_id):
 		return self.goals.filter(GoalModel.id == goal_id).first()
+
+	def get_workouts(self, limit, offset, category_id=None):
+		if category_id is None:
+			return self.workouts.order_by(WorkoutModel.start_at.desc()).limit(limit).offset(offset).all()
+		else:
+			return self.workouts.filter(WorkoutModel.category_id == category_id).order_by(WorkoutModel.start_at.desc()).limit(limit).offset(offset).all()
+
+	def get_workout_by_id(self, workout_id):
+		return self.workouts.filter(WorkoutModel.id == workout_id).first()
 
 	def set_height(self, height):
 		if height > 0:

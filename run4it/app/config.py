@@ -31,12 +31,15 @@ class Config(object):
 		'http://10.0.0.117:4200',
 	]
 
+	ALLOWED_UPLOAD_EXTENSIONS = { 'gpx' } # 'tcx'
+
 	# Define in sub-classes
 	#ENV = None
 	#DEBUG = False
 	#TESTING = False
 	#SECRET_KEY = 'some-secret'
 	#SQLALCHEMY_DATABASE_URI = None
+	#GPX_UPLOAD_DIR
 
 
 class DevelopConfig(Config):
@@ -48,6 +51,7 @@ class DevelopConfig(Config):
 	JWT_SECRET_KEY = "even-more-top-secreterer"
 	SQLALCHEMY_DATABASE_URI = "sqlite:///{0}".format(os.path.join(Config.PROJECT_ROOT, 'dev.db'))
 	MAIL_DEFAULT_SENDER = os.environ.get("RUN4IT_FASTMAIL_USERNAME", "nousefor@name.com")
+	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads/gpx")
 
 class TestConfig(Config):
 	"""Test Configuration"""
@@ -59,6 +63,7 @@ class TestConfig(Config):
 	JWT_SECRET_KEY = "even-more-top-secreterer"
 	SQLALCHEMY_DATABASE_URI = "sqlite:///{0}".format(os.path.join(Config.PROJECT_ROOT, 'test.db'))
 	MAIL_DEFAULT_SENDER = os.environ.get("RUN4IT_FASTMAIL_USERNAME", "nousefor@name.com")
+	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads/gpx")
 
 class ProductionConfig(Config):
 	"""Production Configuration"""
@@ -68,6 +73,7 @@ class ProductionConfig(Config):
 	SECRET_KEY = os.environ.get("RUN4IT_SECRET_KEY", "very-secret")
 	JWT_SECRET_KEY = os.environ.get("RUN4IT_JWT_SECRET_KEY", "very-secreterer")
 	SQLALCHEMY_DATABASE_URI = os.environ.get("RUN4IT_DB_URL", "postgresql://run4it:run4it@localhost/run4it")
+	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads/gpx")
 
 	CORS_ORIGIN_WHITELIST = [
 		'https://localhost:4200',

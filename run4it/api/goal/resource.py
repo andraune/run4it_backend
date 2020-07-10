@@ -2,31 +2,22 @@ import datetime as dt
 import pytz
 from flask_restful import request, Resource
 from flask_apispec import marshal_with
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required
 from webargs.flaskparser import use_kwargs
 from run4it.app.database import db
 from run4it.api.templates import report_error_and_abort
-from run4it.api.user import User
+from run4it.api.profile.auth_helper import get_auth_profile_or_abort
 from .model import Goal, GoalCategory
 from .schema import goal_schema, goals_schema, goal_update_schema
 
-def _get_auth_profile_or_abort(username):
-	auth_username = get_jwt_identity()
-	if auth_username != username:
-		report_error_and_abort(422, "goal", "Profile not found")
-
-	user = User.find_by_username(auth_username)
-	if user.profile is None: # should not be possible to have a user without a profile
-		report_error_and_abort(422, "goal", "Profile not found")
-
-	return user.profile
 
 class ProfileGoalList(Resource):
 	@jwt_required
 	@use_kwargs(goal_schema, locations={"query"})
 	@marshal_with(goals_schema)
 	def get(self, username, filter='', **kwargs):
-		profile = _get_auth_profile_or_abort(username)
+		profile = get_auth_profile_or_abort(username, "goal")
+		goals = None
 
 		if filter == 'expired':
 			goals = profile.get_expired_goals()
@@ -45,7 +36,7 @@ class ProfileGoalList(Resource):
 	@use_kwargs(goal_update_schema, error_status_code = 422)
 	@marshal_with(goal_schema)
 	def post(self, username, start_at, duration, start_value, target_value, category_id):
-		profile = _get_auth_profile_or_abort(username)
+		profile = get_auth_profile_or_abort(username, "goal")
 		category = GoalCategory.get_by_id(category_id)
 
 		if category is None:
@@ -75,7 +66,7 @@ class ProfileGoal(Resource):
 	@jwt_required
 	@marshal_with(goal_schema)
 	def get(self, username, goal_id):
-		profile = _get_auth_profile_or_abort(username)
+		profile = get_auth_profile_or_abort(username, "goal")
 		goal = profile.get_goal_by_id(goal_id)
 
 		if goal is None:
@@ -88,7 +79,7 @@ class ProfileGoal(Resource):
 	@use_kwargs(goal_update_schema, error_status_code = 422)
 	@marshal_with(goal_schema)
 	def put(self, username, goal_id, start_at, duration, start_value, target_value, category_id, **kwargs):
-		profile = _get_auth_profile_or_abort(username)
+		profile = get_auth_profile_or_abort(username, "goal")
 		goal = profile.get_goal_by_id(goal_id)
 
 		if goal is None:
@@ -108,7 +99,7 @@ class ProfileGoal(Resource):
 		utc_start_at = start_at - start_at.utcoffset()
 
 		goal.category = category
-		goal.start_at = start_at
+		goal.start_at = utc_start_at
 		goal.end_at = utc_start_at + dt.timedelta(days=duration)
 		goal.start_value = start_value
 		goal.target_value = target_value
