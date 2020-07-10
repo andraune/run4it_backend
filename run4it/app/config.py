@@ -51,7 +51,7 @@ class DevelopConfig(Config):
 	JWT_SECRET_KEY = "even-more-top-secreterer"
 	SQLALCHEMY_DATABASE_URI = "sqlite:///{0}".format(os.path.join(Config.PROJECT_ROOT, 'dev.db'))
 	MAIL_DEFAULT_SENDER = os.environ.get("RUN4IT_FASTMAIL_USERNAME", "nousefor@name.com")
-	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads\\gpx")
+	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads/gpx")
 
 class TestConfig(Config):
 	"""Test Configuration"""
@@ -63,7 +63,7 @@ class TestConfig(Config):
 	JWT_SECRET_KEY = "even-more-top-secreterer"
 	SQLALCHEMY_DATABASE_URI = "sqlite:///{0}".format(os.path.join(Config.PROJECT_ROOT, 'test.db'))
 	MAIL_DEFAULT_SENDER = os.environ.get("RUN4IT_FASTMAIL_USERNAME", "nousefor@name.com")
-	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads\\gpx")
+	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads/gpx")
 
 class ProductionConfig(Config):
 	"""Production Configuration"""
