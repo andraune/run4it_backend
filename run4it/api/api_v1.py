@@ -8,6 +8,7 @@ from run4it.api.token.resource import Token, TokenList
 from run4it.api.profile.resource import Profile, ProfileWeight
 from run4it.api.discipline import DisciplineResource, DisciplineListResource
 from run4it.api.goal import ProfileGoalListResource, ProfileGoalResource
+from run4it.api.workout import ProfileWorkoutListResource, ProfileWorkoutResource
 
 
 API_VERSION = 1
@@ -47,6 +48,10 @@ def create_api(app):
 	# Profile goal resources
 	api.add_resource(ProfileGoalListResource, "/profiles/<string:username>/goals")
 	api.add_resource(ProfileGoalResource, "/profiles/<string:username>/goals/<int:goal_id>")
+
+	# Profile workout resources
+	api.add_resource(ProfileWorkoutListResource, "/profiles/<string:username>/workouts")
+	api.add_resource(ProfileWorkoutResource, "/profiles/<string:username>/workouts/<int:workout_id>")
 
 	# Discipline resources
 	api.add_resource(DisciplineListResource, "/disciplines")

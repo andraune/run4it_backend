@@ -3,6 +3,9 @@ flaskenv/
 .vscode/
 __pycache__/
 
+# Ignore upload dirs
+run4it/uploads/
+
 # PyTest
 .pytest_cache
 

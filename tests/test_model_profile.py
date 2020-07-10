@@ -4,6 +4,7 @@ import datetime as dt
 from run4it.api.profile import Profile, ProfileWeightHistory
 from run4it.api.user import User
 from run4it.api.goal import GoalModel, GoalCategoryModel
+from run4it.api.workout import WorkoutModel, WorkoutCategoryModel
 
 @pytest.mark.usefixtures('db')
 class TestProfileModel:
@@ -225,3 +226,57 @@ class TestProfileModel:
 		assert(goal1.id == 1)
 		assert(goal2.id == 2)
 		assert(goal3 is None)
+
+	def _init_profile_with_workouts(self):
+		user = User('user', 'user@mail.com')
+		user.save(commit=False)
+		profile = Profile(user)
+		profile.save(commit=False)
+		cat1 = WorkoutCategoryModel('Running')
+		cat1.save(commit=False)
+		cat2 = WorkoutCategoryModel('Swimming')
+		cat2.save()
+		WorkoutModel(profile.id, cat1, "Run 1", dt.datetime.utcnow() - dt.timedelta(days=3), 1000, 180, 10, None, False).save(commit=False)
+		WorkoutModel(profile.id, cat1, "Run 2", dt.datetime.utcnow() - dt.timedelta(days=2), 1000, 180, 10, None, False).save(commit=False)
+		WorkoutModel(profile.id, cat2, "Swim 1", dt.datetime.utcnow() - dt.timedelta(days=1), 100, 180, 0, None, False).save()
+		return profile
+
+	def test_init_profile_with_workouts(self):
+		profile = self._init_profile_with_workouts()
+		workouts = profile.get_workouts(10, 0)
+		assert(len(workouts) == 3)
+	
+	def test_get_workouts_limit1(self):
+		profile = self._init_profile_with_workouts()
+		workouts = profile.get_workouts(1, 0)
+		assert(len(workouts) == 1)
+		assert(workouts[0].id == 3) # sorting with newest first
+	
+	def test_get_workouts_limit2_offset1(self):
+		profile = self._init_profile_with_workouts()
+		workouts = profile.get_workouts(2, 1)
+		assert(len(workouts) == 2)
+		assert(workouts[0].id == 2) # sorting with newest first
+		assert(workouts[1].id == 1)
+	
+	def test_get_running_workouts(self):
+		profile = self._init_profile_with_workouts()
+		workouts = profile.get_workouts(10, 0, 1)
+		assert(len(workouts) == 2)
+		assert(workouts[0].id == 2) # newest first
+		assert(workouts[1].id == 1)
+
+	def test_get_swimming_workouts(self):
+		profile = self._init_profile_with_workouts()
+		workouts = profile.get_workouts(10, 0, 2)
+		assert(len(workouts) == 1)
+		assert(workouts[0].id == 3)
+
+	def test_get_workout_by_id(self):
+		profile = self._init_profile_with_workouts()
+		workout1 = profile.get_workout_by_id(1)
+		workout2 = profile.get_workout_by_id(2)
+		workout3 = profile.get_workout_by_id(99)
+		assert(workout1.id == 1)
+		assert(workout2.id == 2)
+		assert(workout3 is None)

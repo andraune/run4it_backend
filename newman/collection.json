@@ -4228,6 +4228,428 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "ProfileWorkouts",
+			"item": [
+				{
+					"name": "LoginActiveUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a6d8ba77-0ade-4354-9c08-10bfcf8851cc",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Login OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Login response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.username).to.eql(\"JonnyIT\");",
+									"    pm.expect(jsonData.confirmed).to.eql(true);",
+									"    pm.expect(jsonData.accessToken).to.not.eql(\"\");",
+									"    pm.expect(jsonData.refreshToken).to.not.eql(\"\");",
+									"    pm.environment.set(\"userLoginAccessKey\", jsonData.accessToken);",
+									"    pm.environment.set(\"userLoginRefreshKey\", jsonData.refreshToken);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e3b22af3-becf-44c3-b3f8-9d6ee09dd685",
+								"exec": [
+									"pm.environment.unset(\"userLoginAccessKey\");",
+									"pm.environment.unset(\"userLoginRefreshKey\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"email\": \"active@user.com\", \"password\": \"pwd\" }",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/login",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"users",
+								"login"
+							]
+						},
+						"description": "Post request to log in user because password is incorrect."
+					},
+					"response": []
+				},
+				{
+					"name": "GetWorkouts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f93aa380-a8a3-4a48-b831-f81953c0f648",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Workouts response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.be.above(0);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/workouts",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"workouts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetWorkoutsLimit1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6bdc9395-393c-43a1-b9f0-812cbca168c4",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Workouts response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.equal(1);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/workouts?limit=1",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"workouts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetWorkoutsLimit1Offset1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "49607528-fdb1-4841-9824-b19d6c3a005a",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Workouts response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.equal(1);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/workouts?limit=1&offset=1",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"workouts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "1"
+								},
+								{
+									"key": "offset",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetWorkoutByID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "83f2aca8-df5d-495f-8da1-9c84541dfb40",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Workouts response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[\"id\"]).to.equal(2);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/workouts/2",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"workouts",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateWorkout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d32b6ef4-461b-4ad9-b9ef-a2786571aa48",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"CreateWorkout response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[\"distance\"]).to.eql(42195);",
+									"    pm.expect(jsonData[\"duration\"]).to.eql(7273);",
+									"    pm.expect(jsonData[\"categoryName\"]).to.eql(\"Running\");",
+									"    pm.expect(jsonData[\"averageSpeed\"]).to.eql(20.89);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"name\" : \"My created run\",\r\n    \"startAt\" : \"2020-07-01T12:13:14+00:00\",\r\n    \"distance\" : 42195,\r\n    \"duration\" : 7273,\r\n    \"climb\" : 42,\r\n    \"edited\" : true,\r\n    \"categoryID\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/workouts",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"workouts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateWorkout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "40565880-a4a6-45f2-beff-aaba5c13611a",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"CreateWorkout response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[\"id\"]).to.eql(1);",
+									"    pm.expect(jsonData[\"distance\"]).to.eql(87654);",
+									"    pm.expect(jsonData[\"duration\"]).to.eql(31012);",
+									"    pm.expect(jsonData[\"categoryName\"]).to.eql(\"Hiking\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"name\" : \"My updated hike\",\r\n    \"startAt\" : \"2020-07-01T12:13:14+00:00\",\r\n    \"distance\" : 87654,\r\n    \"duration\" : 31012,\r\n    \"climb\" : 1780,\r\n    \"edited\" : false,\r\n    \"categoryID\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/workouts/1",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"workouts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"auth": {

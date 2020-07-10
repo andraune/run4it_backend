@@ -1,3 +1,4 @@
+import ntpath
 from math import floor
 from run4it.app.database import Column, SurrogatePK, reference_col, relationship, db
 
@@ -31,6 +32,19 @@ class Workout(SurrogatePK, db.Model):
 	def __init__(self, profile_id, category, name, start_at, distance, duration, climb, resource_path=None, edited=False):
 		db.Model.__init__(self, profile_id=profile_id, category=category, name=name, start_at=start_at, distance=distance, duration=duration, climb=climb, resource_path=resource_path, edited=edited)
 
+	def register_extended_data(self):
+		if self.resource_path is not None: # TODO: Read from file system and parse GPX or equivalent
+			self.extended_data = list()
+			self.extended_data.append(WorkoutDataPoint(10.0, 11.0, 1, 120, 12.2))
+			self.extended_data.append(WorkoutDataPoint(10.2, 11.2, 2, 122, 12.4))
+
+	@property
+	def resource_file(self):
+		if self.resource_path is not None:
+			return ntpath.basename(self.resource_path)
+		else:
+			return None
+
 	@property
 	def category_name(self):
 		return self.category.name
@@ -62,3 +76,25 @@ class Workout(SurrogatePK, db.Model):
 		return '<Workout({name!r},{distance!r}m)>'.format(
 			name=self.name,
 			distance=self.distance)
+
+class WorkoutDataPoint: # not a database object
+	
+	def __init__(self, latitude, longitude, elevation=0, heart_bpm=0, speed=0.0):
+		self.latitide = round(latitude, 5)
+		self.longitude = round(longitude, 5)
+		self.elevation = round(elevation, None)
+		self.heart_bpm = round(heart_bpm, None)
+		self.speed = round(speed, 2)
+	
+	@property
+	def pace(self):
+		if self.speed > 0.0:
+			pace_float = 60.0 / self.speed
+			pace_min = floor(pace_float)
+			pace_sec = int((pace_float - pace_min) * 60)
+			return "{0:02d}:{1:02d}".format(pace_min, pace_sec)
+		else:
+			return ""
+
+	def __repr__(self):
+		return '<WorkoutDataPoint({lat!r},{long!r},{ele!r})>'.format(lat=self.latitude,long=self.longitude, ele=self.elevation)

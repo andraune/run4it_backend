@@ -87,3 +87,14 @@ class TestWorkoutModel:
 		new_workout2.save()
 		assert(new_workout2.average_speed == 10.11)
 		assert(new_workout2.average_pace == "05:56")
+
+	def test_resource_file(self):
+		category = WorkoutCategoryModel.get_by_id(1)
+		new_workout1 = WorkoutModel(1, category, "Run 1", dt.datetime.utcnow(), 10000, 3600, 0, None)
+		new_workout1.save(commit=False)
+		new_workout2 = WorkoutModel(1, category, "Run 2", dt.datetime.utcnow(), 4567, 1627, 0, '/path/to/file')
+		new_workout2.save()
+		assert(new_workout1.resource_path is None)
+		assert(new_workout1.resource_file is None)
+		assert(new_workout2.resource_path == "/path/to/file")
+		assert(new_workout2.resource_file == "file")
