@@ -24,15 +24,12 @@ class TcxParser:
 				parser = TcxHandler()
 				parser.parse(self.tcx_filepath)
 				self.tcx_data = parser.trackpoints
+				self._strip_ends_for_no_movement_tracks()
 			except:
 				self.tcx_data = None
 
 		if self.tcx_data is not None and len(self.tcx_data) == 0:
 			self.tcx_data = None
-
-
-	def __repr__(self):
-		return '<TcxParser({file!r}, {tracks!r}>'.format(file=self.tcx_filepath, tracks=self.get_num_of_tracks())
 
 	def get_num_of_tracks(self):
 		if self.tcx_data is not None:
@@ -60,6 +57,7 @@ class TcxParser:
 					if heart_bpm > 0:
 						cumulative_heart_bpm += heart_bpm
 						heart_rate_points += 1
+					
 					track_data.append(WorkoutDataPoint(
 						float(point["latitudedegrees"]),
 						float(point["longitudedegrees"]),
@@ -140,6 +138,65 @@ class TcxParser:
 		else:
 			return None, None, None
 
+	def _strip_ends_for_no_movement_tracks(self):
+		if self.tcx_data is not None and len(self.tcx_data) > 0:
+			# remove points in both ends of array if movement is very low
+			start_idx = self._find_movement_start(self.tcx_data)
+			end_idx = self._find_movement_end(self.tcx_data)
+			num_points = len(self.tcx_data)
+
+			if end_idx <= start_idx:
+				self.tcx_data = []
+
+			if end_idx < (num_points-1):
+				self.tcx_data = self.tcx_data[:end_idx]
+
+			if start_idx > 0:
+				self.tcx_data = self.tcx_data[start_idx:]
+	
+	def _find_movement_start(self, points):
+		i=1
+		while i < len(points):
+			p1 = json.loads(repr(self.tcx_data[i-1]))
+			p2 = json.loads(repr(self.tcx_data[i]))
+			time1 = dt.datetime.strptime(p1["time"], "%Y-%m-%dT%H:%M:%S.%fZ")
+			time2 = dt.datetime.strptime(p2["time"], "%Y-%m-%dT%H:%M:%S.%fZ")
+			time = (time2 - time1).total_seconds()
+			latitude1 = float(p1["latitudedegrees"])
+			longitude1 = float(p1["longitudedegrees"])
+			latitude2 = float(p2["latitudedegrees"])
+			longitude2 = float(p2["longitudedegrees"])
+			dist = geo_distance((latitude1, longitude1),(latitude2, longitude2)).m
+			if time>0:
+				speed = dist/time
+				if speed > SPEED_NO_MOVEMENT_LIMIT_M_PER_S:
+					break
+			i+=1
+		return i-1
+		
+	def _find_movement_end(self, points):
+		i=len(points)-1
+		while i > 0:
+			p1 = json.loads(repr(self.tcx_data[i-1]))
+			p2 = json.loads(repr(self.tcx_data[i]))
+			time1 = dt.datetime.strptime(p1["time"], "%Y-%m-%dT%H:%M:%S.%fZ")
+			time2 = dt.datetime.strptime(p2["time"], "%Y-%m-%dT%H:%M:%S.%fZ")
+			time = (time2 - time1).total_seconds()
+			latitude1 = float(p1["latitudedegrees"])
+			longitude1 = float(p1["longitudedegrees"])
+			latitude2 = float(p2["latitudedegrees"])
+			longitude2 = float(p2["longitudedegrees"])
+			dist = geo_distance((latitude1, longitude1),(latitude2, longitude2)).m
+			if time>0:
+				speed = dist/time
+				if speed > SPEED_NO_MOVEMENT_LIMIT_M_PER_S:
+					break
+			i-=1
+
+		return i			
+
+	def __repr__(self):
+		return '<TcxParser({file!r}, {tracks!r}>'.format(file=self.tcx_filepath, tracks=self.get_num_of_tracks())
 
 
 if __name__ == "__main__":
