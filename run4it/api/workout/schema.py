@@ -26,6 +26,7 @@ class WorkoutSchema(Schema):
 	averageSpeed = fields.Float(attribute='average_speed', dump_only=True, required=True)
 	averagePace = fields.Str(attribute='average_pace', dump_only=True, required=True)
 	trackData = fields.List(fields.Nested(WorkoutExtendedTrackDataPoint), attribute='extended_track_data', dump_only=True, required=False)
+	trackSplits = fields.List(fields.Nested(WorkoutExtendedTrackDataPoint), attribute='extended_split_data', dump_only=True, required=False)
 	trackSummary = fields.Nested(WorkoutExtendedTrackDataPoint, attribute='extended_summary', dump_only=True, required=False)
 
 	class Meta:
