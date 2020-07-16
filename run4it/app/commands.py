@@ -181,7 +181,7 @@ def init_database_test_data():
 	workout = WorkoutModel(User.find_by_username('JonnyIT').profile.id, workout_cat, "Åsen run", dt.datetime.utcnow(), 7321, 1921, 43)
 	workout.save(commit=False)
 	print("Added {0}".format(workout))
-	workout = WorkoutModel(User.find_by_username('JonnyIT').profile.id, workout_cat, "Åsen run", dt.datetime.utcnow(), 3000, 658, 0, '/home/user/file.gpx', 1)
+	workout = WorkoutModel(User.find_by_username('JonnyIT').profile.id, workout_cat, "Åsen run", dt.datetime.utcnow(), 3000, 658, 0, 'C:/mydev/run4it_backend/run4it/uploads/gpx/test.tcx', 1)
 	workout.save(commit=False)
 	print("Added {0}".format(workout))
 	db.session.commit()

@@ -31,7 +31,7 @@ class Config(object):
 		'http://10.0.0.117:4200',
 	]
 
-	ALLOWED_UPLOAD_EXTENSIONS = { 'gpx' } # 'tcx'
+	ALLOWED_UPLOAD_EXTENSIONS = { 'gpx', 'tcx' }
 
 	# Define in sub-classes
 	#ENV = None

@@ -51,7 +51,7 @@ def create_api(app):
 
 	# Profile workout resources
 	api.add_resource(ProfileWorkoutListResource, "/profiles/<string:username>/workouts")
-	api.add_resource(ProfileWorkoutGpxResource, "/profiles/<string:username>/workouts/gpx")
+	api.add_resource(ProfileWorkoutGpxResource, "/profiles/<string:username>/workouts/gpx/<int:category_id>")
 	api.add_resource(ProfileWorkoutResource, "/profiles/<string:username>/workouts/<int:workout_id>")
 
 	# Discipline resources
