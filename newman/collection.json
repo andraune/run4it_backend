@@ -468,7 +468,6 @@
 							"listen": "test",
 							"script": {
 								"id": "bc6befdc-f219-49cf-807e-6456899f5e20",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Response time is acceptable\", function() {",
 									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));",
@@ -485,10 +484,11 @@
 									"",
 									"pm.test(\"Registration response\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.errors.username[0]).to.equal(\"Length must be between 4 and 16.\")",
+									"    pm.expect(jsonData.errors.username[0]).to.equal(\"Username must be 4-16 characters: a-z, A-Z, 0-9 and underscore\")",
 									"});",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],

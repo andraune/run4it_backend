@@ -2,7 +2,7 @@ from marshmallow import Schema, validate, fields
 
 
 class UserSchema(Schema):
-	username = fields.Str(required=True, validate=[validate.Length(min=4, max=16)], error_messages={'required': 'Username is required.'})
+	username = fields.Str(required=True, validate=[validate.Regexp('^[a-zA-Z]{1}[a-zA-Z0-9_]{3,15}$', 0, error='Username must be 4-16 characters: a-z, A-Z, 0-9 and underscore')], error_messages={'required': 'Username is required.'})
 	email = fields.Email(required=True, error_messages={'required': 'Email is required.'})
 	password = fields.Str(load_only=True, required=True, validate=[validate.Length(min=6, max=32)], error_messages={'required': 'Password is required.'})
 	confirmed = fields.Bool(dump_only=True, required=True)
