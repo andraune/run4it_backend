@@ -11,9 +11,9 @@ from .helpers import get_response_json, register_confirmed_user, register_and_lo
 class TestProfileWorkoutListResource:
 
 	def setup(self): # register some workouts
-		cat1 = WorkoutCategoryModel('Running')
+		cat1 = WorkoutCategoryModel('Running', True)
 		cat1.save(commit=False)
-		cat2 = WorkoutCategoryModel('Hiking')
+		cat2 = WorkoutCategoryModel('Hiking', True)
 		cat2.save()
 		now = dt.datetime.utcnow()
 		WorkoutModel(1, cat1, "Run 1", now - dt.timedelta(days=3), 3456, 201, 12, 'path/run1.gpx', False).save(commit=False)
@@ -144,9 +144,9 @@ class TestProfileWorkoutListResource:
 class TestProfileWorkoutResource:
 
 	def setup(self): # register some workouts
-		cat1 = WorkoutCategoryModel('Running')
+		cat1 = WorkoutCategoryModel('Running', True)
 		cat1.save(commit=False)
-		cat2 = WorkoutCategoryModel('Hiking')
+		cat2 = WorkoutCategoryModel('Hiking', True)
 		cat2.save()
 		now = dt.datetime.utcnow()
 		WorkoutModel(1, cat1, "Run 1", now - dt.timedelta(days=1), 3456, 201, 12, 'path/run1.gpx', False).save(commit=False)
@@ -260,7 +260,7 @@ class TestProfileWorkoutResource:
 @pytest.mark.usefixtures('db')
 class TestProfileWorkoutGpxResource:
 	def setup(self):
-		cat1 = WorkoutCategoryModel('Running')
+		cat1 = WorkoutCategoryModel('Running', True)
 		cat1.save(commit=False)
 	
 	def teardown(self):
@@ -274,14 +274,52 @@ class TestProfileWorkoutGpxResource:
 			os.remove(filename)
 		except:
 			pass
+		try:
+			tmp_filename = os.path.join(current_app.config["GPX_UPLOAD_DIR"], "jonny_test.tcx")
+			os.remove(tmp_filename)
+		except:
+			pass
+		try:
+			filename = os.path.join(current_app.config["GPX_UPLOAD_DIR"], "jonny_workout_1.tcx")
+			os.remove(filename)
+		except:
+			pass
+
+	def get_dummy_gpx_file(self):
+		gpxStr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"Polar Ignite\">"
+		gpxStr += "<metadata><author><name>Polar</name></author><time>2020-04-29T18:11:26.826Z</time></metadata><trk><trkseg>"
+		gpxStr += "<trkpt lat=\"63.60100167\" lon=\"10.99771167\"><ele>15.0</ele><time>2020-04-29T18:11:26.826Z</time></trkpt>"
+		gpxStr += "<trkpt lat=\"63.60100167\" lon=\"10.99771167\"><ele>15.0</ele><time>2020-04-29T18:11:27.827Z</time></trkpt>"
+		gpxStr += "<trkpt lat=\"63.600985\" lon=\"10.99769833\"><ele>14.0</ele><time>2020-04-29T18:11:28.827Z</time></trkpt></trkseg></trk></gpx>"
+		return io.BytesIO(bytearray(str.encode(gpxStr)))
+
+	def get_dummy_tcx_file(self):
+		tcxStr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><TrainingCenterDatabase xsi:schemaLocation=\"http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2 http://www.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd\" "
+		tcxStr += "xmlns:ns5=\"http://www.garmin.com/xmlschemas/ActivityGoals/v1\" xmlns:ns3=\"http://www.garmin.com/xmlschemas/ActivityExtension/v2\" xmlns:ns2=\"http://www.garmin.com/xmlschemas/UserProfile/v2\" "
+		tcxStr += "xmlns=\"http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:ns4=\"http://www.garmin.com/xmlschemas/ProfileExtension/v1\">"
+		tcxStr += "<Activities><Activity Sport=\"Running\"><Id>2020-06-30T04:49:19.000Z</Id><Lap StartTime=\"2020-06-30T04:49:19.000Z\"><TotalTimeSeconds>284.0</TotalTimeSeconds>"
+		tcxStr += "<DistanceMeters>1000.0</DistanceMeters><MaximumSpeed>3.825999975204468</MaximumSpeed><Calories>86</Calories><Intensity>Active</Intensity><TriggerMethod>Manual</TriggerMethod>"
+		tcxStr += "<Track><Trackpoint><Time>2020-06-30T04:49:19.000Z</Time><Position><LatitudeDegrees>63.47279107198119</LatitudeDegrees><LongitudeDegrees>10.90274571441114</LongitudeDegrees></Position>"
+		tcxStr += "<AltitudeMeters>12.600000381469727</AltitudeMeters><DistanceMeters>0.0</DistanceMeters></Trackpoint>"
+		tcxStr += "<Trackpoint><Time>2020-06-30T04:49:25.000Z</Time><Position><LatitudeDegrees>63.472980335354805</LatitudeDegrees><LongitudeDegrees>10.902920477092266</LongitudeDegrees></Position>"
+		tcxStr += "<AltitudeMeters>12.600000381469727</AltitudeMeters><DistanceMeters>23.229999542236328</DistanceMeters></Trackpoint>"
+		tcxStr += "<Trackpoint><Time>2020-06-30T04:49:31.000Z</Time><Position><LatitudeDegrees>63.47312391735613</LatitudeDegrees><LongitudeDegrees>10.903240581974387</LongitudeDegrees></Position>"
+		tcxStr += "<AltitudeMeters>12.600000381469727</AltitudeMeters><DistanceMeters>46.0</DistanceMeters></Trackpoint></Track></Lap>"
+		tcxStr += "<Creator xsi:type=\"Device_t\"><Name>Forerunner 630</Name><UnitId>3918934328</UnitId><ProductID>2156</ProductID>"
+		tcxStr += "<Version><VersionMajor>8</VersionMajor><VersionMinor>10</VersionMinor><BuildMajor>0</BuildMajor><BuildMinor>0</BuildMinor></Version>"
+		tcxStr += "</Creator></Activity></Activities>"
+		tcxStr += "<Author xsi:type=\"Application_t\"><Name>Connect Api</Name><Build>"
+		tcxStr += "<Version><VersionMajor>0</VersionMajor><VersionMinor>0</VersionMinor><BuildMajor>0</BuildMajor><BuildMinor>0</BuildMinor></Version></Build>"
+		tcxStr += "<LangID>en</LangID><PartNumber>006-D2449-00</PartNumber></Author></TrainingCenterDatabase>"
+		return io.BytesIO(bytearray(str.encode(tcxStr)))
 
 	def test_content_type_is_json(self, api, client):
-		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny", category_id=1)
 		response = client.post(url)
 		assert(response.headers["Content-Type"] == 'application/json')
 
 	def test_upload_gpx_not_logged_in(self, api, client):
-		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny", category_id=1)
 		response = client.post(url)
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 401)
@@ -290,33 +328,62 @@ class TestProfileWorkoutGpxResource:
 	def test_upload_gpx_for_another_user(self, api, client):
 		register_confirmed_user("test", "test@test.com", "pwd")
 		token,_ = register_and_login_confirmed_user(api, client, "jonny", "jonny@vikan.no", "jonny")
-		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="test", category_id=1)
 		response = client.post(url, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 422)
-		assert(response_json["errors"]["workout"] is not None)
+		assert(response_json["errors"]["workout"][0] == "Profile not found")
 
 	def test_upload_gpx(self, api, client):
 		token,_ = register_and_login_confirmed_user(api, client, "jonny", "jonny@vikan.no", "jonny")
-		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
-		fileinfo = {"gpxfile" : (io.BytesIO(b"abcdef"), 'test.gpx')}
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny", category_id=1)
+		fileinfo = {"gpxfile" : (self.get_dummy_gpx_file(), 'test.gpx')}
 		response = client.post(url, data=fileinfo, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 200)
 		assert(response_json["id"] == 1)
+		assert(response_json["name"] == "[Place name] Running")
+		assert(response_json["duration"] == 1.0)
+		assert(response_json["distance"] == 2.0)
+		assert(response_json["climb"] == 0)
 		assert(response_json["resourceFile"] == "jonny_workout_1.gpx")
+		assert(response_json["categoryName"] == "Running")
+
+	def test_upload_tcx(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "jonny", "jonny@vikan.no", "jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny", category_id=1)
+		fileinfo = {"gpxfile" : (self.get_dummy_tcx_file(), 'test.tcx')}
+		response = client.post(url, data=fileinfo, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 200)
+		assert(response_json["id"] == 1)
+		assert(response_json["name"] == "[Place name] Running")
+		assert(response_json["duration"] == 12)
+		assert(response_json["distance"] == 45)
+		assert(response_json["climb"] == 0)
+		assert(response_json["resourceFile"] == "jonny_workout_1.tcx")
+		assert(response_json["categoryName"] == "Running")
+
+	def test_upload_with_nonexistant_category(self, api, client):
+		token,_ = register_and_login_confirmed_user(api, client, "jonny", "jonny@vikan.no", "jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny", category_id=99)
+		fileinfo = {"gpxfile" : (self.get_dummy_tcx_file(), 'test.tcx')}
+		response = client.post(url, data=fileinfo, headers=get_authorization_header(token))
+		response_json = get_response_json(response.data)
+		assert(response.status_code == 422)
+		assert(response_json["errors"]["workout"][0] == "Workout category not found")
 
 	def test_upload_gpx_invalid_file_label(self, api, client):
 		token,_ = register_and_login_confirmed_user(api, client, "jonny", "jonny@vikan.no", "jonny")
-		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny", category_id=1)
 		fileinfo = {"filelabel" : (io.BytesIO(b"abcdef"), 'test.gpx')}
 		response = client.post(url, data=fileinfo, headers=get_authorization_header(token))
 		assert(response.status_code == 400)
 
 	def test_upload_gpx_invalid_file_extension(self, api, client):
 		token,_ = register_and_login_confirmed_user(api, client, "jonny", "jonny@vikan.no", "jonny")
-		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
-		fileinfo = {"gpxfile" : (io.BytesIO(b"abcdef"), 'test.tcx')}
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny", category_id=1)
+		fileinfo = {"gpxfile" : (io.BytesIO(b"abcdef"), 'test.abc')}
 		response = client.post(url, data=fileinfo, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 422)
@@ -324,23 +391,23 @@ class TestProfileWorkoutGpxResource:
 
 	def test_upload_gpx_with_no_file(self, api, client):
 		token,_ = register_and_login_confirmed_user(api, client, "jonny", "jonny@vikan.no", "jonny")
-		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny", category_id=1)
 		response = client.post(url, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 422)
 		assert(response_json["errors"]["workout"][0] == "Workout file not provided.")
 
 	def test_put_gpx_not_supported(self, api, client):
-		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny", category_id=1)
 		response = client.put(url)
 		assert(response.status_code == 405) # not allowed
 
 	def test_get_gpx_not_supported(self, api, client):
-		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny", category_id=1)
 		response = client.get(url)
 		assert(response.status_code == 405) # not allowed
 
 	def test_delete_not_supported(self, api, client):
-		url = api.url_for(ProfileWorkoutGpxResource, username="jonny")
+		url = api.url_for(ProfileWorkoutGpxResource, username="jonny", category_id=1)
 		response = client.delete(url)
 		assert(response.status_code == 405) # not allowed

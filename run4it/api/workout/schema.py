@@ -1,13 +1,15 @@
 from marshmallow import Schema, validate, fields
+		
 
-
-class WorkoutExtendedDataPoint(Schema):
+class WorkoutExtendedTrackDataPoint(Schema):
 	latitude = fields.Float(dump_only=True, required=True)
 	longitude = fields.Float(dump_only=True, required=True)
 	elevation = fields.Integer(dump_only=True, required=True)
-	heartBpm = fields.Integer(attribute='heart_bpm', dump_only=True, required=True)
-	speed = fields.Float(dump_only=True, required=True)
-	pace = fields.Str(dump_only=True, required=True)
+	duration = fields.Float(dump_only=True, required=True)
+	distance = fields.Float(dump_only=True, required=True)
+	speed = fields.Float(attribute='average_speed', dump_only=True, required=True)
+	pace = fields.Str(attribute='average_pace', dump_only=True, required=True)
+	heartBpm = fields.Int(attribute='heart_bpm', dump_only=True, required=True)
 
 class WorkoutSchema(Schema):
 	limit = fields.Int(load_only=True, validate=[validate.Range(min=1, max=999)])
@@ -23,14 +25,16 @@ class WorkoutSchema(Schema):
 	categoryName = fields.Str(attribute='category_name', dump_only=True, required=True)
 	averageSpeed = fields.Float(attribute='average_speed', dump_only=True, required=True)
 	averagePace = fields.Str(attribute='average_pace', dump_only=True, required=True)
-	extendedData = fields.List(fields.Nested(WorkoutExtendedDataPoint), attribute='extended_data', dump_only=True, required=False)
+	trackData = fields.List(fields.Nested(WorkoutExtendedTrackDataPoint), attribute='extended_track_data', dump_only=True, required=False)
+	trackSplits = fields.List(fields.Nested(WorkoutExtendedTrackDataPoint), attribute='extended_split_data', dump_only=True, required=False)
+	trackSummary = fields.Nested(WorkoutExtendedTrackDataPoint, attribute='extended_summary', dump_only=True, required=False)
 
 	class Meta:
 		strict = True
 		datetimeformat = '%Y-%m-%dT%H:%M:%S+00:00' # note: sets timezone to UTC, should only be used on dump
 
 class WorkoutUpdateSchema(Schema):
-	name = fields.Str(required=True)
+	name = fields.Str(required=True, validate=[validate.Length(min=0, max=128)])
 	startAt = fields.DateTime(attribute='start_at', required=True)
 	distance = fields.Int(required=True, validate=[validate.Range(min=0)])
 	duration = fields.Int(required=True, validate=[validate.Range(min=0)])

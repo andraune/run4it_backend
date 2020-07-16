@@ -4698,7 +4698,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/workouts/gpx",
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/workouts/gpx/1",
 							"host": [
 								"{{apiBaseUrl}}"
 							],
@@ -4707,7 +4707,74 @@
 								"profiles",
 								"JonnyIT",
 								"workouts",
-								"gpx"
+								"gpx",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UploadWorkoutTcx",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "752f2c0a-a3e1-4f0a-9b5c-b7c8f3b6536d",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableUploadResponseTime\")));",
+									"});",
+									"",
+									"pm.test(\"Response OK\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is JSON\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"CreateWorkout response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[\"id\"]).to.be.above(0);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "gpxfile",
+									"type": "file",
+									"src": "test_garmin.tcx"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/profiles/JonnyIT/workouts/gpx/2",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"profiles",
+								"JonnyIT",
+								"workouts",
+								"gpx",
+								"2"
 							]
 						}
 					},
