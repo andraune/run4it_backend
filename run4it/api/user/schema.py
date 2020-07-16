@@ -1,6 +1,6 @@
 from marshmallow import Schema, validate, fields
 
-#validate=validate.Regexp('^$|https://facebook.com/[a-zA-Z][a-zA-Z 0-9._]{0,50}$', , 0, 'Facebook username is invalid')
+
 class UserSchema(Schema):
 	username = fields.Str(required=True, validate=[validate.Regexp('^[a-zA-Z]{1}[a-zA-Z0-9_]{3,15}$', 0, error='Username must be 4-16 characters: a-z, A-Z, 0-9 and underscore')], error_messages={'required': 'Username is required.'})
 	email = fields.Email(required=True, error_messages={'required': 'Email is required.'})
