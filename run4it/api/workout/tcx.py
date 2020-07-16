@@ -1,3 +1,4 @@
+from copy import copy as objcopy
 from os import path
 import datetime as dt
 import json
@@ -9,6 +10,7 @@ from .gpx import WorkoutDataPoint
 
 SPEED_NO_MOVEMENT_LIMIT_M_PER_S = 0.5
 ELEVATION_GAIN_IGNORE_LIMIT_M = 0.1
+SPLIT_DISTANCE_M = 997 # in practice, we get approx ~1000m pr split
 
 
 class TcxParser:
@@ -47,6 +49,9 @@ class TcxParser:
 			cumulative_elevation_gain = 0.0
 			cumulative_heart_bpm = 0.0
 			heart_rate_points = 0
+			start_dist_current_split = 0
+			start_dur_current_split = 0
+			start_ele_current_split = 0
 
 			for idx in range(len(self.tcx_data)):
 				if idx == 0:
@@ -65,6 +70,7 @@ class TcxParser:
 						time,
 						0, 0, 0,
 						heart_bpm))
+					start_ele_current_split = round(elevation, None)
 				else:
 					point = json.loads(repr(self.tcx_data[idx]))
 					previous_point = json.loads(repr(self.tcx_data[idx-1]))
@@ -114,6 +120,20 @@ class TcxParser:
 						cumulative_distance,
 						avg_speed_kmh,
 						heart_bpm))
+					# splits
+					if cumulative_distance-start_dist_current_split >= SPLIT_DISTANCE_M or idx == (len(self.tcx_data)-1):
+						split_point = objcopy(track_data[-1])
+						split_point.distance -= start_dist_current_split
+						split_point.duration -= start_dur_current_split
+						split_point.elevation -= start_ele_current_split
+						if split_point.duration > 0:
+							split_point.average_speed = 3.6 * split_point.distance / split_point.duration
+						else:
+							split_point.average_speed = 0.0
+						split_data.append(split_point)
+						start_dist_current_split = cumulative_distance
+						start_dur_current_split = cumulative_duration
+						start_ele_current_split = track_data[-1].elevation
 					# hack to set speed for first records
 					if idx == 5:
 						track_data[0].average_speed = track_data[5].average_speed
@@ -132,7 +152,6 @@ class TcxParser:
 				if heart_rate_points > 0:
 					avg_heart_rate = cumulative_heart_bpm / heart_rate_points
 				summary = WorkoutDataPoint(first_point.latitude, first_point.longitude, cumulative_elevation_gain, first_point.time, last_point.duration, last_point.distance, total_avg_speed_kmh, avg_heart_rate)
-				split_data.append(summary)
 
 			return track_data, split_data, summary
 		else:
@@ -241,7 +260,13 @@ if __name__ == "__main__":
 		print("SPLITS:")
 		for i in range(len(track_splits)):
 			if track_splits[i] is not None:
-				print(track_splits[i])
+				print("Split {0:2d}: {1:02d}:{2:02d}, {3} min/km, {4}m".format(
+					i+1,
+					int(track_splits[i].duration/60),
+					int(track_splits[i].duration%60),
+					track_splits[i].average_pace,
+					track_splits[i].elevation))
+
 		print()
 		print("TRACK SUMMARY:")
 		print("Start position lat/long:", track_summary.latitude, ",", track_summary.longitude)

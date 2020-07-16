@@ -1,3 +1,4 @@
+from copy import copy as objcopy
 from os import path
 from geopy.distance import distance as geo_distance
 from math import sqrt, floor
@@ -7,6 +8,7 @@ import datetime as dt
 
 SPEED_NO_MOVEMENT_LIMIT_M_PER_S = 0.5
 ELEVATION_GAIN_IGNORE_LIMIT_M = 0.3
+SPLIT_DISTANCE_M = 998 # in practice, we get approx ~1000m pr split
 
 class WorkoutDataPoint:
 	
@@ -74,10 +76,14 @@ class GpxParser:
 		cumulative_duration = 0.0
 		cumulative_distance = 0.0
 		cumulative_elevation_gain = 0.0
+		start_dist_current_split = 0
+		start_dur_current_split = 0
+		start_ele_current_split = 0
 
 		for idx in range(len(points)):
 			if idx == 0:
 				track_data.append(WorkoutDataPoint(points[idx].latitude, points[idx].longitude, points[idx].elevation, points[idx].time, 0, 0, 0))
+				start_ele_current_split = track_data[0].elevation
 			else:
 				point = points[idx]
 				previous_point = points[idx-1]
@@ -102,6 +108,21 @@ class GpxParser:
 						avg_speed_kmh = 3.6 * speed_dist_diff_3d / speed_time_diff
 				# add record
 				track_data.append(WorkoutDataPoint(point.latitude, point.longitude, point.elevation, point.time, cumulative_duration, cumulative_distance, avg_speed_kmh))
+				# splits
+				if cumulative_distance-start_dist_current_split >= SPLIT_DISTANCE_M or idx == (len(points)-1):
+					split_point = objcopy(track_data[-1])
+					split_point.distance -= start_dist_current_split
+					split_point.duration -= start_dur_current_split
+					split_point.elevation -= start_ele_current_split
+					if split_point.duration > 0:
+						split_point.average_speed = 3.6 * split_point.distance / split_point.duration
+					else:
+						split_point.average_speed = 0.0
+					split_data.append(split_point)
+					start_dist_current_split = cumulative_distance
+					start_dur_current_split = cumulative_duration
+					start_ele_current_split = track_data[-1].elevation
+				
 				# hack to set speed for first records
 				if idx == 5:
 					track_data[0].average_speed = track_data[5].average_speed
@@ -116,7 +137,6 @@ class GpxParser:
 			last_track_data = track_data[-1]
 			total_avg_speed_kmh = 3.6 * last_track_data.distance / last_track_data.duration
 			summary = WorkoutDataPoint(first_point.latitude, first_point.longitude, cumulative_elevation_gain, first_point.time, last_track_data.duration, last_track_data.distance, total_avg_speed_kmh)
-			split_data.append(summary)
 		
 		return track_data, split_data, summary
 
@@ -211,15 +231,17 @@ if __name__ == "__main__":
 		
 		print("Parse returned", len(track_data), "points")
 
-		print("TRACK DATA:")
-		for i in range(5):
-			if track_data[i + 40] is not None:
-				print(track_data[i + 40])
 		print()
 		print("SPLITS:")
 		for i in range(len(track_splits)):
 			if track_splits[i] is not None:
-				print(track_splits[i])
+				print("Split {0:2d}: {1:02d}:{2:02d}, {3} min/km, {4}m".format(
+					i+1,
+					int(track_splits[i].duration/60),
+					int(track_splits[i].duration%60),
+					track_splits[i].average_pace,
+					track_splits[i].elevation))
+
 		print()
 		print("TRACK SUMMARY:")
 		print("Start position lat/long:", track_summary.latitude, ",", track_summary.longitude)
