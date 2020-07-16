@@ -15,12 +15,10 @@ class WorkoutCategory(SurrogatePK, db.Model):
 	__tablename__ = 'workout_categories'
 	id = Column(db.Integer, primary_key=True, index=True)
 	name = Column(db.String(32), nullable=False, unique=True)
-	supports_gps_data = Column(db.Boolean, nullable=False, default=True)
+	supports_gps_data = Column(db.Boolean, nullable=False)
 
 	def __init__(self, name, supports_gps_data):
 		db.Model.__init__(self, name=name, supports_gps_data=supports_gps_data)
-		if self.supports_gps_data is None:
-			supports_gps_data = False
 	
 	def __repr__(self):
 		return '<WorkoutCategory({name!r})>'.format(name=self.name)

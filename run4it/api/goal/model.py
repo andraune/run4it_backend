@@ -7,9 +7,11 @@ class GoalCategory(SurrogatePK, db.Model):
 	id = Column(db.Integer, primary_key=True, index=True)
 	name = Column(db.String(32), nullable=False, unique=True)
 	unit = Column(db.String(16), nullable=True)
+	
+	workout_category_id = reference_col('workout_categories', nullable=True)
 
-	def __init__(self, name, unit=None):
-		db.Model.__init__(self, name=name, unit=unit)
+	def __init__(self, name, unit=None, workout_category_id=None):
+		db.Model.__init__(self, name=name, unit=unit, workout_category_id=workout_category_id)
 	
 	def __repr__(self):
 		return '<GoalCategory({name!r})>'.format(name=self.name)
