@@ -15,9 +15,12 @@ class WorkoutCategory(SurrogatePK, db.Model):
 	__tablename__ = 'workout_categories'
 	id = Column(db.Integer, primary_key=True, index=True)
 	name = Column(db.String(32), nullable=False, unique=True)
+	supports_gps_data = Column(db.Boolean, nullable=False, default=True)
 
-	def __init__(self, name):
-		db.Model.__init__(self, name=name)
+	def __init__(self, name, supports_gps_data):
+		db.Model.__init__(self, name=name, supports_gps_data=supports_gps_data)
+		if self.supports_gps_data is None:
+			supports_gps_data = False
 	
 	def __repr__(self):
 		return '<WorkoutCategory({name!r})>'.format(name=self.name)
@@ -53,6 +56,9 @@ class Workout(SurrogatePK, db.Model):
 			tcx = TcxParser(self.resource_path)
 			if tcx.get_num_of_tracks() > 0:
 				self.extended_track_data, self.extended_split_data, self.extended_summary = tcx.get_track_data()
+		if not self.category.supports_gps_data:
+			self.extended_track_data = None
+			self.extended_split_data = None
 
 	@property
 	def resource_file(self):

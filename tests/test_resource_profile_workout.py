@@ -11,9 +11,9 @@ from .helpers import get_response_json, register_confirmed_user, register_and_lo
 class TestProfileWorkoutListResource:
 
 	def setup(self): # register some workouts
-		cat1 = WorkoutCategoryModel('Running')
+		cat1 = WorkoutCategoryModel('Running', True)
 		cat1.save(commit=False)
-		cat2 = WorkoutCategoryModel('Hiking')
+		cat2 = WorkoutCategoryModel('Hiking', True)
 		cat2.save()
 		now = dt.datetime.utcnow()
 		WorkoutModel(1, cat1, "Run 1", now - dt.timedelta(days=3), 3456, 201, 12, 'path/run1.gpx', False).save(commit=False)
@@ -144,9 +144,9 @@ class TestProfileWorkoutListResource:
 class TestProfileWorkoutResource:
 
 	def setup(self): # register some workouts
-		cat1 = WorkoutCategoryModel('Running')
+		cat1 = WorkoutCategoryModel('Running', True)
 		cat1.save(commit=False)
-		cat2 = WorkoutCategoryModel('Hiking')
+		cat2 = WorkoutCategoryModel('Hiking', True)
 		cat2.save()
 		now = dt.datetime.utcnow()
 		WorkoutModel(1, cat1, "Run 1", now - dt.timedelta(days=1), 3456, 201, 12, 'path/run1.gpx', False).save(commit=False)
@@ -260,7 +260,7 @@ class TestProfileWorkoutResource:
 @pytest.mark.usefixtures('db')
 class TestProfileWorkoutGpxResource:
 	def setup(self):
-		cat1 = WorkoutCategoryModel('Running')
+		cat1 = WorkoutCategoryModel('Running', True)
 		cat1.save(commit=False)
 	
 	def teardown(self):

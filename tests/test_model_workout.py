@@ -5,17 +5,17 @@ from run4it.api.workout import WorkoutModel, WorkoutCategoryModel
 @pytest.mark.usefixtures('db')
 class TestWorkoutCategoryModel:
 	def test_get_by_id(self):
-		new_item = WorkoutCategoryModel("Running")
+		new_item = WorkoutCategoryModel("Running", True)
 		new_item.save()
 		retrieved_item = WorkoutCategoryModel.get_by_id(new_item.id)
 		assert(retrieved_item == new_item)
 
 	def test_category_name_unique(self, db):
-		item = WorkoutCategoryModel("Running")
+		item = WorkoutCategoryModel("Running", True)
 		item.save()
 
 		try:
-			item_new = WorkoutCategoryModel("Running")
+			item_new = WorkoutCategoryModel("Running", True)
 			item_new.save()
 		except:
 			db.session.rollback()
@@ -27,8 +27,8 @@ class TestWorkoutCategoryModel:
 @pytest.mark.usefixtures('db')
 class TestWorkoutModel:
 	def setup(self):
-		WorkoutCategoryModel("Running").save(commit=False)
-		WorkoutCategoryModel("Hiking").save()
+		WorkoutCategoryModel("Running", True).save(commit=False)
+		WorkoutCategoryModel("Hiking", True).save()
 
 	def test_setup(self, db):
 		assert(db.session.query(WorkoutCategoryModel).count() == 2)

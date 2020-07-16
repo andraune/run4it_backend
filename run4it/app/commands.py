@@ -172,10 +172,10 @@ def init_database_test_data():
 	db.session.commit()
 
 	# Workout stuff
-	workout_cat = WorkoutCategoryModel('Running')
+	workout_cat = WorkoutCategoryModel('Running', True)
 	workout_cat.save(commit=False)
 	print("Added {0}".format(workout_cat))
-	workout_cat = WorkoutCategoryModel('Hiking')
+	workout_cat = WorkoutCategoryModel('Hiking', True)
 	workout_cat.save()
 	print("Added {0}".format(workout_cat))
 	workout = WorkoutModel(User.find_by_username('JonnyIT').profile.id, workout_cat, "Åsen run", dt.datetime.utcnow(), 7321, 1921, 43)
