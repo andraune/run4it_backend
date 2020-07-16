@@ -74,7 +74,7 @@ class ProfileWorkoutList(Resource):
 	@marshal_with(workout_schema)	
 	def post(self, username, name, start_at, distance, duration, category_id, climb=0, edited=False):
 		profile = get_auth_profile_or_abort(username, "workout")
-		category = WorkoutCategory.get_by_id(category_id)
+		category = WorkoutCategoryModel.get_by_id(category_id)
 
 		if category is None:
 			report_error_and_abort(422, "workout", "Workout category not found")
@@ -121,7 +121,7 @@ class ProfileWorkout(Resource):
 		if workout is None:
 			report_error_and_abort(422, "workout", "Workout not found")
 	
-		category = WorkoutCategory.get_by_id(category_id)
+		category = WorkoutCategoryModel.get_by_id(category_id)
 
 		if category is None:
 			report_error_and_abort(422, "workout", "Workout category not found")
@@ -160,7 +160,7 @@ class ProfileWorkoutGpx(Resource): # both TCX and GPX are supported
 	@marshal_with(workout_schema)
 	def post(self, username, category_id):
 		profile = get_auth_profile_or_abort(username, "workout")
-		category = WorkoutCategory.get_by_id(category_id)
+		category = WorkoutCategoryModel.get_by_id(category_id)
 
 		if category is None:
 			report_error_and_abort(422, "workout", "Workout category not found")
