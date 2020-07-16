@@ -45,7 +45,15 @@ class WorkoutUpdateSchema(Schema):
 	class Meta:
 		strict = True
 
+class WorkoutCategorySchema(Schema):
+	id = fields.Int(required=True, dump_only=True)
+	name = fields.Str(required=True, dump_only=True)
+	supports_gps_data = fields.Bool(required=True, dump_only=True)
+
+	class Meta:
+		strict = True
 
 workout_schema = WorkoutSchema()
 workouts_schema = WorkoutSchema(many=True)
 workout_update_schema = WorkoutUpdateSchema()
+workout_categories_schema = WorkoutCategorySchema(many=True)

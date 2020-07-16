@@ -10,8 +10,8 @@ from werkzeug.utils import secure_filename
 from run4it.api.templates import report_error_and_abort
 from run4it.api.profile.auth_helper import get_auth_profile_or_abort
 from run4it.app.database import db
-from .model import Workout, WorkoutCategory
-from .schema import workout_schema, workouts_schema, workout_update_schema
+from .model import Workout, WorkoutCategory as WorkoutCategoryModel
+from .schema import workout_schema, workouts_schema, workout_update_schema, workout_categories_schema
 
 
 def is_valid_workout_filename(filename):
@@ -96,7 +96,6 @@ class ProfileWorkoutList(Resource):
 			report_error_and_abort(500, "workout", "Unable to create workout.")
 
 		return new_workout, 200, {'Location': '{}/{}'.format(request.path, new_workout.id)}
-
 
 class ProfileWorkout(Resource):
 	@jwt_required
@@ -207,3 +206,8 @@ class ProfileWorkoutGpx(Resource): # both TCX and GPX are supported
 			report_error_and_abort(500, "workout", "Unable to create workout from file.")
 
 		return new_workout, 200, {'Location': '{}/{}'.format(request.path, new_workout.id)}
+
+class WorkoutCategoryList(Resource):
+	@marshal_with(workout_categories_schema)
+	def get(self):			
+		return WorkoutCategoryModel.query.order_by(WorkoutCategoryModel.name.asc()).all()

@@ -4782,6 +4782,59 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Workout",
+			"item": [
+				{
+					"name": "WorkoutCategoryList",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ddfa0db1-68f1-470f-b5cb-fcfb301fce51",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"GetWorkoutCategories OK\", function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is JSON\", function() {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"GetWorkoutCategories response\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.length).to.be.above(0)\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/workout_categories",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"workout_categories"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"auth": {
