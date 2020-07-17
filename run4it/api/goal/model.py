@@ -9,10 +9,18 @@ class GoalCategory(SurrogatePK, db.Model):
 	unit = Column(db.String(16), nullable=True)
 	
 	workout_category_id = reference_col('workout_categories', nullable=True)
+	workout_category = relationship('WorkoutCategory')
 
 	def __init__(self, name, unit=None, workout_category_id=None):
 		db.Model.__init__(self, name=name, unit=unit, workout_category_id=workout_category_id)
-	
+
+	@property
+	def workout_category_name(self):
+		if self.workout_category is not None:
+			return self.workout_category.name
+		else:
+			return ""
+
 	def __repr__(self):
 		return '<GoalCategory({name!r})>'.format(name=self.name)
 

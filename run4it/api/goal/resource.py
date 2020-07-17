@@ -8,7 +8,7 @@ from run4it.app.database import db
 from run4it.api.templates import report_error_and_abort
 from run4it.api.profile.auth_helper import get_auth_profile_or_abort
 from .model import Goal, GoalCategory
-from .schema import goal_schema, goals_schema, goal_update_schema
+from .schema import goal_schema, goals_schema, goal_update_schema, goal_categories_schema
 
 
 class ProfileGoalList(Resource):
@@ -111,3 +111,9 @@ class ProfileGoal(Resource):
 			report_error_and_abort(500, "goal", "Unable to update goal")
 
 		return goal, 200
+
+
+class GoalCategoryList(Resource):
+	@marshal_with(goal_categories_schema)
+	def get(self):			
+		return GoalCategory.query.order_by(GoalCategory.name.asc()).all()

@@ -29,7 +29,17 @@ class GoalUpdateSchema(Schema):
 	class Meta:
 		strict = True
 
+class GoalCategorySchema(Schema):
+	id = fields.Int(dump_only=True, required=True)
+	name = fields.Str(dump_only=True, required=True)
+	unit = fields.Str(dump_only=True, required=True)
+	workoutCategoryName = fields.Str(dump_only=True, required=True, attribute="workout_category_name")
+
+	class Meta:
+		strict = True
+
 
 goal_schema = GoalSchema()
 goals_schema = GoalSchema(many=True)
 goal_update_schema = GoalUpdateSchema()
+goal_categories_schema = GoalCategorySchema(many=True)
