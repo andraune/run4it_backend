@@ -31,7 +31,7 @@ class TestGoalCategoryModel:
 @pytest.mark.usefixtures('db')
 class TestGoalModel:
 	def setup(self):
-		GoalCategoryModel("RunKms", "km").save()
+		GoalCategoryModel("RunKms", "km", 1).save(commit=False)
 		GoalCategoryModel("WeightTarget").save()
 
 	def test_setup(self, db):
@@ -43,6 +43,12 @@ class TestGoalModel:
 		new_goal.save()
 		retrieved_goal = GoalModel.get_by_id(new_goal.id)
 		assert(retrieved_goal == new_goal)
+	
+	def test_goal_category_workout_id(self):
+		category1 = GoalCategoryModel.get_by_id(1)
+		category2 = GoalCategoryModel.get_by_id(2)
+		assert(category1.workout_category_id == 1)
+		assert(category2.workout_category_id is None)
 
 	def test_goal_category_link(self):
 		category = GoalCategoryModel.get_by_id(1)
@@ -50,7 +56,6 @@ class TestGoalModel:
 		new_goal.save()
 		assert(new_goal.category.id == 1)
 		assert(new_goal.category.name == 'RunKms')
-		assert(new_goal.category_name == 'RunKms')
 		assert(new_goal.category_unit == 'km')
 
 	def test_goal_category_unit_none_gives_empty_string(self):

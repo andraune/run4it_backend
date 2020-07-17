@@ -4835,6 +4835,59 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Goal",
+			"item": [
+				{
+					"name": "GoalCategoryList",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "794a5b4c-2337-4228-baa7-36f5fbe4ffb3",
+								"exec": [
+									"pm.test(\"Response time is acceptable\", function() {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"acceptableResponseTime\")));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"GetGoalCategories OK\", function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is JSON\", function() {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"GetGoalCategories response\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.length).to.be.above(0)\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/{{apiVersion}}/goal_categories",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"goal_categories"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"auth": {

@@ -134,7 +134,7 @@ def init_database_test_data():
 	discipline.save(commit=False)
 	print("Added {0}".format(discipline))
 
-	goalcat1 = GoalCategoryModel('Distance', 'km')
+	goalcat1 = GoalCategoryModel('Distance', 'km', 1)
 	goalcat1.save(commit=False)
 	print("Added {0}".format(goalcat1))
 	goalcat2 = GoalCategoryModel('Weight target', 'kg')
