@@ -8,7 +8,7 @@ from run4it.api.profile import Profile, ProfileWeightHistory
 from run4it.api.token import TokenRegistry
 from run4it.api.user import User, UserConfirmation
 from run4it.api.workout import WorkoutCategoryModel, WorkoutModel
-
+from run4it.api.workout.gmaps import GeoCodeLookup
 
 
 def create_app(config_object, app_name):
@@ -52,7 +52,8 @@ def register_shell_context(app):
 			'User': User,
 			'UserConfirmation': UserConfirmation,
 			'Workout': WorkoutModel,
-			'WorkoutCategory': WorkoutCategoryModel		
+			'WorkoutCategory': WorkoutCategoryModel,
+			'GeoCodeLookup': GeoCodeLookup	
 		}
 
 	app.shell_context_processor(shell_context)

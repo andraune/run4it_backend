@@ -32,6 +32,7 @@ class Config(object):
 	]
 
 	ALLOWED_UPLOAD_EXTENSIONS = { 'gpx', 'tcx' }
+	GOOGLE_API_KEY = os.environ.get("GMAPS_API_KEY", "gmaps_api_key")
 
 	# Define in sub-classes
 	#ENV = None
