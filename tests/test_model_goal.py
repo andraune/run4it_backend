@@ -1,6 +1,7 @@
 import pytest
 import datetime as dt
 from run4it.api.goal import GoalModel, GoalCategoryModel
+from run4it.api.workout import WorkoutCategoryModel
 
 @pytest.mark.usefixtures('db')
 class TestGoalCategoryModel:
@@ -10,12 +11,20 @@ class TestGoalCategoryModel:
 		retrieved_item = GoalCategoryModel.get_by_id(new_item.id)
 		assert(retrieved_item == new_item)
 
-	def test_category_name_unique(self, db):
-		item = GoalCategoryModel("Run Kms")
+	def test_category_name_not_unique(self, db):
+		item = GoalCategoryModel("Distance", "km", 1)
+		item.save()
+		item_new = GoalCategoryModel("Distance", "km", 2)
+		item_new.save()		
+		num_items = db.session.query(GoalCategoryModel).count()
+		assert(num_items == 2)
+
+	def test_category_name_and_workout_category_unique(self, db):
+		item = GoalCategoryModel("Distance", "km", 1)
 		item.save()
 
 		try:
-			item_new = GoalCategoryModel("Run Kms")
+			item_new = GoalCategoryModel("Distance", "km", 1)
 			item_new.save()
 		except:
 			db.session.rollback()
@@ -27,6 +36,15 @@ class TestGoalCategoryModel:
 		item = GoalCategoryModel("Run Kms", "km")
 		item.save()
 		assert(item.unit == 'km')	
+
+	def test_category_workout_category_link(self, db):
+		WorkoutCategoryModel("Running", True).save()
+		item1 = GoalCategoryModel("Run Kms", "km", None)
+		item1.save()
+		item2 = GoalCategoryModel("Run Kms", "km", 1)
+		item2.save()
+		assert(item1.workout_category is None)
+		assert(item2.workout_category.id == 1)
 
 @pytest.mark.usefixtures('db')
 class TestGoalModel:

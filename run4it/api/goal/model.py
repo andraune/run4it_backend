@@ -1,15 +1,19 @@
 import datetime as dt
+from sqlalchemy import UniqueConstraint
 from run4it.app.database import Column, SurrogatePK, reference_col, relationship, db
 
 
 class GoalCategory(SurrogatePK, db.Model):
 	__tablename__ = 'training_goal_categories'
 	id = Column(db.Integer, primary_key=True, index=True)
-	name = Column(db.String(32), nullable=False, unique=True)
+	name = Column(db.String(32), nullable=False)
 	unit = Column(db.String(16), nullable=True)
 	
 	workout_category_id = reference_col('workout_categories', nullable=True)
 	workout_category = relationship('WorkoutCategory')
+
+	__table_args__ = (UniqueConstraint('name', 'workout_category_id', name='_name_workout_cat_id_uc'),)
+
 
 	def __init__(self, name, unit=None, workout_category_id=None):
 		db.Model.__init__(self, name=name, unit=unit, workout_category_id=workout_category_id)
@@ -22,7 +26,7 @@ class GoalCategory(SurrogatePK, db.Model):
 			return ""
 
 	def __repr__(self):
-		return '<GoalCategory({name!r})>'.format(name=self.name)
+		return '<GoalCategory({name!r},{wcid!r})>'.format(name=self.name, wcid=self.workout_category_name)
 
 class Goal(SurrogatePK, db.Model):
 	__tablename__ = 'training_goals'
