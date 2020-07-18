@@ -67,6 +67,17 @@ def remove_uploaded_file(filepath):
 		except:
 			pass
 
+def add_workout_data_to_goals(profile, workout):
+	goals = profile.get_active_goals(workout.start_at) # active 'as-we-speak'
+	if goals is not None:
+		for goal in goals:
+			goal.update_from_workout(workout)
+
+def remove_workout_data_from_goals(profile, workout):
+	goals = profile.get_active_goals(workout.start_at) # active 'as-we-speak'
+	if goals is not None:
+		for goal in goals:
+			goal.remove_from_workout(workout)
 
 class ProfileWorkoutList(Resource):
 	@jwt_required
@@ -98,6 +109,7 @@ class ProfileWorkoutList(Resource):
 		try:
 			new_workout = Workout(profile.id, category, name, utc_start_at, distance, duration, climb, None, edited)
 			new_workout.save()
+			add_workout_data_to_goals(profile, new_workout)
 		except:
 			db.session.rollback()
 			report_error_and_abort(500, "workout", "Unable to create workout.")
@@ -141,7 +153,15 @@ class ProfileWorkout(Resource):
 
 		if utc_start_at > now:
 			report_error_and_abort(422, "workout", "Workout start time is in the future")
-		
+
+		# remove data from goal before registering updated
+		try:
+			remove_workout_data_from_goals(profile, workout)
+		except:
+			db.session.rollback()
+			report_error_and_abort(500, "workout", "Unable to update workout")
+
+		# update category
 		workout.category = category
 		workout.name = name
 		workout.start_at = utc_start_at
@@ -156,6 +176,7 @@ class ProfileWorkout(Resource):
 
 		try:
 			workout.save()
+			add_workout_data_to_goals(profile, workout)
 		except:
 			db.session.rollback()
 			report_error_and_abort(500, "workout", "Unable to update workout")
@@ -206,6 +227,7 @@ class ProfileWorkoutGpx(Resource): # both TCX and GPX are supported
 			workout_filepath = rename_uploaded_file(tmp_filepath, profile.username, new_workout.id)
 			new_workout.resource_path = workout_filepath
 			new_workout.save()
+			add_workout_data_to_goals(profile, new_workout)
 		except:
 			remove_uploaded_file(tmp_filepath)
 			remove_uploaded_file(workout_filepath)
