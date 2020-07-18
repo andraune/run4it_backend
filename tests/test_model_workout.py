@@ -1,6 +1,8 @@
 import pytest
 import datetime as dt
 from run4it.api.workout import WorkoutModel, WorkoutCategoryModel
+from run4it.api.goal import GoalModel, GoalCategoryModel
+
 
 @pytest.mark.usefixtures('db')
 class TestWorkoutCategoryModel:
@@ -98,3 +100,67 @@ class TestWorkoutModel:
 		assert(new_workout1.resource_file is None)
 		assert(new_workout2.resource_path == "/path/to/file")
 		assert(new_workout2.resource_file == "file")
+
+	def test_get_workouts_for_goal_excludes_too_old_and_too_new_workouts(self):
+		# register category for goal, connected to "running"
+		goal_category = GoalCategoryModel("Distance", "km", 1)
+		goal_category.save()
+		#register goal
+		goal = GoalModel(1, goal_category, dt.datetime.utcnow() - dt.timedelta(days=4), dt.datetime.utcnow() + dt.timedelta(days=4))
+		goal.save()
+		# register workouts for workout category "Running", within goal limits
+		running_category = WorkoutCategoryModel.get_by_id(1)
+		run_workout_1 = WorkoutModel(1, running_category, "Run 1", dt.datetime.utcnow(), 1000, 200, 0, None, False)
+		run_workout_1.save(commit=False)
+		run_workout_2 = WorkoutModel(1, running_category, "Run 2", dt.datetime.utcnow() + dt.timedelta(days=1), 1000, 200, 0, None, False)
+		run_workout_2.save(commit=False)
+		# register workout completed before goal started
+		WorkoutModel(1, running_category, "Too early", dt.datetime.utcnow() - dt.timedelta(days=5), 1000, 200, 0, None, False).save(commit=False)
+		# register workout completed after goal ended
+		WorkoutModel(1, running_category, "Too late", dt.datetime.utcnow() + dt.timedelta(days=5), 1000, 200, 0, None, False).save(commit=True)
+		goal_workouts = WorkoutModel.get_workouts_for_goal(goal)
+		assert(len(goal_workouts)==2)
+		assert(goal_workouts[0], run_workout_1)
+		assert(goal_workouts[1], run_workout_2)
+
+	def test_get_workouts_for_goal_excludes_other_users_workouts(self):
+		# register category for goal, connected to "running"
+		goal_category = GoalCategoryModel("Distance", "km", 1)
+		goal_category.save()
+		#register goal
+		goal = GoalModel(1, goal_category, dt.datetime.utcnow() - dt.timedelta(days=4), dt.datetime.utcnow() + dt.timedelta(days=4))
+		goal.save()
+		# register workout for workout category "Running", within goal limits
+		running_category = WorkoutCategoryModel.get_by_id(1)
+		run_workout_1 = WorkoutModel(1, running_category, "Run 1", dt.datetime.utcnow(), 1000, 200, 0, None, False)
+		run_workout_1.save(commit=False)
+		# register workout for workout category "Running", within goal limits, but other user
+		run_workout_2 = WorkoutModel(2, running_category, "Run 2", dt.datetime.utcnow() + dt.timedelta(days=1), 1000, 200, 0, None, False)
+		run_workout_2.save(commit=True)
+
+		goal_workouts = WorkoutModel.get_workouts_for_goal(goal)
+		assert(len(goal_workouts)==1)
+		assert(goal_workouts[0], run_workout_1)
+
+	def test_get_workouts_for_goal_excludes_other_workout_categories(self):
+		# register category for goal, connected to "running"
+		goal_category = GoalCategoryModel("Distance", "km", 1)
+		goal_category.save(commit=False)
+		# register category for goal, not connected to "running
+		goal_category_other = GoalCategoryModel("Distance", "km", 2)
+		goal_category_other.save()
+		#register goal
+		goal = GoalModel(1, goal_category, dt.datetime.utcnow() - dt.timedelta(days=4), dt.datetime.utcnow() + dt.timedelta(days=4))
+		goal.save()
+		# register workout for workout category "Running", within goal limits
+		running_category = WorkoutCategoryModel.get_by_id(1)
+		run_workout = WorkoutModel(1, running_category, "Run", dt.datetime.utcnow(), 1000, 200, 0, None, False)
+		run_workout.save(commit=False)
+		# register workout for workout category "Hiking"
+		hiking_category = WorkoutCategoryModel.get_by_id(2)
+		hiking_workout = WorkoutModel(1, hiking_category, "Hike", dt.datetime.utcnow() + dt.timedelta(days=1), 1000, 200, 0, None, False)
+		hiking_workout.save(commit=True)
+
+		goal_workouts = WorkoutModel.get_workouts_for_goal(goal)
+		assert(len(goal_workouts)==1)
+		assert(goal_workouts[0], run_workout)

@@ -134,12 +134,22 @@ def init_database_test_data():
 	discipline.save(commit=False)
 	print("Added {0}".format(discipline))
 
+	workout_cat = WorkoutCategoryModel('Running', True)
+	workout_cat.save(commit=False)
+	print("Added {0}".format(workout_cat))
+	workout_cat = WorkoutCategoryModel('Hiking', True)
+	workout_cat.save()
+	print("Added {0}".format(workout_cat))
+
 	goalcat1 = GoalCategoryModel('Distance', 'km', 1)
-	goalcat1.save(commit=False)
+	goalcat1.save()
 	print("Added {0}".format(goalcat1))
 	goalcat2 = GoalCategoryModel('Weight target', 'kg')
-	goalcat2.save(commit=False)
+	goalcat2.save()
 	print("Added {0}".format(goalcat2))
+	goalcat3 = GoalCategoryModel('Distance', 'km', 2)
+	goalcat3.save()
+	print("Added {0}".format(goalcat3))
 	db.session.commit()
 
 	now = dt.datetime.utcnow()
@@ -171,13 +181,7 @@ def init_database_test_data():
 	print("Added {0}".format(goal))
 	db.session.commit()
 
-	# Workout stuff
-	workout_cat = WorkoutCategoryModel('Running', True)
-	workout_cat.save(commit=False)
-	print("Added {0}".format(workout_cat))
-	workout_cat = WorkoutCategoryModel('Hiking', True)
-	workout_cat.save()
-	print("Added {0}".format(workout_cat))
+	# Workouts
 	workout = WorkoutModel(User.find_by_username('JonnyIT').profile.id, workout_cat, "Åsen run", dt.datetime.utcnow(), 7321, 1921, 43)
 	workout.save(commit=False)
 	print("Added {0}".format(workout))

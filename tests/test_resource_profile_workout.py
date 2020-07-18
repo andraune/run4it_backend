@@ -411,3 +411,4 @@ class TestProfileWorkoutGpxResource:
 		url = api.url_for(ProfileWorkoutGpxResource, username="jonny", category_id=1)
 		response = client.delete(url)
 		assert(response.status_code == 405) # not allowed
+

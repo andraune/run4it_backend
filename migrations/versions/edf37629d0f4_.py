@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 648a4cb3f68d
+Revision ID: edf37629d0f4
 Revises: 
-Create Date: 2020-07-16 22:48:21.889313
+Create Date: 2020-07-18 19:34:50.950191
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '648a4cb3f68d'
+revision = 'edf37629d0f4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,6 +23,7 @@ def upgrade():
     sa.Column('name', sa.String(length=128), nullable=False),
     sa.Column('length', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=16), nullable=True),
+    sa.Column('is_route', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_disciplines_name'), 'disciplines', ['name'], unique=True)
@@ -72,7 +73,7 @@ def upgrade():
     sa.Column('workout_category_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['workout_category_id'], ['workout_categories.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('name')
+    sa.UniqueConstraint('name', 'workout_category_id', name='_name_workout_cat_id_uc')
     )
     op.create_index(op.f('ix_training_goal_categories_id'), 'training_goal_categories', ['id'], unique=False)
     op.create_table('user_profiles',

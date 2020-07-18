@@ -1,5 +1,6 @@
 import ntpath
 from math import floor
+from sqlalchemy import and_
 from run4it.app.database import Column, SurrogatePK, reference_col, relationship, db
 from .gpx import GpxParser
 from .tcx import TcxParser
@@ -91,6 +92,15 @@ class Workout(SurrogatePK, db.Model):
 			return "{0:02d}:{1:02d}".format(avg_pace_min, avg_pace_sec)
 		else:
 			return ""
+
+	@classmethod
+	def get_workouts_for_goal(cls, goal):
+		if goal.category.workout_category is not None:
+			goal_workout_id = goal.category.workout_category.id
+			return cls.query.filter(and_(Workout.category_id==goal_workout_id, Workout.profile_id==goal.profile_id,
+										Workout.start_at >= goal.start_at, Workout.start_at < goal.end_at)).all()
+		else:
+			return []
 
 	def __repr__(self):
 		return '<Workout({name!r},{distance!r}m)>'.format(

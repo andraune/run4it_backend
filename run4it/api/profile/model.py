@@ -1,6 +1,6 @@
 import datetime as dt
-from run4it.api.goal import GoalModel
 from run4it.api.workout import WorkoutModel
+from run4it.api.goal import GoalModel
 from run4it.app.database import (
 	Column, SurrogatePK, TimestampedModel, Model, db, reference_col, relationship)
 
@@ -30,7 +30,7 @@ class Profile(SurrogatePK, TimestampedModel):
 		return self.user.username
 
 	def get_active_goals(self, timestamp=dt.datetime.utcnow()):
-		return self.goals.filter(and_(GoalModel.start_at <= timestamp), (GoalModel.end_at >= timestamp)).order_by(GoalModel.end_at.asc()).all()
+		return self.goals.filter(and_(GoalModel.start_at <= timestamp, GoalModel.end_at >= timestamp)).order_by(GoalModel.end_at.asc()).all()
 
 	def get_expired_goals(self, timestamp=dt.datetime.utcnow()):
 		return self.goals.filter(GoalModel.end_at <= timestamp).order_by(GoalModel.end_at.desc()).all()
