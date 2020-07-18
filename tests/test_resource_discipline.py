@@ -115,25 +115,26 @@ class TestDisciplineResource:
 	def test_post_disciplinelist_new_discipline(self, api, client):
 		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
 		url = api.url_for(DisciplineListResource)
-		response = client.post(url, data={ "name":"new_disc", "length":1234 }, headers=get_authorization_header(token))
+		response = client.post(url, data={ "name":"new_disc", "length":1234, "isRoute":True }, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 200)
 		assert(response_json["id"] == 1)
 		assert(response_json["name"] == "new_disc")
 		assert(response_json["length"] == 1234)
 		assert(response_json["username"] == "run4it")
+		assert(response_json["isRoute"] == True)
 
 	def test_post_discipline_list_new_discipline_location_header(self, api, client):
 		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
 		url = api.url_for(DisciplineListResource)
-		response = client.post(url, data={ "name":"new_disc", "length":1234 }, headers=get_authorization_header(token))
+		response = client.post(url, data={ "name":"new_disc", "length":1234, "isRoute":False }, headers=get_authorization_header(token))
 		assert(response.headers["Location"] == api.url_for(DisciplineResource, disc_id=1, _external=True))		
 
 	def test_post_disciplinelist_new_discipline_duplicate_name(self, api, client):
 		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
 		url = api.url_for(DisciplineListResource)
-		client.post(url, data={ "name":"new_disc", "length":1234 }, headers=get_authorization_header(token))
-		response = client.post(url, data={ "name":"new_disc", "length":12345 }, headers=get_authorization_header(token))
+		client.post(url, data={ "name":"new_disc", "length":1234, "isRoute":True }, headers=get_authorization_header(token))
+		response = client.post(url, data={ "name":"new_disc", "length":12345, "isRoute":False }, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 409)
 		assert(response_json["errors"]["discipline"] is not None)
@@ -204,22 +205,23 @@ class TestDisciplineResource:
 
 	def test_update_discipline(self, api, client):
 		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
-		disc = DisciplineModel("disc1", 1000, "run4it")
+		disc = DisciplineModel("disc1", 1000, "run4it", False)
 		disc.save()
 		url = api.url_for(DisciplineResource, disc_id=1)
-		response = client.put(url, data={'name':'new_name','length':999}, headers=get_authorization_header(token))
+		response = client.put(url, data={'name':'new_name','length':999, 'isRoute':True}, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 200)
 		assert(response_json["name"] == "new_name")
 		assert(response_json["length"] == 999)
 		assert(response_json["username"] == "run4it")
+		assert(response_json["isRoute"] == True)
 
 	def test_update_discipline_other_user(self, api, client):
 		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
 		disc = DisciplineModel("disc1", 1000, "other")
 		disc.save()
 		url = api.url_for(DisciplineResource, disc_id=1)
-		response = client.put(url, data={'name':'new_name','length':999}, headers=get_authorization_header(token))
+		response = client.put(url, data={'name':'new_name','length':999,'isRoute':False}, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 403)
 		assert(response_json["errors"]["discipline"] is not None)
@@ -227,7 +229,7 @@ class TestDisciplineResource:
 	def test_update_discipline_not_found(self, api, client):
 		token,_ = register_and_login_confirmed_user(api, client, "run4it", "run4@it.com", "passwd")
 		url = api.url_for(DisciplineResource, disc_id=1)
-		response = client.put(url, data={'name':'new_name','length':999}, headers=get_authorization_header(token))
+		response = client.put(url, data={'name':'new_name','length':999,'isRoute':False}, headers=get_authorization_header(token))
 		response_json = get_response_json(response.data)
 		assert(response.status_code == 404)
 		assert(response_json["errors"]["discipline"] is not None)

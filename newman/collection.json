@@ -3605,7 +3605,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Marathon\",\n\t\"length\": 42195\n}"
+							"raw": "{\n\t\"name\" : \"Marathon\",\n\t\"length\": 42195,\n\t\"isRoute\": false\n}"
 						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/disciplines",
@@ -3666,7 +3666,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Half-marathon\",\n\t\"length\": 21098\n}"
+							"raw": "{\n\t\"name\" : \"Half-marathon\",\n\t\"length\": 21098,\n\t\"isRoute\":false\n}"
 						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/disciplines/4",

@@ -17,16 +17,15 @@ class DisciplineList(Resource):
 	@jwt_required
 	@use_kwargs(discipline_update_schema, error_status_code = 422)
 	@marshal_with(discipline_schema)
-	def post(self, name, length, **kwargs):
+	def post(self, name, length, is_route, **kwargs):
 		auth_username = get_jwt_identity()
-
 		discipline = DisciplineModel.find_by_name(name)
 
 		if discipline is not None:
 			report_error_and_abort(409, "discipline", "Discipline name already exists.")
 		
 		try:
-			new_discipline = DisciplineModel(name, length, auth_username)
+			new_discipline = DisciplineModel(name, length, auth_username, is_route)
 			new_discipline.save()
 		except:
 			db.session.rollback()
@@ -48,7 +47,7 @@ class Discipline(Resource):
 	@jwt_required
 	@use_kwargs(discipline_update_schema, error_status_code = 422)
 	@marshal_with(discipline_schema)
-	def put(self, disc_id, name, length, **kwargs):
+	def put(self, disc_id, name, length, is_route, **kwargs):
 		auth_username = get_jwt_identity()
 
 		discipline = DisciplineModel.get_by_id(disc_id)
@@ -62,6 +61,7 @@ class Discipline(Resource):
 		try:
 			discipline.name = name
 			discipline.length = length
+			discipline.is_route = is_route
 			discipline.save()
 		except:
 			db.session.rollback()
