@@ -32,7 +32,7 @@ class Config(object):
 	]
 
 	ALLOWED_UPLOAD_EXTENSIONS = { 'gpx', 'tcx' }
-	GOOGLE_API_KEY = os.environ.get("GMAPS_API_KEY", "gmaps_api_key")
+	
 
 	# Define in sub-classes
 	#ENV = None
@@ -53,6 +53,7 @@ class DevelopConfig(Config):
 	SQLALCHEMY_DATABASE_URI = "sqlite:///{0}".format(os.path.join(Config.PROJECT_ROOT, 'dev.db'))
 	MAIL_DEFAULT_SENDER = os.environ.get("RUN4IT_FASTMAIL_USERNAME", "nousefor@name.com")
 	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads/gpx")
+	GOOGLE_API_KEY = os.environ.get("GMAPS_API_KEY", "gmaps_api_key")
 
 class TestConfig(Config):
 	"""Test Configuration"""
@@ -65,6 +66,7 @@ class TestConfig(Config):
 	SQLALCHEMY_DATABASE_URI = "sqlite:///{0}".format(os.path.join(Config.PROJECT_ROOT, 'test.db'))
 	MAIL_DEFAULT_SENDER = os.environ.get("RUN4IT_FASTMAIL_USERNAME", "nousefor@name.com")
 	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads/gpx")
+	GOOGLE_API_KEY = "gmaps_api_key"
 
 class ProductionConfig(Config):
 	"""Production Configuration"""
@@ -75,6 +77,7 @@ class ProductionConfig(Config):
 	JWT_SECRET_KEY = os.environ.get("RUN4IT_JWT_SECRET_KEY", "very-secreterer")
 	SQLALCHEMY_DATABASE_URI = os.environ.get("RUN4IT_DB_URL", "postgresql://run4it:run4it@localhost/run4it")
 	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads/gpx")
+	GOOGLE_API_KEY = os.environ.get("GMAPS_API_KEY", "gmaps_api_key")
 
 	CORS_ORIGIN_WHITELIST = [
 		'https://localhost:4200',
