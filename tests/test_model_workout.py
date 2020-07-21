@@ -120,8 +120,8 @@ class TestWorkoutModel:
 		WorkoutModel(1, running_category, "Too late", dt.datetime.utcnow() + dt.timedelta(days=5), 1000, 200, 0, None, False).save(commit=True)
 		goal_workouts = WorkoutModel.get_workouts_for_goal(goal)
 		assert(len(goal_workouts)==2)
-		assert(goal_workouts[0], run_workout_1)
-		assert(goal_workouts[1], run_workout_2)
+		assert(goal_workouts[0] == run_workout_1)
+		assert(goal_workouts[1] == run_workout_2)
 
 	def test_get_workouts_for_goal_excludes_other_users_workouts(self):
 		# register category for goal, connected to "running"
@@ -140,7 +140,7 @@ class TestWorkoutModel:
 
 		goal_workouts = WorkoutModel.get_workouts_for_goal(goal)
 		assert(len(goal_workouts)==1)
-		assert(goal_workouts[0], run_workout_1)
+		assert(goal_workouts[0] == run_workout_1)
 
 	def test_get_workouts_for_goal_excludes_other_workout_categories(self):
 		# register category for goal, connected to "running"
@@ -163,4 +163,4 @@ class TestWorkoutModel:
 
 		goal_workouts = WorkoutModel.get_workouts_for_goal(goal)
 		assert(len(goal_workouts)==1)
-		assert(goal_workouts[0], run_workout)
+		assert(goal_workouts[0] == run_workout)

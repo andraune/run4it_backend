@@ -12,7 +12,7 @@ Start by creating a file '.flaskenv' with the following contents:
 
 Install required packages:
 
-	- Create and activate virtual python environment
+	- Create and activate virtual python environment (python version >=3.6)
 	- Make project root folder your working directory
 	- pip install -r requirements/dev.txt
 
