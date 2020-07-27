@@ -29,6 +29,7 @@ class Config(object):
 		'http://localhost:4200',
 		'http://127.0.0.1:4200',
 		'http://10.0.0.117:4200',
+		'http://10.0.0.3:4200',
 	]
 
 	ALLOWED_UPLOAD_EXTENSIONS = { 'gpx', 'tcx' }

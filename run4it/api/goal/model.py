@@ -102,6 +102,10 @@ class Goal(SurrogatePK, db.Model):
 		if (self.category.unit is not None):
 			return self.category.unit
 		return ''
+	
+	@property
+	def workout_category_name(self):
+		return self.category.workout_category_name 
 
 	@property
 	def duration(self):	# returns days as decimal number with four digits after the decimal point

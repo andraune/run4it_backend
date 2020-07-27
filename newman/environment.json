@@ -23,6 +23,11 @@
 			"enabled": true
 		},
 		{
+			"key": "acceptableUploadResponseTime",
+			"value": "5000",
+			"enabled": true
+		},
+		{
 			"key": "userLoginAccessKey",
 			"value": "",
 			"enabled": true
@@ -31,14 +36,9 @@
 			"key": "userLoginRefreshKey",
 			"value": "",
 			"enabled": true
-		},
-		{
-			"key": "acceptableUploadResponseTime",
-			"value": "5000",
-			"enabled": true
 		}
 	],
 	"_postman_variable_scope": "environment",
-	"_postman_exported_at": "2020-07-15T20:44:02.273Z",
-	"_postman_exported_using": "Postman/7.27.1"
+	"_postman_exported_at": "2020-07-27T10:18:53.268Z",
+	"_postman_exported_using": "Postman/7.20.0"
 }

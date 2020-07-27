@@ -80,5 +80,5 @@ class ProfileWeight(Resource):
 		if user.profile is None: # should not be possible to have a user without a profile
 		   report_error_and_abort(422, "profile", "Profile not found")
 
-		weight_list = user.profile.weights.all()
+		weight_list = user.profile.weights.order_by(ProfileWeightHistory.created_at.desc()).all()
 		return weight_list
