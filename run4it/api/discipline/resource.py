@@ -8,7 +8,7 @@ from .model import Discipline as DisciplineModel
 from .schema import discipline_schema, disciplines_schema, discipline_update_schema
 
 class DisciplineList(Resource):
-	@use_kwargs(discipline_schema, locations={"query"})
+	@use_kwargs(discipline_schema, error_status_code = 422, locations={"query"})
 	@marshal_with(disciplines_schema)
 	def get(self, limit=20, offset=0, **kwargs):			
 		return DisciplineModel.query.order_by(DisciplineModel.length.asc()).\
