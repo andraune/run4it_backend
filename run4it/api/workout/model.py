@@ -97,8 +97,12 @@ class Workout(SurrogatePK, db.Model):
 	def get_workouts_for_goal(cls, goal):
 		if goal.category.workout_category is not None:
 			goal_workout_id = goal.category.workout_category.id
-			return cls.query.filter(and_(Workout.category_id==goal_workout_id, Workout.profile_id==goal.profile_id,
-										Workout.start_at >= goal.start_at, Workout.start_at < goal.end_at)).all()
+			return cls.query.filter(and_(
+				Workout.category_id==goal_workout_id,
+				Workout.profile_id==goal.profile_id,
+				Workout.start_at >= goal.start_at,
+				Workout.start_at < goal.end_at)
+				).order_by(Workout.start_at.asc()).all()
 		else:
 			return []
 

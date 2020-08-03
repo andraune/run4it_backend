@@ -4,6 +4,7 @@ import pytest
 import datetime as dt
 from flask import current_app
 from run4it.api.workout import ProfileWorkoutListResource, ProfileWorkoutResource, ProfileWorkoutGpxResource, WorkoutModel, WorkoutCategoryModel
+from run4it.api.goal import GoalCategoryModel, GoalModel
 from .helpers import get_response_json, register_confirmed_user, register_and_login_confirmed_user, get_authorization_header
 
 
@@ -81,6 +82,42 @@ class TestProfileWorkoutListResource:
 		assert(response_json[0]['edited'] == False)
 		assert(response_json[0]['averageSpeed'] > 0)
 		assert(response_json[0]['averagePace'] is not None)
+
+	def test_get_workouts_for_goal(self, api, client):
+		run_cat = GoalCategoryModel("Cumulative distance", "km", 1)
+		run_cat.save(commit=False)
+		hike_cat = GoalCategoryModel("Cumulative distance", "km", 2)
+		hike_cat.save()
+		now = dt.datetime.utcnow()
+		run_goal = GoalModel(1, run_cat, now - dt.timedelta(days=4), now - dt.timedelta(days=1))
+		run_goal.save(commit=False)
+		hike_goal = GoalModel(1, hike_cat, now - dt.timedelta(days=3), now)
+		hike_goal.save(commit=False)
+		run_goal_no_workouts = GoalModel(1, run_cat, now, now + dt.timedelta(days=1)) # no workouts in goal period
+		run_goal_no_workouts.save()
+		token,_ = register_and_login_confirmed_user(api, client, "jonny", "jonny@vikan.no", "jonny")
+		
+		url_goal_1 = api.url_for(ProfileWorkoutListResource, username="jonny", goalID=1)
+		response_1 = client.get(url_goal_1, headers=get_authorization_header(token))
+		response_json_1 = get_response_json(response_1.data)
+		assert(response_1.status_code == 200)
+		assert(len(response_json_1) == 2)
+		assert(response_json_1[0]['name'] == "Run 1")
+		assert(response_json_1[1]['name'] == "Run 2")
+
+		url_goal_2 = api.url_for(ProfileWorkoutListResource, username="jonny", goalID=2)
+		response_2 = client.get(url_goal_2, headers=get_authorization_header(token))
+		response_json_2 = get_response_json(response_2.data)
+		assert(response_2.status_code == 200)
+		assert(len(response_json_2) == 1)
+		assert(response_json_2[0]['name'] == "Hike 1")
+
+		url_goal_3 = api.url_for(ProfileWorkoutListResource, username="jonny", goalID=3)
+		response_3 = client.get(url_goal_3, headers=get_authorization_header(token))
+		response_json_3 = get_response_json(response_3.data)
+		assert(response_3.status_code == 200)
+		assert(len(response_json_3) == 0)
+
 
 	def test_create_workout_not_logged_in(self, api, client):
 		url = api.url_for(ProfileWorkoutListResource, username="jonny")

@@ -134,9 +134,9 @@ def init_database_test_data():
 	discipline.save(commit=False)
 	print("Added {0}".format(discipline))
 
-	workout_cat = WorkoutCategoryModel('Running', True)
-	workout_cat.save(commit=False)
-	print("Added {0}".format(workout_cat))
+	workout_cat_run = WorkoutCategoryModel('Running', True)
+	workout_cat_run.save(commit=False)
+	print("Added {0}".format(workout_cat_run))
 	workout_cat = WorkoutCategoryModel('Cross-country skiing', True)
 	workout_cat.save(commit=False)
 	print("Added {0}".format(workout_cat))
@@ -183,7 +183,7 @@ def init_database_test_data():
 	print("Added {0}".format(goal))
 
 	# active goals
-	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalCatWeightLoss, prev_monday, prev_monday + dt.timedelta(days=7), 79, 76, 77)
+	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalCatWeightLoss, prev_monday, prev_monday + dt.timedelta(days=8), 79, 76, 77)
 	goal.save(commit=False)
 	print("Added {0}".format(goal))
 	goal = GoalModel(User.find_by_username('JonnyIT').profile.id, goalCatCumRun, this_month_first, next_month_first, 0, 100, 18)
@@ -209,10 +209,10 @@ def init_database_test_data():
 	db.session.commit()
 
 	# Workouts
-	workout = WorkoutModel(User.find_by_username('JonnyIT').profile.id, workout_cat, "Åsen run", dt.datetime.utcnow(), 7321, 1921, 43)
+	workout = WorkoutModel(User.find_by_username('JonnyIT').profile.id, workout_cat_run, "Åsen run", dt.datetime.utcnow(), 7321, 1921, 43)
 	workout.save(commit=False)
 	print("Added {0}".format(workout))
-	workout = WorkoutModel(User.find_by_username('JonnyIT').profile.id, workout_cat, "Åsen run", dt.datetime.utcnow(), 3000, 658, 0, 'C:/mydev/run4it_backend/run4it/uploads/gpx/test.tcx', 1)
+	workout = WorkoutModel(User.find_by_username('JonnyIT').profile.id, workout_cat_run, "Åsen run", dt.datetime.utcnow()-dt.timedelta(seconds=3600), 3000, 658, 0, 'C:/mydev/run4it_backend/run4it/uploads/gpx/test.tcx', 1)
 	workout.save(commit=False)
 	print("Added {0}".format(workout))
 	db.session.commit()

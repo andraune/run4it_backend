@@ -14,6 +14,7 @@ class WorkoutExtendedTrackDataPoint(Schema):
 class WorkoutSchema(Schema):
 	limit = fields.Int(load_only=True, validate=[validate.Range(min=1, max=999)])
 	offset = fields.Int(load_only=True, validate=[validate.Range(min=0)])
+	goalID = fields.Int(attribute='goal_id', load_only=True, validate=[validate.Range(min=0)])
 	id = fields.Int(dump_only=True, required=True)
 	name = fields.Str(dump_only=True, required=True)
 	startAt = fields.DateTime(attribute='start_at', dump_only=True, required=True)
