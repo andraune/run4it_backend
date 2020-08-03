@@ -90,7 +90,7 @@ class ProfileWeight(Resource):
 			start_date = dt.datetime(start_at.year, start_at.month, start_at.day, 0, 0, 0)
 			weight_list = user.profile.weights.filter(ProfileWeightHistory.created_at > start_date).order_by(ProfileWeightHistory.created_at.desc()).all()
 		elif end_at is not None:
-			end_date = dt.datetime(end_at.year, end_at.month, end_at.day, 0, 0, 0)
+			end_date = dt.datetime(end_at.year, end_at.month, end_at.day, 23, 59, 59, 999999)
 			weight_list = user.profile.weights.filter(ProfileWeightHistory.created_at < end_date).order_by(ProfileWeightHistory.created_at.desc()).all()
 		else:
 			weight_list = user.profile.weights.order_by(ProfileWeightHistory.created_at.desc()).all()
