@@ -81,11 +81,21 @@ def remove_workout_data_from_goals(profile, workout):
 
 class ProfileWorkoutList(Resource):
 	@jwt_required
-	@use_kwargs(workout_schema, locations={"query"})
+	@use_kwargs(workout_schema, error_status_code = 422, locations={"query"})
 	@marshal_with(workouts_schema)
-	def get(self, username, limit=10, offset=0):
+	def get(self, username, goal_id=None, limit=10, offset=0):
 		profile = get_auth_profile_or_abort(username, "workout")
-		return profile.get_workouts(limit, offset)
+		
+		if goal_id is None:
+			return profile.get_workouts(limit, offset)
+		
+		goal = profile.get_goal_by_id(goal_id)
+
+		if goal is None:
+			report_error_and_abort(422, "workout", "Goal not found.")
+		
+		return Workout.get_workouts_for_goal(goal)
+
 	
 	@jwt_required
 	@use_kwargs(workout_update_schema, error_status_code = 422)
