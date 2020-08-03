@@ -49,7 +49,7 @@ class WorkoutUpdateSchema(Schema):
 class WorkoutCategorySchema(Schema):
 	id = fields.Int(required=True, dump_only=True)
 	name = fields.Str(required=True, dump_only=True)
-	supports_gps_data = fields.Bool(required=True, dump_only=True)
+	supportsGpsData = fields.Bool(attribute='supports_gps_data', required=True, dump_only=True)
 
 	class Meta:
 		strict = True

@@ -24,7 +24,7 @@ class TestWorkoutCategoryListResource:
 		assert(len(response_json) == 3)
 		assert(response_json[0]["id"] is not None)
 		assert(response_json[0]["name"] is not None)
-		assert(response_json[0]["supports_gps_data"] is not None)
+		assert(response_json[0]["supportsGpsData"] is not None)
 
 	def test_get_workout_categories_alphabetically_sorted(self, api, client):
 		url = api.url_for(WorkoutCategoryListResource)
@@ -33,7 +33,7 @@ class TestWorkoutCategoryListResource:
 		assert(response.status_code == 200)
 		assert(response_json[0]["id"] == 2)
 		assert(response_json[0]["name"] == "Fitness")
-		assert(response_json[0]["supports_gps_data"] == False)
+		assert(response_json[0]["supportsGpsData"] == False)
 		assert(response_json[1]["name"] == "Hiking")
 		assert(response_json[2]["name"] == "Running")
 
