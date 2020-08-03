@@ -180,7 +180,8 @@
 						]
 					}
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserRegister",
@@ -501,10 +502,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{ \"username\": \"0\", \"email\":\"me@mail.com\", \"password\":\"passw0rd\" }\n",
-							"options": {
-								"raw": {}
-							}
+							"raw": "{ \"username\": \"0\", \"email\":\"me@mail.com\", \"password\":\"passw0rd\" }\n"
 						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users",
@@ -548,7 +546,8 @@
 						]
 					}
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserConfirmation",
@@ -919,7 +918,8 @@
 						]
 					}
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserLogin",
@@ -1480,7 +1480,8 @@
 						]
 					}
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserRefreshLogin",
@@ -1891,7 +1892,8 @@
 						]
 					}
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Token",
@@ -2659,7 +2661,8 @@
 						]
 					}
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserLogout",
@@ -2711,7 +2714,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserLogoutRefresh",
@@ -2763,7 +2767,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "UserProfile",
@@ -3295,11 +3300,9 @@
 									"",
 									"pm.test(\"GetProfile response\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.length).to.equal(2)",
+									"    pm.expect(jsonData.length).to.equal(1)",
 									"    pm.expect(jsonData[0].weight).to.be.above(0.0)",
 									"    pm.expect(jsonData[0].weight).to.be.below(1000.0)",
-									"    pm.expect(jsonData[1].weight).to.be.above(0.0)",
-									"    pm.expect(jsonData[1].weight).to.be.below(1000.0)",
 									"});",
 									""
 								],
@@ -3600,10 +3603,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Marathon\",\n\t\"length\": 42195,\n\t\"isRoute\": false\n}",
-							"options": {
-								"raw": {}
-							}
+							"raw": "{\n\t\"name\" : \"Marathon\",\n\t\"length\": 42195,\n\t\"isRoute\": false\n}"
 						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/disciplines",
@@ -3664,10 +3664,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Half-marathon\",\n\t\"length\": 21098,\n\t\"isRoute\":false\n}",
-							"options": {
-								"raw": {}
-							}
+							"raw": "{\n\t\"name\" : \"Half-marathon\",\n\t\"length\": 21098,\n\t\"isRoute\":false\n}"
 						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/disciplines/4",
@@ -3749,7 +3746,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{ \"email\": \"active@user.com\", \"password\": \"pwd\" }"
+							"raw": "{ \"email\": \"active@user.com\", \"password\": \"pwd\" }",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{apiBaseUrl}}/{{apiVersion}}/users/login",
@@ -4591,12 +4591,12 @@
 									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");",
 									"});",
 									"",
-									"pm.test(\"CreateWorkout response\", function () {",
+									"pm.test(\"UpdateWorkout response\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData[\"id\"]).to.eql(1);",
 									"    pm.expect(jsonData[\"distance\"]).to.eql(87654);",
 									"    pm.expect(jsonData[\"duration\"]).to.eql(31012);",
-									"    pm.expect(jsonData[\"categoryName\"]).to.eql(\"Hiking\");",
+									"    pm.expect(jsonData[\"categoryName\"]).to.eql(\"Cross-country skiing\");",
 									"});",
 									""
 								],
@@ -4676,7 +4676,9 @@
 								}
 							],
 							"options": {
-								"formdata": {}
+								"raw": {
+									"language": "json"
+								}
 							}
 						},
 						"url": {
@@ -4740,7 +4742,9 @@
 								}
 							],
 							"options": {
-								"formdata": {}
+								"raw": {
+									"language": "json"
+								}
 							}
 						},
 						"url": {
@@ -4901,5 +4905,6 @@
 				]
 			}
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }

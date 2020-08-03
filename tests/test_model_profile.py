@@ -100,10 +100,10 @@ class TestProfileModel:
 		new_profile.set_weight(0)
 		new_profile.set_weight(70.0)
 		new_profile.save()
-		assert(new_profile.weights.count() == 2)
-		assert(new_profile.weights[1].weight == 70.0)
+		assert(new_profile.weights.count() == 1)
+		assert(new_profile.weights[0].weight == 70.0)
 
-	def test_profile_updates_weight_history_on_several_new_weights(self):
+	def test_profile_updates_weight_history_on_several_new_weights(self):	# last is saved
 		user = User('user', 'user@mail.com')
 		user.save()		
 		new_profile = Profile(user)
@@ -111,10 +111,8 @@ class TestProfileModel:
 		new_profile.set_weight(70.0)
 		new_profile.set_weight(71.0)
 		new_profile.save()
-		assert(new_profile.weights.count() == 3)
-		assert(new_profile.weights[0].weight == 69.0)
-		assert(new_profile.weights[1].weight == 70.0)	
-		assert(new_profile.weights[2].weight == 71.0)		
+		assert(new_profile.weights.count() == 1)
+		assert(new_profile.weights[0].weight == 71.0)	
 
 	def test_profile_weight_history_relationship(self):
 		user = User('user', 'user@mail.com')

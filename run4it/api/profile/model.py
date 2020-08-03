@@ -65,22 +65,35 @@ class Profile(SurrogatePK, TimestampedModel):
 		return self.workouts.filter(WorkoutModel.id == workout_id).first()
 
 	def set_height(self, height):
-		if height > 0:
+		if height is not None and height > 0:
 			self.height = height
 		else:
 			self.height = None
 	
 	def set_weight(self, weight):
-		if weight > 0.0:
+		if weight is not None and weight > 0.0:
 			self.weight = weight
-			weight_history_record = ProfileWeightHistory(weight=weight)
-			self.weights.append(weight_history_record)
-			weight_history_record.save(False)
+			self._update_weight_history()
 		else:
 			self.weight = None
 
 	def set_birth_date(self, year, month, day):
 		self.birth_date = dt.date(year, month, day)
+
+	def _update_weight_history(self):
+		now = dt.datetime.utcnow()
+		midnight = dt.datetime(now.year, now.month, now.day, 0, 0, 0)
+		next_midnight = midnight + dt.timedelta(days=1)
+		
+		try:
+			weight_today = self.weights.filter(and_(ProfileWeightHistory.created_at >= midnight, ProfileWeightHistory.created_at < next_midnight)).first()
+			weight_today.weight = self.weight
+			weight_today.save(False)
+		except:
+			weight_history_record = ProfileWeightHistory(weight=self.weight)
+			self.weights.append(weight_history_record)
+			weight_history_record.save(False)			
+
 
 	def __repr__(self):
 		return '<UserProfile({username!r})>'.format(username=self.username)

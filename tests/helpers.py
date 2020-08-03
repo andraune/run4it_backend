@@ -12,7 +12,7 @@ def register_confirmed_user(username, email, password, height=None, weight=None,
 	user.confirmed = True
 	profile = Profile(user)
 	profile.height = height
-	profile.weight = weight
+	profile.set_weight(weight)
 	profile.birth_date = birth_date
 	user.save()
 	profile.save()
