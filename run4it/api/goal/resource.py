@@ -38,6 +38,7 @@ class ProfileGoalList(Resource):
 	def post(self, username, start_at, duration, start_value, target_value, category_id):
 		profile = get_auth_profile_or_abort(username, "goal")
 		category = GoalCategory.get_by_id(category_id)
+		current_value = 0
 
 		if category is None:
 			report_error_and_abort(422, "goal", "Goal category not found")
@@ -52,8 +53,11 @@ class ProfileGoalList(Resource):
 		if start_value == target_value:
 			report_error_and_abort(422, "goal", "Goal target value equals start value")
 
+		if category.name == "Weight loss":
+			current_value = start_value
+
 		try:
-			new_goal = Goal(profile.id, category, utc_start_at, utc_end_at, start_value, target_value)
+			new_goal = Goal(profile.id, category, utc_start_at, utc_end_at, start_value, target_value, current_value)
 			new_goal.save()
 		except:
 			db.session.rollback()
