@@ -114,6 +114,26 @@ class TestProfileModel:
 		assert(new_profile.weights.count() == 1)
 		assert(new_profile.weights[0].weight == 71.0)	
 
+	def test_profile_updates_weight_loss_goals_on_new_weight(self):
+		user = User('user', 'user@mail.com')
+		user.save()	
+		profile = Profile(user)
+		profile.set_weight(80)
+		profile.save()
+		weight_cat = GoalCategoryModel('Weight loss', 'kg')
+		weight_cat.save()
+		weight_goal = GoalModel(profile.id, weight_cat, dt.datetime.utcnow() - dt.timedelta(days=1), dt.datetime.utcnow() + dt.timedelta(days=1), 80, 70, 79).save()
+		weight_goal.save()
+		initial_start_value = weight_goal.start_value
+		initial_current_value = weight_goal.current_value
+		assert(initial_start_value == 80)
+		assert(initial_current_value == 79)
+		profile.set_weight(78)
+		profile.save()
+		assert(weight_goal.start_value == 80)
+		assert(weight_goal.current_value == 78)		
+			   
+
 	def test_profile_weight_history_relationship(self):
 		user = User('user', 'user@mail.com')
 		user.save()		
