@@ -74,6 +74,7 @@ class Profile(SurrogatePK, TimestampedModel):
 		if weight is not None and weight > 0.0:
 			self.weight = weight
 			self._update_weight_history()
+			self._update_weight_goals()
 		else:
 			self.weight = None
 
@@ -94,6 +95,17 @@ class Profile(SurrogatePK, TimestampedModel):
 			self.weights.append(weight_history_record)
 			weight_history_record.save(False)			
 
+	def _update_weight_goals(self):
+		try:
+			active_goals = self.get_active_goals()
+			if active_goals is not None:
+				for goal in active_goals:
+					if (goal.category_name == "Weight loss") or (goal.category_unit == 'kg'):
+						goal.current_value = self.weight
+						goal.save(False)
+		except:
+			pass
+ 
 
 	def __repr__(self):
 		return '<UserProfile({username!r})>'.format(username=self.username)
