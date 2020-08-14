@@ -181,10 +181,18 @@ class TcxParser:
 			time1 = dt.datetime.strptime(p1["time"], "%Y-%m-%dT%H:%M:%S.%fZ")
 			time2 = dt.datetime.strptime(p2["time"], "%Y-%m-%dT%H:%M:%S.%fZ")
 			time = (time2 - time1).total_seconds()
-			latitude1 = float(p1["latitudedegrees"])
-			longitude1 = float(p1["longitudedegrees"])
-			latitude2 = float(p2["latitudedegrees"])
-			longitude2 = float(p2["longitudedegrees"])
+			latitude1 = None if "latitudedegrees" not in p1 else float(p1["latitudedegrees"])
+			longitude1 = None if "longitudedegrees" not in p1 else float(p1["longitudedegrees"])
+			latitude2 = None if "latitudedegrees" not in p2 else float(p2["latitudedegrees"])
+			longitude2 = None if "longitudedegrees" not in p2 else float(p2["longitudedegrees"])
+			
+			if latitude1 is None and longitude1 is None: # invalid point 1
+				latitude1 = 0.0 if latitude2 is None else latitude2
+				longitude1 = 0.0 if longitude2 is None else longitude2
+			if latitude2 is None and longitude2 is None: # invalid point 2
+				latitude2 = 0.0 if latitude1 is None else latitude1
+				longitude2 = 0.0 if longitude1 is None else longitude1
+			
 			dist = geo_distance((latitude1, longitude1),(latitude2, longitude2)).m
 			if time>0:
 				speed = dist/time
@@ -192,7 +200,7 @@ class TcxParser:
 					break
 			i+=1
 		return i-1
-		
+
 	def _find_movement_end(self, points):
 		i=len(points)-1
 		while i > 0:
@@ -201,10 +209,18 @@ class TcxParser:
 			time1 = dt.datetime.strptime(p1["time"], "%Y-%m-%dT%H:%M:%S.%fZ")
 			time2 = dt.datetime.strptime(p2["time"], "%Y-%m-%dT%H:%M:%S.%fZ")
 			time = (time2 - time1).total_seconds()
-			latitude1 = float(p1["latitudedegrees"])
-			longitude1 = float(p1["longitudedegrees"])
-			latitude2 = float(p2["latitudedegrees"])
-			longitude2 = float(p2["longitudedegrees"])
+			latitude1 = None if "latitudedegrees" not in p1 else float(p1["latitudedegrees"])
+			longitude1 = None if "longitudedegrees" not in p1 else float(p1["longitudedegrees"])
+			latitude2 = None if "latitudedegrees" not in p2 else float(p2["latitudedegrees"])
+			longitude2 = None if "longitudedegrees" not in p2 else float(p2["longitudedegrees"])
+			
+			if latitude1 is None and longitude1 is None: # invalid point 1
+				latitude1 = 0.0 if latitude2 is None else latitude2
+				longitude1 = 0.0 if longitude2 is None else longitude2
+			if latitude2 is None and longitude2 is None: # invalid point 2
+				latitude2 = 0.0 if latitude1 is None else latitude1
+				longitude2 = 0.0 if longitude1 is None else longitude1
+
 			dist = geo_distance((latitude1, longitude1),(latitude2, longitude2)).m
 			if time>0:
 				speed = dist/time
@@ -222,7 +238,7 @@ if __name__ == "__main__":
 	current_path = path.abspath(path.dirname(__file__))
 	test_file_path_tcx1 = path.abspath(path.join(current_path, "..", "..", "..", "test.tcx")) #polar
 	test_file_path_tcx2 = path.abspath(path.join(current_path, "..", "..", "..", "test_garmin.tcx"))
-
+	
 	parsers = list()
 	parsers.append(TcxParser(test_file_path_tcx1))
 	parsers.append(TcxParser(test_file_path_tcx2))
@@ -251,11 +267,6 @@ if __name__ == "__main__":
 
 		print("Parse returned", len(track_data), "points")
 
-
-		print("TRACK DATA:")
-		for i in range(5):
-			if track_data[i+40] is not None:
-				print(track_data[i+40])
 		print()
 		print("SPLITS:")
 		for i in range(len(track_splits)):
