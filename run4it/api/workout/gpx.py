@@ -7,7 +7,7 @@ import gpxpy
 import datetime as dt
 
 SPEED_NO_MOVEMENT_LIMIT_M_PER_S = 0.5
-ELEVATION_GAIN_IGNORE_LIMIT_M = 0.3
+ELEVATION_GAIN_IGNORE_LIMIT_M = 0.1
 SPLIT_DISTANCE_M = 998 # in practice, we get approx ~1000m pr split
 
 class WorkoutDataPoint:
