@@ -33,6 +33,9 @@ class Config(object):
 	]
 
 	ALLOWED_UPLOAD_EXTENSIONS = { 'gpx', 'tcx' }
+
+	POLAR_API_CLIENT_ID = os.environ.get("POLAR_API_CLIENT_ID", "polar_api_client_id")
+	POLAR_API_CLIENT_SECRET = os.environ.get("POLAR_API_CLIENT_SECRET", "polar_api_client_secret")
 	
 
 	# Define in sub-classes
