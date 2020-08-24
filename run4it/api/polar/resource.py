@@ -1,0 +1,102 @@
+import datetime as dt
+from os import path
+from flask import current_app, render_template, make_response
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_restful import request, Resource
+from flask_apispec import marshal_with
+from webargs.flaskparser import use_kwargs
+from run4it.api.templates import report_error_and_abort
+from run4it.api.profile.auth_helper import get_auth_profile_or_abort
+from run4it.api.user import User
+from .model import PolarUser
+from .schema import polar_callback_schema, polar_user_schema
+
+
+class ProfilePolar(Resource):
+	@jwt_required
+	@marshal_with(polar_user_schema)
+	def get(self, username):
+		profile = get_auth_profile_or_abort(username, "polar")
+		polar_user = profile.get_polar_data()
+
+		if polar_user is None:
+			return {}, 204  # no data
+
+		if not polar_user.has_valid_access_token():
+			polar_user.generate_state_code()
+		else:
+			polar_user.state = None
+
+		try:
+			polar_user.save()
+		except:
+			db.session.rollback()
+			report_error_and_abort(500, "polar", "Failed to retrieve data.")            
+
+		return polar_user
+
+	@jwt_required
+	@marshal_with(polar_user_schema)
+	def post(self, username):
+		profile = get_auth_profile_or_abort(username, "polar")
+		polar_user = profile.get_polar_data()
+
+		if polar_user is None:
+			polar_user = PolarUser(profile.id, profile.username)
+
+		if not polar_user.has_valid_access_token():
+			polar_user.generate_state_code()
+		else:
+			polar_user.state = None		
+
+		try:
+			polar_user.save()
+		except:
+			db.session.rollback()
+			report_error_and_abort(500, "polar", "Failed to retrieve data.")            
+
+		return polar_user
+
+
+class PolarAuthorizationCallback(Resource):
+	'''
+		This resource should only be called from Polar, as a response to Oauth login attempt
+		from redirect in PolarAuthorizationRedirect resource. The returned response should be
+		text/html, not json
+	'''
+	@use_kwargs(polar_callback_schema, locations={"query"}) # do not report error if missing
+	def get(self, state="", code="", error=""):
+		title = "Polar"
+		class_name = "primary-color"
+		error_str = ""
+		content_str = ""
+		if len(error) > 0:
+			error_str = error
+		elif len(code) == 0:
+			error_str = 'Authorization code missing'
+		elif len(state) == 0:
+			error_str = 'Authorization ID missing'
+		else:
+			polar_user = PolarUser.find_by_state_code(state)
+			if polar_user is None:
+				error_str = 'Authorization ID invalid'
+				class_name = "warn-color"
+			else:
+				# attempt to request access token, and save if successful
+
+				try:
+					# get access token
+					polar_user.access_token = 'token'
+					polar_user.access_token_expires = dt.datetime.utcnow() + dt.timedelta(seconds=7200)
+					polar_user.state = None
+					polar_user.save()
+					content_str = 'Your Run4IT account was successfully connected to Polar!'
+				except:
+					error_str = 'Failed to retrieve access token'	
+
+		if error_str != "":
+			content_str = 'Failed to connect to Polar ({error})'.format(error=error_str)
+			class_name = "warn-color"
+
+		headers = {'Content-Type': 'text/html'}
+		return make_response(render_template('callback.html', title=title, className=class_name, contentString=content_str), 200, headers)

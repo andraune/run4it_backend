@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Run4IT - {{ title }} Oauth callback</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    </head>
+    <body class="out-of-bounds-bg-color">
+        <div class="container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='icon.png') }}" alt="Run4IT logo" />
+            </div>
+            <div class="contents">
+                <p class="{{ className }}">{{ contentString }}</p>
+                <p class="primary-color">You may now close this window.</p>     
+            </div>
+        </div>
+        <div class="footer">
+            Run4IT &copy; 2020 Andreas Aune.
+        </div>
+    </body>
+</html>

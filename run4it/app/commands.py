@@ -52,6 +52,7 @@ def init_database_test_data():
 	from run4it.api.discipline import DisciplineModel # noqa
 	from run4it.api.goal import GoalModel, GoalCategoryModel # noqa
 	from run4it.api.workout import WorkoutCategoryModel, WorkoutModel #noqa
+	from run4it.api.polar import PolarUserModel
 
 	# delete most stuff
 	rows = User.query.delete(False)
@@ -93,6 +94,10 @@ def init_database_test_data():
 	rows = WorkoutCategoryModel.query.delete(False)
 	if rows > 0:
 		print('Deleted {0} rows from WorkoutCategory table'.format(rows))
+	
+	rows = PolarUserModel.query.delete(False)
+	if rows > 0:
+		print('Deleted {0} rows from PolarUser table'.format(rows))
 
 	db.session.commit()
 

@@ -21,6 +21,7 @@ class Profile(SurrogatePK, TimestampedModel):
 	weights = relationship('ProfileWeightHistory', lazy='dynamic')
 	goals = relationship('Goal', lazy='dynamic')
 	workouts = relationship('Workout', lazy='dynamic')
+	polar = relationship('PolarUser', lazy='dynamic')
 
 	def __init__(self, user, weights=[], **kwargs):
 		db.Model.__init__(self, user=user, weights=weights, **kwargs)
@@ -63,6 +64,9 @@ class Profile(SurrogatePK, TimestampedModel):
 
 	def get_workout_by_id(self, workout_id):
 		return self.workouts.filter(WorkoutModel.id == workout_id).first()
+
+	def get_polar_data(self):
+		return self.polar.first()
 
 	def set_height(self, height):
 		if height is not None and height > 0:
