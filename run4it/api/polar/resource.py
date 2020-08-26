@@ -95,8 +95,12 @@ class PolarAuthorizationCallback(Resource):
 				if token_response is not None:
 					# set token, token_expiry and register user
 					polar_user.access_token = token_response['access_token']
-					polar_user.access_token_expires = dt.datetime.utcnow() + dt.timedelta(int(token_response['expires_in']))
 					polar_user.polar_user_id = token_response['x_user_id']
+					try:
+						# might fail due to expires_in being HUGE
+						polar_user.access_token_expires = dt.datetime.utcnow() + dt.timedelta(int(token_response['expires_in']))
+					except:
+						polar_user.access_token_expires = dt.datetime(2038, 1, 1)
 
 					if register_user(polar_user.access_token, polar_user.member_id):
 						content_str = 'Your Run4IT account was successfully connected to Polar!'
