@@ -50,8 +50,8 @@ class PolarUser(SurrogatePK, db.Model):
 
 	def has_valid_access_token(self):
 		if self.is_registered():
-			now = dt.datetime.now()
-			return now > self.access_token_expires
+			now = dt.datetime.utcnow()
+			return self.access_token_expires > now
 		return False
 
 	def __repr__(self):

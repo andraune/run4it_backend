@@ -26,7 +26,7 @@ def retrieve_access_token(auth_code):
 	''' Attempts to get user access token from Polar Flow, using TOKEN_ENDPOINT (POST)'''
 	headers = {
 		"Content-Type" : "application/x-www-form-urlencoded",
-		"Accept" : "application/json;charset=UTF-8",
+		"Accept" : "application/json",
 		"Authorization" : _get_basic_auth_header()
 	}
 	data = {
@@ -53,26 +53,30 @@ def retrieve_access_token(auth_code):
 def register_user(token, member_id):
 	''' Attemts to register user in Polar Flow access link, using REGISTER_ENDPOINT (POST)'''
 	headers = {
-		'Content-Type': 'application/json',
-		'Accept': 'application/json',
-		'Authorization': _get_bearer_auth_header(token)
+		"Content-Type": "application/json",
+		"Accept": "application/json",
+		"Authorization": _get_bearer_auth_header(token)
 	}
 	data = {
 		'member-id': member_id
 	}
 	
 	try:
-		result = requests.post(REGISTER_ENDPOINT, data=data, headers=headers)
-		return result.status_code == 200
+		result = requests.post(REGISTER_ENDPOINT, json=data, headers=headers)
+
+		if result.status_code == 200:
+			return True, 'user registered'
+		else:
+			return False, 'code {code} returned'.format(result.status_code)
 	except:
-		return False
+		return False, 'unexpected error'
 
 def unregister_user(token, user_id):
 	''' Attemts to unregister user in Polar Flow access link, using 
 	REGISTER_ENDPOINT with user_id appended (DELETE)'''
 	headers = {
 		'Content-Type': 'application/json',
-		'Accept': 'application/json',
+		'Accept': 'application/json;charset=UTF-8',
 		'Authorization': _get_bearer_auth_header(token)
 	}
 

@@ -102,10 +102,12 @@ class PolarAuthorizationCallback(Resource):
 					except:
 						polar_user.access_token_expires = dt.datetime(2038, 1, 1)
 
-					if register_user(polar_user.access_token, polar_user.member_id):
+					success, feedback = register_user(polar_user.access_token, polar_user.member_id)
+					
+					if success:
 						content_str = 'Your Run4IT account was successfully connected to Polar!'
 					else:
-						error_str = 'Polar user registration failed'
+						error_str = 'Polar user registration failed ({why})'.format(why=feedback)
 				else:
 					error_str = 'Failed to retrieve token'
 
