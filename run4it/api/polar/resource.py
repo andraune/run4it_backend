@@ -117,9 +117,5 @@ class PolarAuthorizationCallback(Resource):
 			content_str = 'Failed to connect to Polar ({error})'.format(error=error_str)
 			class_name = "warn-color"
 
-		return unregister_user('token', 12321)
-	
-		
-		
 		headers = {'Content-Type': 'text/html'}
 		return make_response(render_template('callback.html', title=title, className=class_name, contentString=content_str), 200, headers)
