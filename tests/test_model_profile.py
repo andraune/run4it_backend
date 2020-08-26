@@ -5,6 +5,7 @@ from run4it.api.profile import Profile, ProfileWeightHistory
 from run4it.api.user import User
 from run4it.api.goal import GoalModel, GoalCategoryModel
 from run4it.api.workout import WorkoutModel, WorkoutCategoryModel
+from run4it.api.polar import PolarUserModel
 
 @pytest.mark.usefixtures('db')
 class TestProfileModel:
@@ -298,3 +299,13 @@ class TestProfileModel:
 		assert(workout1.id == 1)
 		assert(workout2.id == 2)
 		assert(workout3 is None)
+
+	def test_get_polar_data(self):
+		user = User('profileUsername', 'user@mail.com')
+		user.save()
+		profile = Profile(user)
+		profile.save()
+		polar_user = PolarUserModel(profile.id, profile.username)
+		polar_user.save()
+		retrieved_polar = profile.get_polar_data()
+		assert(retrieved_polar.member_id == 'R4IT_profileUsername')

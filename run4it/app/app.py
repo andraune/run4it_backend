@@ -1,7 +1,7 @@
 """The app module, containing the app factory function."""
 from flask import Flask
 from .commands import clean, init_test_data, tests
-from .extensions import jwt, db, migrate, mail, cache, cors
+from .extensions import jwt, db, migrate, mail, cors
 from run4it.api.discipline import DisciplineModel
 from run4it.api.goal import GoalModel, GoalCategoryModel
 from run4it.api.profile import Profile, ProfileWeightHistory
@@ -9,6 +9,7 @@ from run4it.api.token import TokenRegistry
 from run4it.api.user import User, UserConfirmation
 from run4it.api.workout import WorkoutCategoryModel, WorkoutModel
 from run4it.api.workout.gmaps import GeoCodeLookup
+from run4it.api.polar import PolarUserModel
 
 
 def create_app(config_object, app_name):
@@ -28,7 +29,6 @@ def register_extensions(app):
 	db.init_app(app)
 	migrate.init_app(app, db)
 	mail.init_app(app)
-	cache.init_app(app)
 	cors.init_app(app, origins=app.config.get('CORS_ORIGIN_WHITELIST', '*'))
 
 def register_commands(app):
@@ -53,7 +53,8 @@ def register_shell_context(app):
 			'UserConfirmation': UserConfirmation,
 			'Workout': WorkoutModel,
 			'WorkoutCategory': WorkoutCategoryModel,
-			'GeoCodeLookup': GeoCodeLookup	
+			'GeoCodeLookup': GeoCodeLookup,
+            'PolarUser': PolarUserModel
 		}
 
 	app.shell_context_processor(shell_context)
