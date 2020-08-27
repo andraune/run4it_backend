@@ -9,7 +9,7 @@ from run4it.api.token import TokenRegistry
 from run4it.api.user import User, UserConfirmation
 from run4it.api.workout import WorkoutCategoryModel, WorkoutModel
 from run4it.api.workout.gmaps import GeoCodeLookup
-from run4it.api.polar import PolarUserModel
+from run4it.api.polar import PolarUserModel, PolarWebhookExerciseModel
 
 
 def create_app(config_object, app_name):
@@ -54,7 +54,8 @@ def register_shell_context(app):
 			'Workout': WorkoutModel,
 			'WorkoutCategory': WorkoutCategoryModel,
 			'GeoCodeLookup': GeoCodeLookup,
-            'PolarUser': PolarUserModel
+            'PolarUser': PolarUserModel,
+			'PolarWebhookExercise': PolarWebhookExerciseModel
 		}
 
 	app.shell_context_processor(shell_context)

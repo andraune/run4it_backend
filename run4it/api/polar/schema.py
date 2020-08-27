@@ -10,6 +10,17 @@ class PolarAuthCallbackSchema(Schema):
 	class Meta:
 		strict = True
 
+class PolarWebhookSchema(Schema):
+	event = fields.Str(required=False)
+	timestamp = fields.DateTime(required=False)
+	user_id = fields.Int(required=False)
+	entity_id = fields.Str(required=False)
+	url = fields.Str(required=False)
+
+	class Meta:
+		strict = True
+
+
 class PolarUserSchema(Schema):
 	profileID = fields.Int(attribute='profile_id', dump_only=True, required=True)
 	memberID = fields.Str(attribute='member_id', dump_only=True, required=True)
@@ -22,5 +33,7 @@ class PolarUserSchema(Schema):
 		strict = True
 		datetimeformat = '%Y-%m-%dT%H:%M:%S+00:00' # note: sets timezone to UTC, should only be used on dump
 
+
 polar_callback_schema = PolarAuthCallbackSchema()
+polar_webhook_schema = PolarWebhookSchema()
 polar_user_schema = PolarUserSchema()

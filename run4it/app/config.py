@@ -36,7 +36,8 @@ class Config(object):
 
 	POLAR_API_CLIENT_ID = os.environ.get("POLAR_API_CLIENT_ID", "polar_api_client_id")
 	POLAR_API_CLIENT_SECRET = os.environ.get("POLAR_API_CLIENT_SECRET", "polar_api_client_secret")
-	
+	POLAR_API_WEBHOOK_SIGNATURE = os.environ.get("POLAR_API_WEBHOOK_SIGNATURE", "polar_api_webhook_signature")
+
 
 	# Define in sub-classes
 	#ENV = None
