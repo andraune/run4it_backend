@@ -1,4 +1,5 @@
 """The api module, containing the API factory function."""
+import logging
 from flask import Blueprint, Flask, current_app
 from flask_restful import Api, Resource
 from run4it.api.user.resource import (UserResource, Register, Confirmation, Login, LoginFresh, LoginRefresh,
@@ -8,7 +9,7 @@ from run4it.api.token.resource import Token, TokenList
 from run4it.api.profile.resource import Profile, ProfileWeight
 from run4it.api.discipline import DisciplineResource, DisciplineListResource
 from run4it.api.goal import ProfileGoalListResource, ProfileGoalResource, GoalCategoryListResource
-from run4it.api.polar import ProfilePolarResource, PolarAuthorizationCallbackResource
+from run4it.api.polar import ProfilePolarResource, PolarWebhookExerciseResource, PolarAuthorizationCallbackResource
 from run4it.api.workout import ProfileWorkoutListResource, ProfileWorkoutResource, ProfileWorkoutGpxResource, WorkoutCategoryListResource
 
 
@@ -60,6 +61,7 @@ def create_api(app):
 
 	# Polar resources
 	api.add_resource(PolarAuthorizationCallbackResource, "/polar/authorization_callback")
+	api.add_resource(PolarWebhookExerciseResource, "/polar/webhook")
 
 	# Discipline resources
 	api.add_resource(DisciplineListResource, "/disciplines")

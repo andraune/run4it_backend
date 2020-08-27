@@ -56,6 +56,13 @@ class TestPolarUserModel:
 		retrieved_user = PolarUserModel.find_by_member_id('R4IT_user')
 		assert(retrieved_user == new_user)
 
+	def test_get_by_polar_user_id(self, db):
+		new_user = PolarUserModel(1, 'user')
+		new_user.polar_user_id = 1234
+		new_user.save()
+		retrieved_user = PolarUserModel.find_by_polar_user_id(1234)
+		assert(retrieved_user == new_user)
+
 	def test_get_by_state_code(self, db):
 		new_user = PolarUserModel(1, 'user')
 		new_user.state = 'code'
