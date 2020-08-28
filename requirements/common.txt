@@ -16,3 +16,4 @@ marshmallow==3.6.1
 passlib==1.7.2
 requests==2.24.0
 webargs==5.5.3
+pyyaml==5.3.1
