@@ -46,6 +46,7 @@ class Config(object):
 	#SECRET_KEY = 'some-secret'
 	#SQLALCHEMY_DATABASE_URI = None
 	#GPX_UPLOAD_DIR
+	#LOG_DIR
 
 
 class DevelopConfig(Config):
@@ -59,6 +60,7 @@ class DevelopConfig(Config):
 	MAIL_DEFAULT_SENDER = os.environ.get("RUN4IT_FASTMAIL_USERNAME", "nousefor@name.com")
 	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads/gpx")
 	GOOGLE_API_KEY = os.environ.get("GMAPS_API_KEY", "gmaps_api_key")
+	LOG_DIR = os.path.join(Config.PROJECT_ROOT, "logs")
 
 class TestConfig(Config):
 	"""Test Configuration"""
@@ -72,6 +74,7 @@ class TestConfig(Config):
 	MAIL_DEFAULT_SENDER = os.environ.get("RUN4IT_FASTMAIL_USERNAME", "nousefor@name.com")
 	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads/gpx")
 	GOOGLE_API_KEY = "gmaps_api_key"
+	LOG_DIR = os.path.join(Config.PROJECT_ROOT, "logs")
 
 class ProductionConfig(Config):
 	"""Production Configuration"""
@@ -83,8 +86,11 @@ class ProductionConfig(Config):
 	SQLALCHEMY_DATABASE_URI = os.environ.get("RUN4IT_DB_URL", "postgresql://run4it:run4it@localhost/run4it")
 	GPX_UPLOAD_DIR = os.path.join(Config.PROJECT_ROOT, "uploads/gpx")
 	GOOGLE_API_KEY = os.environ.get("GMAPS_API_KEY", "gmaps_api_key")
+	LOG_DIR = os.path.join(Config.PROJECT_ROOT, "logs")
 
 	CORS_ORIGIN_WHITELIST = [
+		'https://localhost:4200',
+		'https://127.0.0.1:4200',
 		'https://run4it.jonnytech.net'
 	]
 

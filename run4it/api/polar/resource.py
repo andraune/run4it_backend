@@ -67,6 +67,9 @@ class PolarAuthorizationCallback(Resource):
 		from redirect in PolarAuthorizationRedirect resource. The returned response should be
 		text/html, not json
 	'''
+	def __init__(self, **kwargs):
+		self.logger = kwargs.get('logger')
+
 	@use_kwargs(polar_callback_schema, locations={"query"}) # do not report error if missing
 	def get(self, state="", code="", error=""):
 		title = "Polar"
@@ -134,8 +137,14 @@ class PolarWebhookExercise(Resource):
 		This resource should only be called from Polar. Handles POST requests
 		for PING and EXERCISE events.
 	'''
+	def __init__(self, **kwargs):
+		self.logger = kwargs.get('logger')
+
 	@use_kwargs(polar_webhook_schema)
 	def post(self, event='', timestamp=None, user_id=0, entity_id='', url=None):
+		self.logger.debug("Polar webhook endpoint request START, event={evt}, timestamp={time}".format(evt=event, time=timestamp))
+		self.logger.debug("Polar webhook endpoint request data, user_id={uid}, entity_id={eid}".format(uid=user_id, eid=entity_id))
+
 		if event == "EXERCISE" and user_id>0 and entity_id != "":
 			valid_signature = current_app.config['POLAR_API_WEBHOOK_SIGNATURE']
 			received_signature = ''
@@ -143,13 +152,19 @@ class PolarWebhookExercise(Resource):
 				received_signature = request.headers['Polar-Webhook-Signature']
 
 			if valid_signature == received_signature:
+				self.logger.info("Polar webhook signature validated")
 				if timestamp is None:
 					timestamp = dt.datetime.utcnow()
 				try:
 					exercise = PolarWebhookExerciseModel(user_id, entity_id, timestamp, url)
 					exercise.save()
+					self.logger.info("Polar webhook saved")
 				except:
+					self.logger.error("Polar webhook failed to save")
 					db.session.rollback()
+			else:
+				self.logger.info("Polar webhook signature doesn't match ({expected},{actual})".format(expected=valid_signature, actual=received_signature))
 
+		self.logger.debug("Polar webhook endpoint request END")
 		# always just return 200 without content
 		return "", 200	

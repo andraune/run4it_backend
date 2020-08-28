@@ -19,7 +19,7 @@ API_VERSION_STR = 'v{0}'.format(API_VERSION)
 
 class ApiVersion(Resource):
 	def get(self):
-		return { 'version': API_VERSION, 'env': current_app.config['ENV'], 'todo': 'disciplines, personal_records' }
+		return { 'version': API_VERSION, 'env': current_app.config['ENV'] }
 
 
 def create_api(app):
@@ -60,8 +60,8 @@ def create_api(app):
 	api.add_resource(ProfilePolarResource, "/profiles/<string:username>/polar") 
 
 	# Polar resources
-	api.add_resource(PolarAuthorizationCallbackResource, "/polar/authorization_callback")
-	api.add_resource(PolarWebhookExerciseResource, "/polar/webhook")
+	api.add_resource(PolarAuthorizationCallbackResource, "/polar/authorization_callback", resource_class_kwargs={'logger': logging.getLogger('file')})
+	api.add_resource(PolarWebhookExerciseResource, "/polar/webhook", resource_class_kwargs={'logger': logging.getLogger('file')})
 
 	# Discipline resources
 	api.add_resource(DisciplineListResource, "/disciplines")
