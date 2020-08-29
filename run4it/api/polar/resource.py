@@ -169,15 +169,7 @@ class PolarWebhookExercise(Resource):
 					self.logger.error("Polar webhook failed to save")
 					db.session.rollback()
 			else:
-				self.logger.info("Polar webhook signature doesn't match ({calc},{actual})".format(calc=calc_signature,actual=received_signature))
-				alt_msg1 = bytes(str(request.get_json()), 'utf-8')
-				alt_msg2 = bytes(json.dumps(request.get_json()), 'utf-8')
-				calc_signature1 = get_hmac_signature(signature_key, alt_msg1)
-				calc_signature2 = get_hmac_signature(signature_key, alt_msg2)
-				self.logger.info("Polar webhook signature alternative 1 ({calc},{actual})".format(calc=calc_signature1,actual=received_signature))
-				self.logger.info("Polar webhook signature alternative 2 ({calc},{actual})".format(calc=calc_signature2,actual=received_signature))
-
-			
+				self.logger.info("Polar webhook signature doesn't match ({calc},{actual})".format(calc=calc_signature,actual=received_signature))			
 		else:
 			self.logger.debug("Polar webhook endpoint request ignored, event={evt}, timestamp={time}".format(evt=event, time=timestamp))
 
