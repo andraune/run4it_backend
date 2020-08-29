@@ -1,4 +1,5 @@
 import datetime as dt
+import json
 from os import path
 from flask import current_app, render_template, make_response
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -11,7 +12,7 @@ from run4it.api.profile.auth_helper import get_auth_profile_or_abort
 from run4it.api.user import User
 from .model import PolarUser, PolarWebhookExercise as PolarWebhookExerciseModel
 from .schema import polar_callback_schema, polar_webhook_schema, polar_user_schema
-from .polar import retrieve_access_token, register_user, unregister_user
+from .polar import retrieve_access_token, register_user, unregister_user, get_hmac_signature
 
 
 class ProfilePolar(Resource):
@@ -142,16 +143,21 @@ class PolarWebhookExercise(Resource):
 
 	@use_kwargs(polar_webhook_schema)
 	def post(self, event='', timestamp=None, user_id=0, entity_id='', url=None):
-		self.logger.debug("Polar webhook endpoint request START, event={evt}, timestamp={time}".format(evt=event, time=timestamp))
-		self.logger.debug("Polar webhook endpoint request data, user_id={uid}, entity_id={eid}".format(uid=user_id, eid=entity_id))
-
 		if event == "EXERCISE" and user_id>0 and entity_id != "":
-			valid_signature = current_app.config['POLAR_API_WEBHOOK_SIGNATURE']
+			self.logger.debug("Polar webhook endpoint request: event={evt}, timestamp={time}, user_id={uid}, entity_id={eid}".format(evt=event, time=timestamp, uid=user_id, eid=entity_id))
+			signature_key = current_app.config['POLAR_API_WEBHOOK_SIGNATURE']
 			received_signature = ''
 			if 'Polar-Webhook-Signature' in request.headers:
 				received_signature = request.headers['Polar-Webhook-Signature']
 
-			if valid_signature == received_signature:
+			request.content_length
+			calc_signature = ''
+			if request.content_length < 500000:
+				calc_signature = get_hmac_signature(signature_key, request.get_data())
+			else:
+				self.logger.debug("Polar webhook endpoint request ignored due to content length {clen}, event={evt}, timestamp={time}".format(clen=request.content_length, evt=event, time=timestamp))
+			
+			if calc_signature == received_signature:
 				self.logger.info("Polar webhook signature validated")
 				if timestamp is None:
 					timestamp = dt.datetime.utcnow()
@@ -163,8 +169,17 @@ class PolarWebhookExercise(Resource):
 					self.logger.error("Polar webhook failed to save")
 					db.session.rollback()
 			else:
-				self.logger.info("Polar webhook signature doesn't match ({expected},{actual})".format(expected=valid_signature, actual=received_signature))
+				self.logger.info("Polar webhook signature doesn't match ({calc},{actual})".format(calc=calc_signature,actual=received_signature))
+				alt_msg1 = bytes(str(request.get_json()), 'utf-8')
+				alt_msg2 = bytes(json.dumps(request.get_json()), 'utf-8')
+				calc_signature1 = get_hmac_signature(signature_key, alt_msg1)
+				calc_signature2 = get_hmac_signature(signature_key, alt_msg2)
+				self.logger.info("Polar webhook signature alternative 1 ({calc},{actual})".format(calc=calc_signature1,actual=received_signature))
+				self.logger.info("Polar webhook signature alternative 2 ({calc},{actual})".format(calc=calc_signature2,actual=received_signature))
 
-		self.logger.debug("Polar webhook endpoint request END")
+			
+		else:
+			self.logger.debug("Polar webhook endpoint request ignored, event={evt}, timestamp={time}".format(evt=event, time=timestamp))
+
 		# always just return 200 without content
-		return "", 200	
+		return {}, 200	

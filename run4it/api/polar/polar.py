@@ -1,5 +1,7 @@
 
 import requests
+import hmac
+import hashlib
 from base64 import b64encode
 from flask import current_app
 
@@ -18,7 +20,16 @@ def _get_basic_auth_header():
 
 def _get_bearer_auth_header(access_token):
 	return 'Bearer {token}'.format(token=access_token)
-	
+
+def get_hmac_signature(key_str, message_bytes):
+	key_bytes = bytes(key_str, 'utf-8')
+	signature = ''
+	try:
+		signature = hmac.new(key_bytes, msg=message_bytes, digestmod=hashlib.sha256).hexdigest().lower()
+	except:
+		signature = '<error>'
+	return signature
+
 
 # Request / Response handlers
 
