@@ -26,7 +26,8 @@ class ProfilePolar(Resource):
 			return {}, 204  # no data
 
 		if not polar_user.has_valid_access_token():
-			polar_user.generate_state_code()
+			if polar_user.state is None:
+				polar_user.generate_state_code()
 		else:
 			polar_user.state = None
 
