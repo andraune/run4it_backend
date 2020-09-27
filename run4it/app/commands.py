@@ -5,6 +5,27 @@ from flask import current_app
 from flask.cli import with_appcontext
 
 
+@click.group()
+def script4it():
+	'''Run Run4IT scripts'''
+	pass
+
+@script4it.command()
+@with_appcontext
+def polar_import():
+	"""Import data from Polar and save as workouts"""
+	from run4it.api.scripts import script_import_polar_exercices as script_func
+	return script_func('polar_import')
+
+@script4it.command()
+@with_appcontext
+def token_cleanup():
+	"""Removes revoked and expired tokens from database"""
+	from run4it.api.scripts import script_token_registry_purge as script_func
+	return script_func('token_cleanup')
+
+
+
 @click.command()
 @with_appcontext
 def init_test_data():
@@ -40,7 +61,6 @@ def tests():
 	test_path = os.path.join(project_root, "tests")
 	ret_code = pytest.main([test_path, '--verbose'])
 	exit(ret_code)
-
 
 def init_database_test_data():
 	print('Deleting database data ...')
