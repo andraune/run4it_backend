@@ -167,7 +167,6 @@ def get_exercise_fit_from_url(token, url, entity_id):
 		print(fit_url)
 		result = requests.get(fit_url, headers=headers)
 		print(result.status_code)
-		print(result.json())
 		if result.status_code == 200:
 			filename = "polar_{0}.fit".format(entity_id)
 			print(filename)
@@ -176,5 +175,5 @@ def get_exercise_fit_from_url(token, url, entity_id):
 			return filepath
 		else:
 			return None
-	except:
-		return None
+	except Exception as e:
+			print(str(e))

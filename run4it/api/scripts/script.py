@@ -86,7 +86,7 @@ def _commit_script_execution(script_entry, return_code):
 	return -2
 
 def _create_workout_from_polar_exercise(profile_id, exercise_json, fit_data):
-    category = _get_workout_category_from_polar_exercise()
+    category = _get_workout_category_from_polar_exercise(exercise_json['category'],exercise_json['sub_category'])
     if category is None:
         print("Unable to create workout from Polar exercise, no category found ({0},{1})".format(exercise_json['category'],exercise_json['sub_category']))
         return 0
