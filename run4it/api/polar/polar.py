@@ -128,22 +128,28 @@ def get_exercise_data_from_url(token, url):
 			response_json = result.json()
 			ret_json = {'start_at':None, 'duration':0, 'distance':0, 'heart_bpm':0, 'kcal':0, 'category':'', 'sub_category':'', 'route':False }
 			if 'start-time' in response_json:
+				print("{0}={1}".format('start-time', response_json['start-time']))
 				local_start_at = dateutil.parser.parse(response_json['start-time'])
 				ret_json['start_at'] = local_start_at - local_start_at.utcoffset()
 			if 'duration' in response_json:
 				duration = isodate.parse_duration(response_json['duration'])
 				ret_json['duration'] = int(duration.total_seconds())
 			if 'distance' in response_json:
-				ret_json['distance'] = response_json['distance']
-			if 'heart-rate' in response_json and 'average' in response_json['heart-rate']:
-				ret_json['heart_bpm'] = response_json['heart-rate']['average']			
+				ret_json['distance'] = int(response_json['distance'])
+			if 'heart-rate' in response_json:
+				print("{0}={1}".format('heart-rate', response_json['heart-rate']))
+				if 'average' in response_json['heart-rate']:
+					print("{0}={1}".format('heart-rate:average', response_json['heart-rate']['average']))
+					ret_json['heart_bpm'] = response_json['heart-rate']['average']			
 			if 'calories' in response_json:
 				ret_json['kcal'] = response_json['calories']
 			if 'sport' in response_json:
 				ret_json['category'] = response_json['sport']
 			if 'detailed-sport-info' in response_json:
+				print("{0}={1}".format('detailed-sport-info', response_json['detailed-sport-info']))
 				ret_json['sub_category'] = response_json['detailed-sport-info']
 			if 'has-route' in response_json:
+				print("{0}={1}".format('has-route', response_json['has-route']))
 				ret_json['route'] = response_json['has-route']
 			return ret_json		
 		else:
