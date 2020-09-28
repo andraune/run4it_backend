@@ -20,7 +20,11 @@ class WorkoutCategory(SurrogatePK, db.Model):
 
 	def __init__(self, name, supports_gps_data):
 		db.Model.__init__(self, name=name, supports_gps_data=supports_gps_data)
-	
+
+	@classmethod
+	def find_by_name(cls, name):
+		return cls.query.filter_by(name=name).first()
+
 	def __repr__(self):
 		return '<WorkoutCategory({name!r})>'.format(name=self.name)
 
