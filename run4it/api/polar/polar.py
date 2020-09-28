@@ -1,5 +1,5 @@
 
-import os.path
+from os import path
 import datetime as dt
 import dateutil.parser
 import isodate
