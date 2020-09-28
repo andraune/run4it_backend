@@ -8,6 +8,7 @@ import hashlib
 from base64 import b64encode
 from flask import current_app
 
+
 BASE_ACCESSLINK_URL = 'https://www.polaraccesslink.com/v3'
 TOKEN_ENDPOINT = 'https://polarremote.com/v2/oauth2/token'
 REGISTER_ENDPOINT = '{base}/users'.format(base=BASE_ACCESSLINK_URL)
@@ -127,30 +128,25 @@ def get_exercise_data_from_url(token, url):
 		if result.status_code == 200:
 			response_json = result.json()
 			ret_json = {'start_at':None, 'duration':0, 'distance':0, 'heart_bpm':0, 'kcal':0, 'category':'', 'sub_category':'', 'route':False }
-			if 'start-time' in response_json:
-				print("{0}={1}".format('start-time', response_json['start-time']))
-				local_start_at = dateutil.parser.parse(response_json['start-time'])
+			if 'start_time' in response_json:
+				local_start_at = dateutil.parser.parse(response_json['start_time'])
 				ret_json['start_at'] = local_start_at - local_start_at.utcoffset()
 			if 'duration' in response_json:
 				duration = isodate.parse_duration(response_json['duration'])
 				ret_json['duration'] = int(duration.total_seconds())
 			if 'distance' in response_json:
 				ret_json['distance'] = int(response_json['distance'])
-			if 'heart-rate' in response_json:
-				print("{0}={1}".format('heart-rate', response_json['heart-rate']))
-				if 'average' in response_json['heart-rate']:
-					print("{0}={1}".format('heart-rate:average', response_json['heart-rate']['average']))
-					ret_json['heart_bpm'] = response_json['heart-rate']['average']			
+			if 'heart_rate' in response_json:
+				if 'average' in response_json['heart_rate']:
+					ret_json['heart_bpm'] = response_json['heart_rate']['average']			
 			if 'calories' in response_json:
 				ret_json['kcal'] = response_json['calories']
 			if 'sport' in response_json:
 				ret_json['category'] = response_json['sport']
-			if 'detailed-sport-info' in response_json:
-				print("{0}={1}".format('detailed-sport-info', response_json['detailed-sport-info']))
-				ret_json['sub_category'] = response_json['detailed-sport-info']
-			if 'has-route' in response_json:
-				print("{0}={1}".format('has-route', response_json['has-route']))
-				ret_json['route'] = response_json['has-route']
+			if 'detailed_sport_info' in response_json:
+				ret_json['sub_category'] = response_json['detailed_sport_info']
+			if 'has_route' in response_json:
+				ret_json['route'] = response_json['has_route']
 			return ret_json		
 		else:
 			return None
