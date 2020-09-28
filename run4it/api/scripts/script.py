@@ -1,6 +1,7 @@
 import datetime as dt
 from .model import Script as ScriptModel
 from run4it.api.token import TokenRegistry
+from run4it.api.workout import WorkoutModel, WorkoutCategoryModel
 from run4it.api.polar import PolarUserModel, PolarWebhookExerciseModel, get_exercise_data_from_url, get_exercise_fit_from_url
 
 
@@ -11,8 +12,6 @@ def script_import_polar_exercices(script_name):
     # Script code goes here
     polar_exercises = PolarWebhookExerciseModel.get_not_processed()
     if polar_exercises is not None:
-        print("Found {} Polar exercises for import".format(len(polar_exercises)))
-
         # Loop through exercises and download exercise data
         for exercise in polar_exercises:
             polar_user = PolarUserModel.find_by_polar_user_id(exercise.polar_user_id)
@@ -23,7 +22,8 @@ def script_import_polar_exercices(script_name):
                 if exercise_json is not None:
                     fit_data = None
                     
-                    if exercise_json['route']:
+                    if exercise_json['route'] == True:
+                        print("Attempt to download exercise FIT for {0}".format(exercise.entity_id))
                         fit_data = get_exercise_fit_from_url(polar_user.access_token, exercise.url, exercise.entity_id)
 
                     new_workout_id = _create_workout_from_polar_exercise(polar_user.profile_id, exercise_json, fit_data)
@@ -86,12 +86,16 @@ def _commit_script_execution(script_entry, return_code):
 	return -2
 
 def _create_workout_from_polar_exercise(profile_id, exercise_json, fit_data):
-    print("Place to save workout for profile_id {0}.".format(profile_id))
-    print("start_at: {0}".format(exercise_json['start_at']))
-    print("duration: {0}".format(exercise_json['duration']))
-    print("distance: {0}".format(exercise_json['distance']))
-    print("heart_bpm: {0}".format(exercise_json['heart_bpm']))
-    print("kcal: {0}".format(exercise_json['kcal']))
-    print("category: {0}".format(exercise_json['category']))
-    print("sub_category: {0}".format(exercise_json['sub_category']))
-    return 0
+    category = _get_workout_category_from_polar_exercise()
+    if category is None:
+        print("Unable to create workout from Polar exercise, no category found ({0},{1})".format(exercise_json['category'],exercise_json['sub_category']))
+        return 0
+    #new_workout = WorkoutModel(profile_id, category, "Polar", exercise_json['start_at'], exercise_json['distance'], exercise_json['duration'], 0)
+    return 1
+
+def _get_workout_category_from_polar_exercise(polar_category, polar_category_detailed):
+    # category examples: RUNNING
+    # sub_category examples: RUNNING
+    if polar_category == 'RUNNING':
+        return WorkoutCategoryModel.find_by_name('Running')
+    return None
