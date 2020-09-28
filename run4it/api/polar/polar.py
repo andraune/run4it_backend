@@ -1,4 +1,5 @@
 
+import os.path
 import datetime as dt
 import dateutil.parser
 import isodate
@@ -164,12 +165,9 @@ def get_exercise_fit_from_url(token, url, entity_id):
 
 	try:
 		fit_url = "{0}/fit".format(url)
-		print(fit_url)
 		result = requests.get(fit_url, headers=headers)
-		print(result.status_code)
 		if result.status_code == 200:
 			filename = "polar_{0}.fit".format(entity_id)
-			print(filename)
 			filepath = _save_fit_file(filename, result.content)
 			print(filepath)
 			return filepath
