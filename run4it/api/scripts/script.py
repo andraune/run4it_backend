@@ -132,6 +132,7 @@ def _create_workout_from_polar_exercise(profile_id, exercise_json, fit_path):
 def _get_workout_category_from_polar_exercise(polar_category, polar_category_detailed):
 	# category examples: RUNNING
 	# sub_category examples: RUNNING
+	print("Dbg:Polar cat={0}, detailed={1}".format(polar_category, polar_category_detailed))
 	if polar_category == 'RUNNING':
 		return WorkoutCategoryModel.find_by_name('Running')
 	return None
