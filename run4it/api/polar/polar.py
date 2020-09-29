@@ -1,14 +1,30 @@
 
+from os import path
+import datetime as dt
+import dateutil.parser
+import isodate
 import requests
 import hmac
 import hashlib
 from base64 import b64encode
 from flask import current_app
 
+
 BASE_ACCESSLINK_URL = 'https://www.polaraccesslink.com/v3'
 TOKEN_ENDPOINT = 'https://polarremote.com/v2/oauth2/token'
 REGISTER_ENDPOINT = '{base}/users'.format(base=BASE_ACCESSLINK_URL)
 
+
+# Helpers for file handling
+def _save_fit_file(filename, file_bytes):
+	filepath = path.join(current_app.config["GPX_UPLOAD_DIR"], filename)
+	try:
+		file = open(filepath, 'wb')
+		file.write(file_bytes)
+		file.close()
+		return filepath
+	except:
+		return None
 
 # Authentication header contents (helpers)
 
@@ -82,6 +98,7 @@ def register_user(token, member_id):
 	except:
 		return False, 'unexpected error'
 
+
 def unregister_user(token, user_id):
 	''' Attemts to unregister user in Polar Flow access link, using 
 	REGISTER_ENDPOINT with user_id appended (DELETE)'''
@@ -99,3 +116,59 @@ def unregister_user(token, user_id):
 	except:
 		return False	
 
+
+def get_exercise_data_from_url(token, url):
+	'''Retrieves exercise data using URL with entityID (does not require transaction)'''
+	headers = {
+		"Accept": "application/json",
+		"Authorization": _get_bearer_auth_header(token)
+	}
+
+	try:
+		result = requests.get(url, headers=headers)
+		if result.status_code == 200:
+			response_json = result.json()
+			ret_json = {'start_at':None, 'duration':0, 'distance':0, 'heart_bpm':0, 'kcal':0, 'category':'', 'sub_category':'', 'route':False }
+			if 'start_time' in response_json:
+				local_start_at = dateutil.parser.parse(response_json['start_time'])
+				ret_json['start_at'] = local_start_at - local_start_at.utcoffset()
+			if 'duration' in response_json:
+				duration = isodate.parse_duration(response_json['duration'])
+				ret_json['duration'] = int(duration.total_seconds())
+			if 'distance' in response_json:
+				ret_json['distance'] = int(response_json['distance'])
+			if 'heart_rate' in response_json:
+				if 'average' in response_json['heart_rate']:
+					ret_json['heart_bpm'] = response_json['heart_rate']['average']			
+			if 'calories' in response_json:
+				ret_json['kcal'] = response_json['calories']
+			if 'sport' in response_json:
+				ret_json['category'] = response_json['sport']
+			if 'detailed_sport_info' in response_json:
+				ret_json['sub_category'] = response_json['detailed_sport_info']
+			if 'has_route' in response_json:
+				ret_json['route'] = response_json['has_route']
+			return ret_json		
+		else:
+			return None
+	except:
+		return None
+
+def get_exercise_fit_from_url(token, url, entity_id):
+	'''Retrieves exercise FIT data using URL with entityID (does not require transaction)'''
+	headers = {
+		"Accept": "*/*",
+		"Authorization": _get_bearer_auth_header(token)
+	}
+
+	try:
+		fit_url = "{0}/fit".format(url)
+		result = requests.get(fit_url, headers=headers)
+		if result.status_code == 200:
+			filename = "polar_{0}.fit".format(entity_id)
+			filepath = _save_fit_file(filename, result.content)
+			return filepath
+		else:
+			return None
+	except Exception as e:
+		return None

@@ -24,7 +24,17 @@ class TestWorkoutCategoryModel:
 
 		num_items = db.session.query(WorkoutCategoryModel).count()
 		assert(num_items == 1)
-	
+
+	def test_find_by_name(self):
+		item1 = WorkoutCategoryModel("Running", True)
+		item2 = WorkoutCategoryModel("Hiking", True)
+		item1.save(commit=False)
+		item2.save()
+		retrieved_item = WorkoutCategoryModel.find_by_name("Hiking")
+		assert(retrieved_item.name == item2.name)
+		retrieved_item = WorkoutCategoryModel.find_by_name("Bullshit")
+		assert(retrieved_item is None)
+
 
 @pytest.mark.usefixtures('db')
 class TestWorkoutModel:
