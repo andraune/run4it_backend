@@ -4,6 +4,7 @@ from sqlalchemy import and_
 from run4it.app.database import Column, SurrogatePK, reference_col, relationship, db
 from .gpx import GpxParser
 from .tcx import TcxParser
+from .fit import FitParser
 
 
 def is_filename_extension_of_type(filename, extension):
@@ -59,6 +60,10 @@ class Workout(SurrogatePK, db.Model):
 			tcx = TcxParser(self.resource_path)
 			if tcx.get_num_of_tracks() > 0:
 				self.extended_track_data, self.extended_split_data, self.extended_summary = tcx.get_track_data()
+		elif is_filename_extension_of_type(self.resource_path, "fit"):
+			fit = FitParser(self.resource_path)
+			if fit.get_num_of_tracks() > 0:
+				self.extended_track_data, self.extended_split_data, self.extended_summary = fit.get_track_data()
 		if not self.category.supports_gps_data:
 			self.extended_track_data = None
 			self.extended_split_data = None

@@ -24,7 +24,6 @@ class Config(object):
 	JWT_BLACKLIST_ENABLED = True
 	JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
 
-	CACHE_TYPE = 'simple'
 	CORS_ORIGIN_WHITELIST = [
 		'http://localhost:4200',
 		'http://127.0.0.1:4200',

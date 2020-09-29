@@ -18,14 +18,12 @@ REGISTER_ENDPOINT = '{base}/users'.format(base=BASE_ACCESSLINK_URL)
 # Helpers for file handling
 def _save_fit_file(filename, file_bytes):
 	filepath = path.join(current_app.config["GPX_UPLOAD_DIR"], filename)
-	print(filepath)
 	try:
 		file = open(filepath, 'wb')
 		file.write(file_bytes)
 		file.close()
 		return filepath
-	except Exception as e:
-		print(str(e))
+	except:
 		return None
 
 # Authentication header contents (helpers)
@@ -169,9 +167,8 @@ def get_exercise_fit_from_url(token, url, entity_id):
 		if result.status_code == 200:
 			filename = "polar_{0}.fit".format(entity_id)
 			filepath = _save_fit_file(filename, result.content)
-			print(filepath)
 			return filepath
 		else:
 			return None
 	except Exception as e:
-			print(str(e))
+		return None
