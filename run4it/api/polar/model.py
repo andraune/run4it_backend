@@ -81,7 +81,7 @@ class PolarWebhookExercise(SurrogatePK, db.Model):
 
 	@classmethod
 	def get_not_processed(cls):
-		return cls.query.filter_by(processed=False).all()
+		return cls.query.filter_by(processed=False).order_by(cls.polar_user_id).all()
 
 	def __repr__(self):
 		return '<PolarWebhookExercise({user!r}:{entity!r})>'.format(user=self.polar_user_id,entity=self.entity_id)
