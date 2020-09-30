@@ -24,7 +24,7 @@ def script_import_polar_exercices(script_name):
 				exercise_json = get_exercise_data_from_url(polar_user.access_token, exercise.url)
 				
 				if exercise_json is not None:
-					fit_data = None
+					fit_path = None
 					
 					if exercise_json['route'] == True:
 						fit_path = get_exercise_fit_from_url(polar_user.access_token, exercise.url, exercise.entity_id)
