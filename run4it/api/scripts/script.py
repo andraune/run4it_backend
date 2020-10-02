@@ -136,9 +136,16 @@ def _create_workout_from_polar_exercise(profile_id, exercise_json, fit_path):
 	return 0
 
 def _get_workout_category_from_polar_exercise(polar_category, polar_category_detailed):
-	# category examples: RUNNING
-	# sub_category examples: RUNNING
-	print(str(dt.datetime.utcnow()), "Dbg:Polar cat={0}, detailed={1}".format(polar_category, polar_category_detailed))
-	if polar_category == 'RUNNING':
+	if polar_category == 'RUNNING': # detailed can be: RUNNING | TREADMILL_RUNNING
 		return WorkoutCategoryModel.find_by_name('Running')
+	if polar_category == 'OTHER':
+		if polar_category_detailed == "HIKING":
+			return WorkoutCategoryModel.find_by_name('Hiking')
+		if polar_category_detailed == "STRENGTH_TRAINING":
+			return WorkoutCategoryModel.find_by_name('Fitness')
+		if polar_category_detailed == "CROSS-COUNTRY_SKIING":
+			return WorkoutCategoryModel.find_by_name('Cross-country skiing')
+		if polar_category_detailed == "ROLLER_SKIING_FREESTYLE":
+			return WorkoutCategoryModel.find_by_name('Roller skiing')
+	print(str(dt.datetime.utcnow()), "Dbg:Polar cat={0}, detailed={1}".format(polar_category, polar_category_detailed))
 	return None
