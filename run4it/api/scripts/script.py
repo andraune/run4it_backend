@@ -101,7 +101,7 @@ def _create_workout_from_polar_exercise(profile_id, exercise_json, fit_path):
 	# save Workout using meta data first
 	new_workout = None
 	try:
-		new_workout = WorkoutModel(profile_id, category, "Polar", exercise_json['start_at'], exercise_json['distance'], exercise_json['duration'], 0, fit_path, False)
+		new_workout = WorkoutModel(profile_id, category, category.name, exercise_json['start_at'], exercise_json['distance'], exercise_json['duration'], 0, fit_path, False)
 		new_workout.save()
 	except:
 		db.session.rollback()
