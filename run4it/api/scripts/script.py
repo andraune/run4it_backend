@@ -50,7 +50,7 @@ def script_import_polar_exercices(script_name):
 				print(str(dt.datetime.utcnow()), "Failed to set Polar exercise {0} as 'processed'".format(exercise.entity_id))
 
 	else:
-		print(str(dt.datetime.utcnow()), "Error searching for Polar exercises for import".format(len(polar_exercises)))
+		print(str(dt.datetime.utcnow()), "Error searching for Polar exercises for import")
 		ret_code = 1
 	# End of script code
 	return _commit_script_execution(script_entry, ret_code)
@@ -130,7 +130,6 @@ def _create_workout_from_polar_exercise(profile_id, exercise_json, fit_path):
 			add_workout_data_to_goals(profile, new_workout)
 		except:
 			db.session.rollback()
-		print()
 		return new_workout.id
 	print(str(dt.datetime.utcnow()), "Unable to save workout for some unknown reason.")
 	return 0
