@@ -170,5 +170,5 @@ def get_exercise_fit_from_url(token, url, entity_id):
 			return filepath
 		else:
 			return None
-	except Exception as e:
+	except:
 		return None
