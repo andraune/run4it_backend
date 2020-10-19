@@ -30,23 +30,33 @@ class Profile(SurrogatePK, TimestampedModel):
 	def username(self):
 		return self.user.username
 
-	def get_active_goals(self, timestamp=dt.datetime.utcnow()):
+	def get_active_goals(self, timestamp=None):
+		if timestamp is None:
+			timestamp=dt.datetime.utcnow()
 		return self.goals.filter(and_(GoalModel.start_at <= timestamp, GoalModel.end_at >= timestamp)).order_by(GoalModel.end_at.asc()).all()
 
-	def get_expired_goals(self, timestamp=dt.datetime.utcnow()):
+	def get_expired_goals(self, timestamp=None):
+		if timestamp is None:
+			timestamp=dt.datetime.utcnow()
 		return self.goals.filter(GoalModel.end_at <= timestamp).order_by(GoalModel.end_at.desc()).all()
 
-	def get_future_goals(self, timestamp=dt.datetime.utcnow()):
+	def get_future_goals(self, timestamp=None):
+		if timestamp is None:
+			timestamp=dt.datetime.utcnow()
 		return self.goals.filter(GoalModel.start_at > timestamp).order_by(GoalModel.start_at.asc()).all()
 
-	def get_completed_goals(self, timestamp=dt.datetime.utcnow()):
+	def get_completed_goals(self, timestamp=None):
+		if timestamp is None:
+			timestamp=dt.datetime.utcnow()
 		return self.goals.filter(
 			GoalModel.end_at <= timestamp,
 			or_(and_(GoalModel.start_value < GoalModel.target_value, GoalModel.current_value >= GoalModel.target_value),
 				and_(GoalModel.start_value > GoalModel.target_value, GoalModel.current_value <= GoalModel.target_value))
 			).order_by(GoalModel.end_at.desc()).all()
 
-	def get_incompleted_goals(self, timestamp=dt.datetime.utcnow()):
+	def get_incompleted_goals(self, timestamp=None):
+		if timestamp is None:
+			timestamp=dt.datetime.utcnow()
 		return self.goals.filter(
 			GoalModel.end_at <= timestamp,
 			or_(and_(GoalModel.start_value < GoalModel.target_value, GoalModel.current_value < GoalModel.target_value),
